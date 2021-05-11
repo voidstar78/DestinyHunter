@@ -28,7 +28,7 @@ static unsigned char rest_mode = FALSE;
 static unsigned char (*ptr_blockers)[5];  // of the current map
 static unsigned char or_equal_modifier[] = {0xC0,0x30,0x0C,0x03};
 static unsigned char weapon_fire_symbols[] = {66, 78, 67, 77, 66, 78, 67, 77};
-static unsigned char check_for_flipskill_learned = TRUE;
+static unsigned char check_for_flipskill_learned;
 static unsigned char stage_event_state;		
 static unsigned char which_stats_modified;  //< Flag used to indicate which player-stats/states/status have been modified (only update/redraw those modified states)
 
@@ -151,6 +151,13 @@ static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
 static unsigned char num_locations_to_draw = 0;	
 
 typedef void (*ptr_animate_icon_func_type)(Challenge *);
+
+unsigned char IS_BLOCKED(unsigned char check_x, unsigned char check_y)  
+{  
+  if (ptr_blockers == 0)
+		return FALSE;
+	return (IS_BIT_ON(ptr_blockers[check_y-2][div8_table[check_x]], mod8_table[check_x]) == TRUE);
+}
 
 void draw_stage_overlay(char* stage_name)
 {	
@@ -490,6 +497,19 @@ void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
 	ptr_challenge->x = va_arg(valist, signed char);
 	ptr_challenge->y = va_arg(valist, signed char);
 	
+	while (IS_BLOCKED(ptr_challenge->x, ptr_challenge->y))
+	{
+		// GUARANTEE THAT WE DON'T SPAWN ON A BLOCKED AREA
+		if (rand_mod(2) == 0)
+		{
+      --(ptr_challenge->y);
+		}
+		else
+		{
+			++(ptr_challenge->y);
+		}
+	}	
+	
 	ptr_challenge->hp_max = va_arg(valist, unsigned char);
 	ptr_challenge->hp_remaining = ptr_challenge->hp_max;
 	
@@ -613,7 +633,7 @@ void initialize_stage3_challenges(unsigned char start, unsigned char count)
     rand_x = rand_mod(19);
 		rand_y = rand_mod(22);
 		rand_mov = rand_mod(8);
-		
+
                                   //                                         HP    mov  
                                   //           num         X        Y       max    spd    aggr   attk_speed
     switch (rand_mod(2))
@@ -664,19 +684,19 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
                                   //           num         X        Y       max    spd    aggr   attk_speed
     switch (rand_mod(4))
 		{
-		case 0:  // X- Y-   TOP LEFT
+		case 0:  // X- Y-   TOP 
 		  initialize_challengeI(&challenges[start], 5,     rand_x,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 1:  // X+ Y-   TOP RIGHT
+		case 1:  // X+ Y-   RIGHT      
 		  initialize_challengeI(&challenges[start], 5,     38+rand_x,  rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 2:  // X+ Y+   BOTTOM RIGHT
+		case 2:  // X+ Y+   BOTTOM
 		  initialize_challengeI(&challenges[start], 5,     rand_x,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 3:  // X- Y+   BOTTOM LEFT
+		case 3:  // X- Y+   LEFT		  
 		  initialize_challengeI(&challenges[start], 5,     0-rand_x,  rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 		}
@@ -1033,13 +1053,6 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 			++virtual_x;
 		}
   }
-}
-
-unsigned char IS_BLOCKED(unsigned char check_x, unsigned char check_y)  
-{  
-  if (ptr_blockers == 0)
-		return FALSE;
-	return (IS_BIT_ON(ptr_blockers[check_y-2][div8_table[check_x]], mod8_table[check_x]) == TRUE);
 }
   
 void run_stage(
@@ -1548,7 +1561,7 @@ void run_stage(
 											}
 											else if (challenges_count < 5)
 											{
-												initialize_stage4_challenges(challenges_count, 1);  // JEWEL												
+												initialize_stage4_challenges(challenges_count, 1);  // SAMUAL
 												++challenges_remaining;
 											}
 										}											
@@ -2709,8 +2722,12 @@ void animate_stage3(Challenge* ptr_challenge)
 	g_i = ptr_challenge->animation_count % 4;
 	ptr_challenge->icon[CD_LEFT][0][2] = tail_symbolsLEFT[g_i];
 	
-	if (ptr_challenge->icon[CD_LEFT][0][1] == SYMBOL_SPADE)  // SPADE symbol
+	if (
+	  (ptr_challenge->icon[CD_LEFT][0][1] == SYMBOL_SPADE)  // SPADE symbol
+		|| (ptr_challenge->icon[CD_LEFT][0][1] == SYMBOL_SPADE_INV)
+  )
 	{
+		// This is actually a BIRD with only a CD_LEFT icon - update the left wing portion
 		ptr_challenge->icon[CD_LEFT][0][0] = wing_symbolsLEFT[g_i];
 	}
 	else
@@ -2827,6 +2844,8 @@ start_over:
 	INIT_TIMER(started_timer);				
 	//INIT_TIMER((*(Time_counter*)(g_pvec_map[1][0])));
 	
+	check_for_flipskill_learned = TRUE;
+	
 #ifdef TARGET_C64
 	ENABLE_CHARACTER_SET_A;	
 	textcolor(C64_COLOR_WHITE);
@@ -2891,21 +2910,21 @@ quick_game:
 
 	challenges_count = 0;
 
+  ptr_blockers = blockers_stage1_values;
 	initialize_stage1_challenges();						
 	decode_stage_to_map(rle_stage1_values, sizeof(rle_stage1_values));
-	ptr_blockers = blockers_stage1_values;
 	run_stage(1, 0);  
   if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
-	initialize_stage2_challenges();				
-	decode_stage_to_map(rle_stage2_values, sizeof(rle_stage2_values));
 	ptr_blockers = blockers_stage2_values;		
+	initialize_stage2_challenges();				
+	decode_stage_to_map(rle_stage2_values, sizeof(rle_stage2_values));	
 	run_stage(2, &animate_stage2);  
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
-	initialize_stage3_challenges(0, 3);
-	decode_stage_to_map(rle_stage3_values, sizeof(rle_stage3_values));
 	ptr_blockers = blockers_stage3_values;
+	initialize_stage3_challenges(0, 3);
+	decode_stage_to_map(rle_stage3_values, sizeof(rle_stage3_values));	
 	run_stage(3, &animate_stage3); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
@@ -2915,9 +2934,9 @@ quick_game:
 		temp_hp = global_destiny_status.hp_current;
 		global_destiny_status.hp_current = g_ptr_persona_status->hp_max;  //< give max HP back during this flashback
 		
-		initialize_stage4_challenges(0, 4);
-		decode_stage_to_map(rle_stage4_values, sizeof(rle_stage4_values));
 		ptr_blockers = 0;  // blockers_stage4_values;
+		initialize_stage4_challenges(0, 4);
+		decode_stage_to_map(rle_stage4_values, sizeof(rle_stage4_values));		
 		run_stage(4, &animate_stage4); 
 		
 		// This is a fashback stage, the player can't actually die... Whether "died" or not, recover original HP
@@ -2925,27 +2944,27 @@ quick_game:
 		global_destiny_status.hp_current = temp_hp;				
 	}
 	
-	initialize_stage5_challenges(0, 35, 12);
-	decode_stage_to_map(rle_stage5_values, sizeof(rle_stage5_values));
 	ptr_blockers = blockers_stage5_values;
+	initialize_stage5_challenges(0, 35, 12);
+	decode_stage_to_map(rle_stage5_values, sizeof(rle_stage5_values));	
 	run_stage(5, &animate_stage5);
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 
-	initialize_stage6_challenges(0,10);
-	decode_stage_to_map(rle_stage6_values, sizeof(rle_stage6_values));
 	ptr_blockers = blockers_stage6_values;
+	initialize_stage6_challenges(0,10);
+	decode_stage_to_map(rle_stage6_values, sizeof(rle_stage6_values));	
 	run_stage(6, 0);  
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
-	initialize_stage7_challenges();
-	decode_stage_to_map(rle_stage7_values, sizeof(rle_stage7_values));
 	ptr_blockers = blockers_stage7_values;
+	initialize_stage7_challenges();
+	decode_stage_to_map(rle_stage7_values, sizeof(rle_stage7_values));	
 	run_stage(7, &animate_stage7); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
 	g_pvec_map[0][1] = 3;  //< The fireballs are challenges that can't be defeated, so if 8 drops to 4, we know all the HYDRA were defeated
-	initialize_stage8_challenges();
 	ptr_blockers = blockers_stage8_values;
+	initialize_stage8_challenges();	
 	decode_stage_to_map(rle_stage8_values, sizeof(rle_stage8_values));
 	run_stage(8, &animate_stage8); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;

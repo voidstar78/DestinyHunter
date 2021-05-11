@@ -65,7 +65,6 @@ void conduct_intro()
 	WRITE_STRING(6,13, str_instruction_blessing, STR_INSTRUCTION_BLESSING_LEN);
 	WRITE_STRING(6,15, str_instruction_persistency, STR_INSTRUCTION_PERSISTENCY_LEN);
 	
-	//text_banner_center(21, str_return_to_begin, SOMETHING_ELSE);			
 	text_banner_center(20, str_press_return_to_proceed, SOMETHING_ELSE);			
 
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
