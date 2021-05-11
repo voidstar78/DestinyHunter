@@ -1,0 +1,8 @@
+
+The pet.cfg file goes into the cfg sub-folder of the cc65 runtime folder:
+
+~\cc65-snapshot-win32\cfg
+
+
+The primary change is the reduction of the reserved STACK SIZE.
+
