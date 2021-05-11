@@ -53,12 +53,10 @@ void conduct_intro()
 		
 	g_enter_result = flush_keyboard_and_wait_for_ENTER();    	
 #endif
-
+  
 	CLRSCR;	
 	
-	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
-	
-	//text_banner_center(2, str_instructions, global_destiny_status.direction);			
+  INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
 	text_banner_center(3, str_destiny_hunter, g_ptr_persona_status->direction);			
 
 	WRITE_STRING(6, 7, str_instruction_aim, STR_INSTRUCTION_AIM_LEN);

@@ -98,6 +98,8 @@ static unsigned char stage_mod_y[] = {0, 10, 11,  8,  4,  4,  6,  8, 12};
 static unsigned char stage_min_y[] = {0,  4,  6,  5, 10,  5,  6, 10,  6};   
 
 /*
+Retained for historical reference:
+
 static char* stage_names[9] = {
 	"matins  ",  //< placeholder name, not used (stages are indexed 1-8       (was)
 	"rats    ",  // RATS                                                      WOLVES              1
@@ -357,8 +359,8 @@ void draw_stage_map()
 {
 	char* ptr_value;
 	//unsigned char ch;
-	unsigned char y;
-	unsigned char x;	
+	register unsigned char y;
+	register unsigned char x;	
 #ifdef TARGET_C64
 	bordercolor(C64_COLOR_BLACK);
 #endif	
@@ -413,8 +415,6 @@ void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigne
 
 void ORIENT_AND_QUEUE_DRAW_WEAPON()
 {	
-  char* ptr_value;
-	
 /*if (valid_key == TRUE) .. not sure why this isn't working...*/ 
 	switch (global_destiny_status.curr_arrow_direction) 
 	{ 
@@ -427,13 +427,13 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 	case DIR_WW: global_destiny_status.weapon_y = global_destiny_status.location_y;     global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 93 221 */ 
 	case DIR_NW: global_destiny_status.weapon_y = global_destiny_status.location_y - 1; global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 85 213 */ 
 	} 
-	ptr_value = g_pvec_map[global_destiny_status.weapon_y]; 
+	
 				
 #ifdef TARGET_C64
 	// This ends up looking wrong color on the C64, so looking worse.
 #else
 	// Invert the weapon when it is on BEACH tiles, just makes it look nicer...
-	if (ptr_value[global_destiny_status.weapon_x] == MAP_BEACH) 
+	if (g_pvec_map[global_destiny_status.weapon_y][global_destiny_status.weapon_x] == MAP_BEACH) 
 		SET_MASK(global_destiny_status.symbol_weapon, MASK_HIGH_BIT); 
 	else 
 		CLEAR_MASK(global_destiny_status.symbol_weapon, MASK_HIGH_BIT); 
@@ -476,13 +476,6 @@ void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon
 	
 	for (g_i = 0; g_i < num; ++g_i)  // can't use while(num > 0) here, since va_args read in order (can't skip)
 	{
-		/*
-		if ((g_i+1) > challenge->longest_icon_width)
-		{
-			//challenge->longest_icon_width = (g_i+1);
-			++challenge->longest_icon_width;
-		}
-		*/
 		challenge->icon[icon_index][index][g_i] = va_arg(valist, unsigned char);		
 	}
 	
@@ -664,26 +657,26 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 	while (count > 0)
 	{		
     rand_x = rand_mod(40);
-		rand_y = rand_mod(22);
+		rand_y = rand_mod(22);		
 		rand_mov = rand_mod(4)+3;
 		
                                   //                                         HP    mov  
                                   //           num         X        Y       max    spd    aggr   attk_speed
     switch (rand_mod(4))
 		{
-		case 0:  // X- Y-
+		case 0:  // X- Y-   TOP LEFT
 		  initialize_challengeI(&challenges[start], 5,     rand_x,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 1:  // X+ Y-
+		case 1:  // X+ Y-   TOP RIGHT
 		  initialize_challengeI(&challenges[start], 5,     38+rand_x,  rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 2:  // X+ Y+
+		case 2:  // X+ Y+   BOTTOM RIGHT
 		  initialize_challengeI(&challenges[start], 5,     rand_x,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 3:  // X- Y+
+		case 3:  // X- Y+   BOTTOM LEFT
 		  initialize_challengeI(&challenges[start], 5,     0-rand_x,  rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 		}
@@ -700,12 +693,10 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 		challenges[start].hit_box_y = 0;	
 		
 	  set_icon_char(&challenges[start], 0, CD_LEFT, 3,   85,   SYMBOL_SPADE,  73);  // 85/73 flap down,   74/75 flap up
-		/*
 		if (orig_start != 0)
 		{
 			SET_MASK(challenges[start].icon[0][CD_LEFT][1], MASK_HIGH_BIT);  // REVERSE/INVERSE the bird icon for the new spawns
 		}
-		*/
 		
 		++start;
 		--count;
@@ -754,8 +745,8 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 	while (count > 0)
 	{		
     rand_x = rand_mod(10);
-		rand_y = rand_mod(13);
-		rand_mov = 0; //rand_mod(2);
+    rand_y = rand_mod(13);
+		rand_mov = rand_mod(2);  // 0 or 1
 		
                                   //                                         HP    mov  
                                   //           num         X        Y       max    spd    aggr   attk_speed		
@@ -943,6 +934,8 @@ void initialize_stage8_challenges()
 	//challenges[7].associated_with = &challenges[3];
 	
 	challenges_count += 2;
+	
+	initialize_stage6_challenges(challenges_count, 2);
 }
 
 void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stage_values_size) //, char pvec_map[][41])
@@ -1196,28 +1189,33 @@ void run_stage(
     STORE_TIME_NO_CORRECTOR(global_timer);  //< global_timer will be used as a "NOW" time
 
 		// ** INIT STAGE UNIQUE ITEMS **********************************
-    //if (stage_index == 1)
+		if (global_destiny_status.arrows_current == 0)
+		{						
+			BUFFER_LOCATION_TO_DRAW(item_arrows_x, item_arrows_y, SYMBOL_UP_ARROW
+#ifdef TARGET_C64
+				, C64_COLOR_WHITE
+#endif				
+			);  // 30 is UP ARROW, 31 is LEFT ARROW			  
+		}
+
+#ifdef FINAL_BUILD
+    if (stage_index == 1)
+#endif			
 		{
 			// PLACE ANY PICK-UP ITEMS...
       if (IS_MASK_OFF(global_destiny_status.inventory, INVENTORY_BOW))
 			{				
 				// IDEA: animate to get players attention
-  			BUFFER_LOCATION_TO_DRAW(item_bow_x, item_bow_y, 41
+  			BUFFER_LOCATION_TO_DRAW(item_bow_x, item_bow_y, SYMBOL_BOW
 #ifdef TARGET_C64
           , C64_COLOR_BROWN
 #endif
 				);  // ")" right bow
-			}			
-			
-			if (global_destiny_status.arrows_current == 0)
-			{						
-				BUFFER_LOCATION_TO_DRAW(item_arrows_x, item_arrows_y, 30
-#ifdef TARGET_C64
-          , C64_COLOR_WHITE
-#endif				
-				);  // 30 is UP ARROW, 31 is LEFT ARROW			  
 			}
-		}		
+		}
+#ifdef FINAL_BUILD
+    else
+#endif
 		if (stage_index == 3)
 		{
 			if (IS_MASK_OFF(global_destiny_status.inventory, INVENTORY_GEM))
@@ -1241,7 +1239,7 @@ void run_stage(
 			  }
 			}
 		}
-		if (stage_index == 5)
+		else if (stage_index == 5)
 		{
 			if (
 			  IS_MASK_OFF(global_destiny_status.inventory, INVENTORY_ORB)
@@ -1635,8 +1633,15 @@ void run_stage(
 			}
 		}
 		
-		if (weapon_state == WS_FIRING)  // if still firing...
+		if (weapon_state == WS_FIRING)  //< if still firing...
 		{
+      // ** OPTIONAL -- make the arrow inverted when firing over a beach
+  	  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
+	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
+	    else 
+		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
+			// **********************************************************
+
 			BUFFER_LOCATION_TO_DRAW(weapon_range_x,weapon_range_y,weapon_fire_symbol
 #ifdef TARGET_C64
           , C64_COLOR_WHITE
@@ -2453,7 +2458,7 @@ move_due_to_loiter:
 										if (
 										  (
 											  (IS_BLOCKED(temp_x, temp_y) == TRUE)
-											  && (stage_index != 8)
+											  && (stage_index != 8)  //< Challenges in STAGE8 immune to blockers...
 											)											
 									  )
 										{
@@ -2812,14 +2817,17 @@ void animate_stage8(Challenge* ptr_challenge)
 
 void main(void)
 {	
-	//Time_counter started_timer;
+	Time_counter started_timer;
+	unsigned char temp_hp;
 	
 start_over:
 
 	INIT_TIMER(global_timer);			
-	//INIT_TIMER(started_timer);			
 	
-#ifdef TARGET_C64  
+	INIT_TIMER(started_timer);				
+	//INIT_TIMER((*(Time_counter*)(g_pvec_map[1][0])));
+	
+#ifdef TARGET_C64
 	ENABLE_CHARACTER_SET_A;	
 	textcolor(C64_COLOR_WHITE);
 	bgcolor(C64_COLOR_BLACK);
@@ -2866,8 +2874,8 @@ quick_game:
 	//global_destiny_status.arrows_current = 0;	
 	// ^^ these are already set to 0 during a memset up above
 
-	//STORE_TIME_NO_CORRECTOR(started_timer);
-  STORE_TIME_NO_CORRECTOR((*(Time_counter*)(g_pvec_map[1][0])));
+	STORE_TIME_NO_CORRECTOR(started_timer);
+  //STORE_TIME_NO_CORRECTOR((*(Time_counter*)(g_pvec_map[1][0])));
   	
 	srand(global_destiny_status.seed_value);  // initiate RNG based on seed_value	    
 			
@@ -2903,17 +2911,18 @@ quick_game:
 	
 	if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_BOOK))
 	{
-		g_pvec_map[0][0] = global_destiny_status.hp_current;
+		//g_pvec_map[0][0] = global_destiny_status.hp_current;
+		temp_hp = global_destiny_status.hp_current;
+		global_destiny_status.hp_current = g_ptr_persona_status->hp_max;  //< give max HP back during this flashback
 		
 		initialize_stage4_challenges(0, 4);
 		decode_stage_to_map(rle_stage4_values, sizeof(rle_stage4_values));
 		ptr_blockers = 0;  // blockers_stage4_values;
 		run_stage(4, &animate_stage4); 
-		if (stage_event_state	== STAGE_DEATH)  // This is a fashback stage, the player can't actually die...
-		{
-			global_destiny_status.hp_current = g_pvec_map[0][0];
-		}
-		// else, they beat it without dying, good job!
+		
+		// This is a fashback stage, the player can't actually die... Whether "died" or not, recover original HP
+		//global_destiny_status.hp_current = g_pvec_map[0][0];				
+		global_destiny_status.hp_current = temp_hp;				
 	}
 	
 	initialize_stage5_challenges(0, 35, 12);
@@ -2922,7 +2931,7 @@ quick_game:
 	run_stage(5, &animate_stage5);
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 
-	initialize_stage6_challenges(0,8);
+	initialize_stage6_challenges(0,10);
 	decode_stage_to_map(rle_stage6_values, sizeof(rle_stage6_values));
 	ptr_blockers = blockers_stage6_values;
 	run_stage(6, 0);  
@@ -2942,7 +2951,8 @@ quick_game:
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
          
 	STORE_TIME_NO_CORRECTOR(global_timer);
-	UPDATE_DELTA_TIME_FULL(global_timer, (*(Time_counter*)(g_pvec_map[1][0])));
+	UPDATE_DELTA_TIME_FULL(global_timer, started_timer);
+	//UPDATE_DELTA_TIME_FULL(global_timer, (*(Time_counter*)(g_pvec_map[1][0])));
 
   // ********* END GAME **********************************************				 
   CLRSCR;
@@ -2975,6 +2985,5 @@ quick_game:
 	WRITE_STRING(0,10, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
 	
   g_i = flush_keyboard_and_wait_for_ENTER();
-  goto start_over;
-	
+  goto start_over;	
 }

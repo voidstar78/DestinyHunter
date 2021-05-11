@@ -71,7 +71,6 @@ void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char
 	persona_stats.att = a_g;                \
 	persona_stats.def = a_h;                \
 	persona_stats.hp_max = a_i;             \
-	persona_stats.hp_current = persona_stats.hp_max;  \
 	persona_stats.direction = a_j;	        \
 	++g_pvec_personas_count;
 
@@ -140,15 +139,15 @@ void choose_persona()  // Destiny_status* ptr_destiny_stats, vec* pvec_personas)
 		name_length = 5+g_i;  //< Re-using name_length for the Y row
 		{
 			//WRITE_CHAR(10, name_length, 27);  //selectionLEFT[ptr_persona_val->direction]);
-			WRITE_1U_DIGIT(11, name_length, (g_i+1) | MASK_HIGH_BIT);
+			WRITE_1U_DIGIT(13, name_length, (g_i+1) | MASK_HIGH_BIT);
 			//WRITE_CHAR(12, name_length, 29);  //selectionRIGHT[ptr_persona_val->direction]);
 		}
 		
-		WRITE_STRING(14, name_length, ptr_persona_val->name, strlen(ptr_persona_val->name));
+		WRITE_STRING(15, name_length, ptr_persona_val->name, strlen(ptr_persona_val->name));
   }
 
-  WRITE_STRING(0, 22, str_select_persona, STR_SELECT_PERSONA_LEN);
-	WRITE_STRING(0, 23, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
+  WRITE_STRING(4, 22, str_select_persona, STR_SELECT_PERSONA_LEN);
+	WRITE_STRING(4, 23, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
 	
 	{
 		// an initial_selection choice was found -- apply the initial_selection 
@@ -209,13 +208,13 @@ show_initial_section:
 				else
 				{
 					// clear the marker of the now-previous selection
-					WRITE_CHAR(8, 5+g_i, ' ');
+					WRITE_CHAR(12, 5+g_i, ' ');
 					
 					// move to the next index
 					g_i = temp_index;
 					
 					// show a marker for this new index
-					WRITE_CHAR(8, 5+g_i, '>');
+					WRITE_CHAR(12, 5+g_i, '>');
 				
 #ifdef QUICK_GAME
 show_stats:				
