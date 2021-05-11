@@ -1,21 +1,58 @@
 #ifndef DH_CORE_H
 #define DH_CORE_H
 
+/*
+
+core.h/.c are CORE support functions that essentially any program running on
+a Commodore system would need:  screen I/O, keyboard I/O, timer support.
+
+All PEEK POKE addresses throughout were derived from the following resources:
+
+www.commodore.ca/wp-content/uploads/2018/11/commodore_pet_memory_map.pdf 
+www.zimmers.net/cbmpics/cbm/PETx/petmem.txt
+
+Interesting highlights of interest:
+
+ADDRESS  
+DECIMAL  DESCRIPTION
+141-143  Jiffy clock
+151      which key down
+152      shift press indicator
+153-154  corrector clock
+166      key image (seems identical to 151 in testing I did on my 4016 hardware)
+
+  TIME	  008D-008F   141-143	    Real-Time Jiffy Clock (approx) 1/60 Sec		
+
+          0099-009A   153-154     Jiffy clock correction: 623rd 1/60 sec
+	                                does not increment time		
+
+
+*/
+
+// ================================================================ BEGIN ==
+// BUILD CONFIGURATION
+// -------------------------------------------------------------------------
+// Since every program is basically expected to include core.h fairly immediately,
+// we go ahead and use core.h as also the place to specify specific target build settings.
+
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
 //#define FINAL_BUILD
 //#define TARGET_C64
 #define TARGET_PET
 
 // The following are optimizations intended for the cc65 compiler environment
-#pragma inline-stdfuncs (on)
+//#pragma inline-stdfuncs (on)
 #pragma static-locals (on)
 #pragma register-vars (on)
 // --------------------------------------------------------------------------
-#define NDEBUG                  //< NO DEBUG - do a release/fast build (this should also disable asserts)
+#define NDEBUG                  //< NO DEBUG - do a release/fast build (this should also disable any asserts)
 
 #include <peekpoke.h>  //< Make standard PEEK and POKE macros available, doesn't consume any resources if not used
+// ================================================================= END ===
 
+// ================================================================ BEGIN ==
 // ************* KEYBOARD CONSTANTS AND RELATED FEATURES
+// -------------------------------------------------------------------------
 
 #define C64_JOYSTICK_ADDRESS_1 56321U  // Control Port 1
 #define C64_JOYSTICK_ADDRESS_2 56320U  // Control Port 2
@@ -26,7 +63,7 @@
 #define C64_JOYSTICK_RIGHT    0x08  // 247 1111 0111
 #define C64_JOYSTICK_BUTTON   0x10  // 239 1110 1111
 #ifdef TARGET_C64
-extern unsigned char g_joy;
+  extern unsigned char g_joy;
 #endif
 
 // COMMODORE PET 4016 graphicUS KEYCODES (these are codes when using kbhit, cgetc)
@@ -44,6 +81,7 @@ extern unsigned char g_joy;
 #define KEY_RETURN       0x0D
 */
 
+// TO CONSERVE SPACE - only make declarations for the keys that are actually used by the program
 // COMMODORE PET 4016 US KEYCODES (using GET_PKEY_VIEW, aka PEEK(166))
 extern unsigned char PKEY_RETURN;   // same as '\n'
 //unsigned char PKEY_BACKSPACE   = 0x14;   // decimal 20
@@ -97,7 +135,15 @@ extern unsigned char PKEY_7;
 extern unsigned char PKEY_8;
 extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has been pressed
 
-// 20XX/30XX KEYBOARD CODES
+// THESE ARE MACRO definitions, because these values are used to overwrite
+// the default values that are initialized above in the .c file.  As such, I
+// refer to these as the "B-series" keyboard codes, only because they are 
+// not the DEFAULT (which would be the "A-series").  A/B-series is independent
+// of which PET model is used.  Here, I have a DEFAULT (A) and then one ALTERNATE (B).
+// I obtain these keycodes using a test program that executes GET_PKEY_VIEW in a loop,
+// then run that test program using the VICE emulator with different Settings|Models.
+
+// 30XX KEYBOARD CODES (seems identical to 20XX series per the PET 2001 online emulator)
 #define B_PKEY_RETURN      0x1B
 //#define B_PKEY_BACKSPACE   0x41
 #define B_PKEY_SPACE       0x06
@@ -148,55 +194,36 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 #define B_PKEY_7           0x3A
 #define B_PKEY_8           0x32
 
-//#define B_PKEY_Z           0x20   // 'Z'
-
-
-/*
-  All PEEK POKE addresses throughout were derived from the following resources:
-	
-  www.commodore.ca/wp-content/uploads/2018/11/commodore_pet_memory_map.pdf 
-	www.zimmers.net/cbmpics/cbm/PETx/petmem.txt
-	
-	Interesting highlights of interest:
-	
-	ADDRESS  
-	DECIMAL  DESCRIPTION
-	141-143  Jiffy clock
-	151      which key down
-	152      shift press indicator
-  153-154  corrector clock
-	166      key image (seems identical to 151 in testing I did on my 4016 hardware)
-	
-*/
 #ifdef TARGET_C64
   #define GET_PKEY_VIEW PEEK(197)  
 #else
   #define GET_PKEY_VIEW PEEK(166)  // works 4016
-  //#define GET_PKEY_VIEW PEEK(151)  // seems to be identically the same thing
+  //#define GET_PKEY_VIEW PEEK(151)  // seems to be identical; maybe there is some slight speed/buffer difference?
 #endif
+// ================================================================= END ===
 
-
-// ************* MATH/LOGIC FEATURES
+// ================================================================ BEGIN ==
+// ************* MATH/LOGIC RELATED FEATURES
+// -------------------------------------------------------------------------
 
 // BOOLEAN VALUES AND BIT-LOGIC SUPPORT
 #define TRUE 1
 #define FALSE 0
 
-// 1-8 OFFSET BASED (don't use these: why waste opcodes doing the "-1" adjustment computation)
-//#define SET_BIT(n, k) n = (n | (1 << (k - 1)))
-//#define CLEAR_BIT(n, k) n = (n & (~(1 << (k - 1))))
-//#define TOGGLE_BIT(n, k) n = (n ^ (1 << (k - 1)))
-//#define IS_BIT_ON(n, k) ((n & (1 << (k-1))) ? TRUE : FALSE)
-
-// 0-7 OFFSET BASED
+// BIT-MASK SUPPORT (0-7 OFFSET BASED)
 #define SET_BIT(n, k) n = (n | (1 << (k)))
 #define CLEAR_BIT(n, k) n = (n & (~(1 << (k))))
 #define TOGGLE_BIT(n, k) n = (n ^ (1 << (k)))  
 #define IS_BIT_ON(n, k) ((n & (1 << (k))) ? TRUE : FALSE)
 
+// BIT-MASK SUPPORT (1-8 OFFSET BASED) (don't use these: why waste opcodes doing the "-1" adjustment computation)
+//#define SET_BIT(n, k) n = (n | (1 << (k - 1)))
+//#define CLEAR_BIT(n, k) n = (n & (~(1 << (k - 1))))
+//#define TOGGLE_BIT(n, k) n = (n ^ (1 << (k - 1)))
+//#define IS_BIT_ON(n, k) ((n & (1 << (k-1))) ? TRUE : FALSE)
+
 // Using these MASK macros is even better, no shifting.
 #define MASK_HIGH_BIT 0x80  // 1000 0000
-// example: if (IS_MASK_ON(which_ones, STATS_HP))
 #define IS_MASK_ON(mask, bit) \
   ((mask & bit) == bit)
 #define IS_MASK_OFF(mask, bit) \
@@ -209,7 +236,7 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 // INTEGER ROUNDING to nearest WHOLE INTEGER (without use of float)
 // cc65 at this time apparently doesn't support FLOAT types.  That's understandable.  These early processors didn't natively
 // support floating point either (see "coprocessors", the first being Intel 8087 in 1980).  While BASIC did support floating 
-// point, it was software emulated (so it's slow and has who-knows-what kind of precision).  Historical note: Bill Gates' 
+// point, it was software emulated (so it's slow).  Historical note: Bill Gates' 
 // original BASIC included a floating-point emulation.   When Wozniak cloned his own BASIC for the Apple I, he kept it 
 // limited to INTEGERs only, hence calling it Integer BASIC.    Since Commodore was able to use Microsoft BASIC, this is 
 // why the Commodore has that capability.  Wozniak found helpers to complete support for floats by the time he started 
@@ -224,9 +251,16 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 // itself, but to help align the result back to the correct screen column without extra code checks to adjust.
 #define ROUND_DIVIDE(numer, denom) (((numer) + (denom) / 2) / (denom))
 
+// Early on I was using vector functions that used malloc/calloc and free.  I abandoned those functions,
+// since that did have slight overhead related to managing the vectors RESERVE.  However, I found it
+// useful to keep this VEC_GET style of the original function, to convey the intent that I am
+// "getting" an entry out of a vector-array.
 #define VEC_GET(a,b) &a[b]
+// ================================================================= END ===
 
-// ************* TIME FEATURES
+// ================================================================ BEGIN ==
+// ************* TIME RELATED FEATURES
+// -------------------------------------------------------------------------
 
 #define JIFFIES_FULL_SECOND       60       // 60/1   aka Jiffies per Second
 #define JIFFIES_HALF_SECOND       30       // 60/2 
@@ -241,7 +275,7 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 
 typedef struct
 {
-	//unsigned char a;          //< PET TIME is 3 byte (not 4), so this high byte isn't needed
+	//unsigned char a;          //< PET TIME is 3 byte (not 4), so this high byte isn't needed - but we want to align/union with an unsigned long type
 	//unsigned char b;          //< addr 141
 	//unsigned char c;          //< addr 142
 	//unsigned char d;		      //< addr 143
@@ -250,15 +284,12 @@ typedef struct
 	//       at the time.  I read there are some other non-portable aspects about unions, so for now I'm just avoiding it.
 	// 
 
-	unsigned char corrector;    //< addr 154  (not accounting for corrector causes 1/10th second drift every minute - 1 second drift every 10 minute; so 6 second drift per hour)
-	// ^---- I define the "corrector" first on purpose, so don't change this order.  The macros below write into "total"
-	//       relative to the address of this corrector.  For some reason I couldn't use the address of total itself.
-	//       I need to re-explore this, but again it may relate to the alignment not being exactly what I think it is -- and
-	//       that may be a compiler or pragma thing.  For now everything "just works" (in polling the Jiffies), so leaving it alone for now.
+	unsigned char corrector;    //< addr 154
 	
 	union 
 	{
     unsigned long   totl;        //< addres 141-143 (high byte isn't used)
+		
 		struct Data
 		{
 			//            totl
@@ -268,28 +299,21 @@ typedef struct
 		  unsigned char d;          //< this high byte is not used
 		} data;
 	};
-//  TIME	  008D-008F   141-143	    Real-Time Jiffy Clock (approx) 1/60 Sec		
-//
-//          0099-009A   153-154     Jiffy clock correction: 623rd 1/60 sec
-//	                                does not increment time		
 } Time_counter;
 
 // Going to assume that every program needs at least one timer.  This "global_timer" is intended to be used to store the "now time".
 // So programs would then define timers for additional things they need to monitor delta times for, relative to this global "now time".
+// This probably should be called "global_now_timer" to be more clear about that.  But there may be situation where it is not used
+// for "now", so, keeping it as just global_timer.
 extern Time_counter global_timer;  
 
-extern unsigned long delta_time;
-
-#define INIT_TIMER(target_timer) \
-  POKE(&target_timer.data.d, 0);  /* init the high byte of TOTAL since we'll only poll 3 bytes when updating timer */
-	
-extern unsigned long delta_time_sec;  //< Use a long (4 bytes) since max delta seconds is 86400 (larger than 65535, so needs more than 16-bits)
-extern unsigned long delta_time_ms;   //< Used to stores millisecond precision XX.9999
+extern unsigned long delta_time;      //< Assuming the purpose of a timer is to eventually need to compare delta-elased time; this declaration is standardized for that purpose.	
+extern unsigned long delta_time_sec;  //< Max jiffies in 3 bytes is 16777215, so we can represent up to 279620 seconds (which needs 2.5 bytes, just going to use 4-bytes to keep it aligned)
+extern unsigned long delta_time_ms;   //< Instead of wasting that information when DIV jiffy count by 60, we can get 3-digits of milliseconds.  This is used to hold that.
 
 /*
-#define STORE_TIME_NO_CORRECTOR_BY_COPY_GLOBAL(target) \
-  target.totl = global_timer.totl;
-
+// The following is technically more correct, but only matters after hours and hours of runtime.  If this is a short-runtime
+// program, save the bytes and just use the NO_CORRECTOR version.
 #define STORE_TIME(target_timer) \
   POKE(&target_timer.data.c, PEEK(141));  \
   POKE(&target_timer.data.b, PEEK(142));  \
@@ -298,6 +322,7 @@ extern unsigned long delta_time_ms;   //< Used to stores millisecond precision X
   target_timer.totl += target_timer.corrector;
 */
 
+// WARNING: STORE_TIME_NO_CORRECTOR does not initialize target_timer.data.d to 0.
 #ifdef TARGET_C64
 	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
 		POKE(&target_timer.data.c, PEEK(160));  \
@@ -311,7 +336,7 @@ extern unsigned long delta_time_ms;   //< Used to stores millisecond precision X
 #endif  
   
 /*
-Alternative time update (where b, c, d are unsigned char):
+Alternative time update (using individual b, c, d unsigned char, not the "unsigned long" union overlay):
   started.b = PEEK(141); 
 	started.c = PEEK(142); 
 	started.d = PEEK(143);
@@ -319,6 +344,10 @@ Alternative time update (where b, c, d are unsigned char):
 	  ((unsigned long)started.b << 16) | ((unsigned long)started.c << 8) | (unsigned long)started.d;
 	started.total += started.corrector;
 */
+
+#define INIT_TIMER(target_timer) \
+  POKE(&target_timer.data.d, 0);  /* Necessary only if trying to access .totl */
+
 #define UPDATE_DELTA_JIFFY_ONLY(now_time, start_time) \
 	delta_time = (now_time.totl - start_time.totl);
 
@@ -326,12 +355,19 @@ Alternative time update (where b, c, d are unsigned char):
 	delta_time = (now_time.totl - start_time.totl);  \
 	delta_time_sec = delta_time / 60; \
 	delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) );	  // 3-digit precision
-	//delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) / 10UL);  // 2-digit precision
+	//delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) / 10UL);   // 2-digit precision
+	//delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) / 100UL);  // 1-digit precision
+// ================================================================= END ===	
 
-// ************* VIDEO FEATURES
+// ================================================================ BEGIN ==
+// ************* VIDEO RELATED FEATURES
+// -------------------------------------------------------------------------
 
+// Technically only available on C64, but macros take no space until they
+// are used.  Since the PET version won't be using them, no real reason to
+// wrap these macros in a TARGET_C64 ifdef.
 #define C64_COLOR_BLACK  0x00U
-#define C64_COLOR_WHITE  1U
+#define C64_COLOR_WHITE  0x01U
 #define C64_COLOR_RED    0x02U
 #define C64_COLOR_CYAN   0x03U
 #define C64_COLOR_PURPLE 0x04U
@@ -356,6 +392,7 @@ Alternative time update (where b, c, d are unsigned char):
 // macro definition.
 #define WIDTH_OF_SCREEN 40
 #define HEIGHT_OF_SCREEN 25
+
 #ifdef TARGET_C64
   #define BASE_SCREEN_ADDRESS 0x0400
 	#define BASE_COLOR_ADDRESS  0xD800
@@ -381,16 +418,19 @@ Alternative time update (where b, c, d are unsigned char):
 	__asm__("jsr $ffd2");
 #define ENABLE_TEXT_MODE  \
   __asm__("lda #$0E");  \
-	__asm__("jsr $ffd2");	
+	__asm__("jsr $ffd2");
 	
-// POKEW(59468U,14);  character set 1	
-// POKEW(59468U,12);  character set 2
-
+#define CLRSCR \
+	__asm__("lda #$93"); \
+	__asm__("jsr $ffd2");
+	
+// Obsolete - kept for reference only (alternate to the above __asm__)
 //#define ENABLE_GRAPHIC_MODE printf("\x8E")  // CHR(142)  aka UPPER case, font is closer together to connect symbols
 //#define ENABLE_TEXT_MODE    printf("\x0E")  // CHR(14)   aka LOWER case
 
-#define ENABLE_REVERSE_MODE printf("\x12")  // seems to enable the high bit (REVERSE) of any subsequent character output
-#define ENABLE_REGULAR_MODE printf("\x92")  // disables REVERSE and clears the high bit of any subsequent character output
+// Obsolete - kept for reference only (handled instead by direct POKE to screen)
+//#define ENABLE_REVERSE_MODE printf("\x12")  // seems to enable the high bit (REVERSE) of any subsequent character output
+//#define ENABLE_REGULAR_MODE printf("\x92")  // disables REVERSE and clears the high bit of any subsequent character output
 
 #define WRITE_CHAR(x,y,ch) \
   POKE(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x, ch)
@@ -398,20 +438,23 @@ Alternative time update (where b, c, d are unsigned char):
 #define READ_CHAR(x,y) \
   PEEK(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x)
 
-// "val" must always be <10
+// "val" must always be <10 (i.e. 0..9, single digit only)
 #define WRITE_1U_DIGIT(x,y,val) \
   WRITE_CHAR(x,y, 48 + val);
 
-extern unsigned char g_pad_char;
+extern unsigned char g_pad_char;  //<  Set to '\0' or 0 for NO padding, otherwise set to what you want to use as the LEFT-SIDE padding (typically 48 == '0')
+// Write the binary encoded value "val" at x,y converted to decimal.  If g_pad_char is NO-ZERO,
+// then left-pad by the "pad" number of characers.
 void WRITE_PU_DIGIT(unsigned char x, unsigned char y, unsigned long val, unsigned char pad);
 
 void WRITE_STRING(unsigned char x, unsigned char y, const char* str, unsigned char str_len);
 
-#define CLRSCR \
-	__asm__("lda #$93"); \
-	__asm__("jsr $ffd2");
+// ================================================================= END ===
 	
+// ================================================================ BEGIN ==	
 // ************* AUDIO FEATURES	
+// -------------------------------------------------------------------------
+
 // Per Basic 4.0 Programming for the Commodore PET  shift register and control register should be set to 15 and 16 respectively
 #define AUDIO_TURN_ON \
   POKEW(59467U,16);
@@ -432,5 +475,6 @@ void WRITE_STRING(unsigned char x, unsigned char y, const char* str, unsigned ch
 // invalid command, but the console will interpret it as an audible alert and issue the
 // standard alert-audio of the system.
 #define DO_BEEP printf("\a")
+// ================================================================= END ===
 
 #endif

@@ -144,7 +144,7 @@ extern char str_fired[];
 #define STR_TIME_LEN 4
 extern char str_time[];
 
-#define STR_THANK_YOU_LEN 29
+#define STR_THANK_YOU_LEN 39
 extern char str_thank_you[];
 
 #define STR_EMAIL_LEN 27
