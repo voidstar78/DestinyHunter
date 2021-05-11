@@ -33,6 +33,7 @@
 #define SYMBOL_DIAMOND    90
 #define SYMBOL_CLOVER     88
 #define SYMBOL_UP_ARROW   30
+#define SYMBOL_BOW        41
 #define SYMBOL_ORB       215
 
 #define MAX_BLESSING_COUNT 9       //< limit max number of blessings to 1 character
@@ -106,7 +107,7 @@ typedef struct
 	unsigned char blessing_count;     // used for free-levels, gift-items, power-ups
 	unsigned char persistency_count;  // sort of like potions
 	
-	unsigned char hp_current;         // RANGE 0-8 (0 is dead); screen will use 4-character space, doubled up with different symbols
+	unsigned char hp_current;         // HP that player currently has
 	unsigned char arrows_current;     // number of arrows the PLAYER has  (0-99)
 	
 	unsigned char curr_arrow_direction;  // see DIR_XX macros listed earlier
@@ -154,7 +155,7 @@ typedef struct
 	unsigned char def;             // DEFENSE STAT, applies to player+persona   0-9  (includes agility, dodge)
 	
 	unsigned char hp_max;          // HP MAX of this persona                    0-8  (seeds Player initial HP MAX)
-	unsigned char hp_current;      // HP currently remaining                    0-8    	
+	//unsigned char hp_current;      // HP currently remaining                    0-8    	
 } Persona_status;
 extern Persona_status g_pvec_personas[MAX_PERSONAS_TO_SELECT];
 extern unsigned char g_pvec_personas_count;

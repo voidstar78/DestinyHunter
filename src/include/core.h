@@ -36,7 +36,7 @@ DECIMAL  DESCRIPTION
 // we go ahead and use core.h as also the place to specify specific target build settings.
 
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
-//#define FINAL_BUILD
+#define FINAL_BUILD
 //#define TARGET_C64
 #define TARGET_PET
 

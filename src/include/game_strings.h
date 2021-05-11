@@ -3,16 +3,16 @@
 
 #define STR_STAGENAME_LEN 8
 
-#define STR_INTRO_NOTICE_LEN 33
+#define STR_INTRO_NOTICE_LEN 37
 extern char str_intro_notice[];
 
 #define STR_PRESS_A_KEY_REVERSE_LEN 11
 extern char str_press_a_key_reverse[];
 
-#define STR_YONI_REVERSE 11
+#define STR_YONI_REVERSE 12
 extern char str_YONI_reverse[];
 
-#define STR_LINGA_REVERSE 11
+#define STR_LINGA_REVERSE 12
 extern char str_LINGA_reverse[];
 
 //#define STR_CHIME_REVERSE_LEN 5

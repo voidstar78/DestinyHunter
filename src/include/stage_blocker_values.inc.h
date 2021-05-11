@@ -71,7 +71,7 @@ static unsigned char blockers_stage2_values[][] = {
 static unsigned char blockers_stage3_values[][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
-{0,0,0,0,48},
+{0,0,0,0,112},
 {0,0,0,0,96},
 {0,0,0,0,0},
 {0,0,0,0,0},
@@ -90,8 +90,8 @@ static unsigned char blockers_stage3_values[][] = {
 {0,0,0,0,0},
 {0,0,0,0,0},
 {31,0,0,0,0},
-{240,1,0,0,0},
-{0,7,0,0,0},
+{241,1,0,0,0},
+{255,7,0,0,0},
 };
 
 /*
