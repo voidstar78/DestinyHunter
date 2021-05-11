@@ -23,7 +23,7 @@ unsigned char banner_style[][] = {
 };
 
 unsigned char rand_mod(unsigned char n)
-{
+{	  
 	return (rand() % n);
 }
 

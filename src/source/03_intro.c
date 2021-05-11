@@ -16,7 +16,7 @@ void conduct_intro()
 	CLRSCR;
 		
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
-			
+	
 	text_banner_center(3, str_destiny_hunter, g_ptr_persona_status->direction);			
 
 	WRITE_STRING(3, 7, str_you_are_dreaming, STR_YOU_ARE_DREAMING_LEN);
@@ -47,8 +47,8 @@ void conduct_intro()
 	WRITE_STRING(3, 15, str_your_training_begins, STR_YOUR_TRAINING_BEGINS_LEN);  
 	
 	//print_fancy(3, 18, str_disembark_on_coast, JIFFIES_SIXTEENTH_SECOND);
-	WRITE_STRING(3, 17, str_disembark_on_coast, STR_DISEMBARK_ON_COAST_LEN);
-	
+	WRITE_STRING(3, 17, str_disembark_on_coast, STR_DISEMBARK_ON_COAST_LEN);	
+
 	text_banner_center(22, str_press_return_to_proceed, SOMETHING_ELSE);	
 		
 	g_enter_result = flush_keyboard_and_wait_for_ENTER();    	
@@ -71,7 +71,8 @@ void conduct_intro()
 	text_banner_center(20, str_press_return_to_proceed, SOMETHING_ELSE);			
 
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
+
+  // TBD: Monitor for R key to "reverse" keyboard controls
 	
 	g_enter_result = flush_keyboard_and_wait_for_ENTER();    
-
 }

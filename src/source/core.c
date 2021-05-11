@@ -1,9 +1,6 @@
 #include <core.h>
 
-#include <peekpoke.h>  //< Make standard PEEK and POKE macros available, doesn't consume any resources if not used
-
 #ifdef TARGET_C64
-
   unsigned char g_joy = 0;
 
 	unsigned char PKEY_RETURN      = 1;   // same as '\n'
@@ -127,7 +124,7 @@ unsigned long delta_time_sec;  //< Use a long (4 bytes) since max delta seconds 
 unsigned long delta_time_ms;   //< Used to stores millisecond precision XX.9999
 
 unsigned char g_pad_char = 48;  // 48 == '0'
-// "pad" has a max range, depends on values in the pad_value array
+
 void WRITE_PU_DIGIT(unsigned char x, unsigned char y, unsigned long val, unsigned char pad)  // PU = pad unsigned
 {	
 	//VERSION 1:  you can only pad up to the max length in the table (i.e. 8 or 9), uses 90 more bytes - not sure if runs faster
@@ -181,7 +178,7 @@ void WRITE_PU_DIGIT(unsigned char x, unsigned char y, unsigned long val, unsigne
 	WRITE_1U_DIGIT(x, y, val);
 	*/
 	
-	// VERSION 2: can pad up to any length; uses less memory  (but has *,/ that could be slower)
+	// VERSION 2: can pad up to any length; seems to uses less code-space
 	unsigned char index = 0;
 	unsigned long multi = 10;
 		
@@ -222,6 +219,6 @@ void WRITE_STRING(unsigned char x, unsigned char y, const char* str, unsigned ch
 	{		
 		--str_len;
 		
-  	WRITE_CHAR(x+str_len, y, str[str_len]);
+		WRITE_CHAR(x+str_len, y, str[str_len]);
 	}
 }	

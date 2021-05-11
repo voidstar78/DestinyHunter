@@ -1,7 +1,7 @@
 #include <02_init_persona.h>
 
 #include <string.h>  //< strcpy
-#include <stdarg.h>  //< va_list, va_start, va_arg
+//#include <stdarg.h>  //< va_list, va_start, va_arg
 
 #include <core.h>
 #include <utility.h>
@@ -33,6 +33,7 @@ static char str_graph[][] =
 	*/
 
 // Initialize some default values of a PERSONA and add it to the persona vector
+/*
 void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char num, ...)
 {
 	va_list valist;
@@ -59,6 +60,20 @@ void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char
 	
 	++g_pvec_personas_count;	
 }
+*/
+#define INITIALIZE_PERSONA(persona_stats, set_name, a_a, a_b, a_c, a_d, a_e, a_f, a_g, a_h, a_i, a_j) \
+	strcpy(persona_stats.name, set_name);		\
+	persona_stats.land_movement = a_b;      \
+	persona_stats.water_movement = a_c;     \
+	persona_stats.stealth = a_d;            \
+	persona_stats.range = a_e;              \
+	persona_stats.arrows_max = a_f;	        \
+	persona_stats.att = a_g;                \
+	persona_stats.def = a_h;                \
+	persona_stats.hp_max = a_i;             \
+	persona_stats.hp_current = persona_stats.hp_max;  \
+	persona_stats.direction = a_j;	        \
+	++g_pvec_personas_count;
 
 void show_stat(unsigned char x, unsigned char y, const char* description, unsigned char offset, unsigned char value)
 {	
@@ -85,15 +100,15 @@ void choose_persona()  // Destiny_status* ptr_destiny_stats, vec* pvec_personas)
 	{	
 	  //                                                          arg Lnd Wtr Ste Rng MAX  ATT DEF MAX
 	  //                                                            n Mov Mov lth     Arrw          HP  DIRECTION
-	  INITIALIZE_PERSONA(&g_pvec_personas[0], str_persona_alcyone,  9,  7,  6,  7,  5,  30,  8,  6,  8, FORWARD_YONI_BLACK);
-	  INITIALIZE_PERSONA(&g_pvec_personas[1], str_persona_skadi,    9,  8,  8,  8,  5,  40,  8,  4,  8, FORWARD_YONI_BLACK);
-	  INITIALIZE_PERSONA(&g_pvec_personas[2], str_persona_cyrene,   9,  6,  5,  6,  6,  20,  7,  8,  7, FORWARD_YONI_BLACK);
+	  INITIALIZE_PERSONA(g_pvec_personas[0], str_persona_alcyone,  9,  7,  6,  7,  5,  30,  8,  6,  8, FORWARD_YONI_BLACK);
+	  INITIALIZE_PERSONA(g_pvec_personas[1], str_persona_skadi,    9,  8,  8,  8,  5,  40,  8,  4,  8, FORWARD_YONI_BLACK);
+	  INITIALIZE_PERSONA(g_pvec_personas[2], str_persona_cyrene,   9,  6,  5,  6,  6,  20,  7,  8,  7, FORWARD_YONI_BLACK);
 	}
 	// BACKWARD_LINGA_WHITE	 list these second
 	{
-	  INITIALIZE_PERSONA(&g_pvec_personas[3], str_persona_rudra,    9,  7,  6,  6,  7,  80,  9,  7,  6, BACKWARD_LINGA_WHITE);
-	  INITIALIZE_PERSONA(&g_pvec_personas[4], str_persona_orion,    9,  8,  9,  7,  4,  30,  8,  7,  8, BACKWARD_LINGA_WHITE);
-	  INITIALIZE_PERSONA(&g_pvec_personas[5], str_persona_sidon,    9,  8,  7,  7,  6,  50,  8,  8,  9, BACKWARD_LINGA_WHITE);
+	  INITIALIZE_PERSONA(g_pvec_personas[3], str_persona_rudra,    9,  7,  6,  6,  7,  80,  9,  7,  6, BACKWARD_LINGA_WHITE);
+	  INITIALIZE_PERSONA(g_pvec_personas[4], str_persona_orion,    9,  8,  9,  7,  4,  30,  8,  7,  8, BACKWARD_LINGA_WHITE);
+	  INITIALIZE_PERSONA(g_pvec_personas[5], str_persona_sidon,    9,  8,  7,  7,  6,  50,  8,  8,  9, BACKWARD_LINGA_WHITE);
 	}                                                                                 //^^-- these should be above 20 (minimum of 20 since challenge-X collections are RAND(20))
 	
 #ifdef QUICK_GAME  
