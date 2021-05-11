@@ -30,6 +30,7 @@
 #define SYMBOL_INV_ORB1  209
 #define SYMBOL_INV_ORB2  215
 #define SYMBOL_SPADE      65
+#define SYMBOL_SPADE_INV 193   // C1h, 65 with HIGH-BIT set to 1
 #define SYMBOL_DIAMOND    90
 #define SYMBOL_CLOVER     88
 #define SYMBOL_UP_ARROW   30
