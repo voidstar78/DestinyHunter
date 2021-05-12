@@ -497,19 +497,6 @@ void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
 	ptr_challenge->x = va_arg(valist, signed char);
 	ptr_challenge->y = va_arg(valist, signed char);
 	
-	while (IS_BLOCKED(ptr_challenge->x, ptr_challenge->y))
-	{
-		// GUARANTEE THAT WE DON'T SPAWN ON A BLOCKED AREA
-		if (rand_mod(2) == 0)
-		{
-      --(ptr_challenge->y);
-		}
-		else
-		{
-			++(ptr_challenge->y);
-		}
-	}	
-	
 	ptr_challenge->hp_max = va_arg(valist, unsigned char);
 	ptr_challenge->hp_remaining = ptr_challenge->hp_max;
 	
@@ -519,7 +506,8 @@ void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
 	
 	ptr_challenge->attack_speed = va_arg(valist, unsigned char);
 	
-	//INIT_TIMER(ptr_challenge->last_move_timer);	
+	INIT_TIMER(ptr_challenge->last_move_timer);	
+	INIT_TIMER(ptr_challenge->last_attack_time);	
 	
 	ptr_challenge->behavior = BEHAVIOR_GOING;
 	ptr_challenge->targetN = 0;
@@ -685,7 +673,8 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
     switch (rand_mod(4))
 		{
 		case 0:  // X- Y-   TOP 
-		  initialize_challengeI(&challenges[start], 5,     rand_x,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
+		  // The -4 accounts for TOP RIGHT corner blockers when this spawn is used for STAGE3
+		  initialize_challengeI(&challenges[start], 5,     rand_x-4,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 			
 			break;
 			
 		case 1:  // X+ Y-   RIGHT      
@@ -693,7 +682,8 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 			break;
 			
 		case 2:  // X+ Y+   BOTTOM
-		  initialize_challengeI(&challenges[start], 5,     rand_x,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
+		  // The +12 accounts for BOTTOM LEFT corner blockers when this spawn is used for STAGE3
+		  initialize_challengeI(&challenges[start], 5,     rand_x+12,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
 		case 3:  // X- Y+   LEFT		  
@@ -760,17 +750,27 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 {  
 	unsigned char rand_x;
 	unsigned char rand_y;
+	unsigned char ofs_x;
 	unsigned long rand_mov;	
-				  
+				
+	if (start != 0)
+	{
+		ofs_x = 3;
+	}
+	else
+	{
+		ofs_x = 39;
+	}
+
 	while (count > 0)
-	{		
-    rand_x = rand_mod(10);
-    rand_y = rand_mod(13);
-		rand_mov = rand_mod(2);  // 0 or 1
-		
-                                  //                                         HP    mov  
-                                  //           num         X        Y       max    spd    aggr   attk_speed		
-	  initialize_challengeI(&challenges[start], 5,     39+rand_x,  rand_y+5,  2,  rand_mov, 100,   JIFFIES_THIRD_SECOND);	 
+	{	
+		rand_x = rand_mod(10);
+		rand_y = rand_mod(13);
+    rand_mov = rand_mod(2);  // 0 or 1
+
+																	//                                         HP    mov  
+																	//           num         X        Y       max    spd    aggr   attk_speed		
+		initialize_challengeI(&challenges[start], 5,     ofs_x+rand_x,  rand_y+5,  2,  rand_mov, 100,   JIFFIES_THIRD_SECOND);	 
 
     if (rand_mod(2) == 0)  // EVENs cluster in the middle
 		{
@@ -790,8 +790,8 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 		//memset(challenges[start].icon, 0, sizeof(challenges[0].icon));		
 		
 		challenges[start].max_direction_state = 1;
-		challenges[start].hit_box_x = 1;
-		challenges[start].hit_box_y = 1;	
+		challenges[start].hit_box_x = 0;
+		challenges[start].hit_box_y = 0;	
 		
 		//set_icon_char(&challenges[start], 0, CD_LEFT, 1,    121);
 		set_icon_char(&challenges[start], 0, CD_LEFT, 1,    162);
@@ -802,7 +802,6 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 		++start;
 		--count;
 	}		
-	
 }
 
 void initialize_stage7_challenges()
@@ -856,7 +855,7 @@ void initialize_stage7_challenges()
 
 void initialize_stage8_challenges()
 {	
-	//memset(challenges[0].icon, 0, sizeof(challenges[0].icon));
+	memset(challenges[0].icon, 0, sizeof(challenges[0].icon));
 	
 	challenges[0].max_direction_state = 1;
 	challenges[0].hit_box_x = 2;
@@ -955,7 +954,11 @@ void initialize_stage8_challenges()
 	
 	challenges_count += 2;
 	
+#ifdef TARGET_C64
+  // For some reason these extra CHALLENGES aren't working in the C64 version
+#else
 	initialize_stage6_challenges(challenges_count, 2);
+#endif
 }
 
 void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stage_values_size) //, char pvec_map[][41])
@@ -1021,8 +1024,7 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 				{
           display_color = C64_COLOR_BLUE;
 				}
-#endif								
-					
+#endif													
 				break;  
 			
 			case 3: 
@@ -1034,7 +1036,7 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 #endif												
 				break;
 							
-			case 5: 
+			case 5:   
 				//display_symbol = MAP_SPECIAL; 
 				display_symbol = rand_mod(22)+233; 		
 #ifdef TARGET_C64
@@ -1618,7 +1620,7 @@ void run_stage(
 										}
 									
 										// Mark the spot of the defeated challenge as "X" (bake it directly into the game map)
-										ptr_value = g_pvec_map[weapon_range_y];  //VEC_GET(pvec_map, weapon_range_y);
+										ptr_value = g_pvec_map[weapon_range_y];
 										ptr_value[weapon_range_x] = MAP_DEAD1;
 										
 										global_destiny_status.persistency_count += rand_mod(2)+1;
@@ -1648,12 +1650,18 @@ void run_stage(
 		
 		if (weapon_state == WS_FIRING)  //< if still firing...
 		{
+#ifdef TARGET_C64
+      // Background ends up WHITE, not applying this in C64 version
+#else
+	    /* out of memory...
       // ** OPTIONAL -- make the arrow inverted when firing over a beach
   	  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
 	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
 	    else 
 		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
+			*/
 			// **********************************************************
+#endif
 
 			BUFFER_LOCATION_TO_DRAW(weapon_range_x,weapon_range_y,weapon_fire_symbol
 #ifdef TARGET_C64
@@ -2505,7 +2513,7 @@ move_due_to_loiter:
 									)
 									{
 										// reached the target location...
-										ptr_challenge->stuck_count = 0;
+										//ptr_challenge->stuck_count = 0;
 										
 										if (
 										  (ptr_challenge->icon[CD_LEFT][0][0] == FIREBALL_SYMBOL)  // This is a fireball - it dies when it reaches its target
@@ -2844,6 +2852,7 @@ start_over:
 	INIT_TIMER(started_timer);				
 	//INIT_TIMER((*(Time_counter*)(g_pvec_map[1][0])));
 	
+	g_pad_char = 48;  //< Back to 0 padded, necessary for 2nd runs of the game
 	check_for_flipskill_learned = TRUE;
 	
 #ifdef TARGET_C64
@@ -2951,7 +2960,7 @@ quick_game:
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 
 	ptr_blockers = blockers_stage6_values;
-	initialize_stage6_challenges(0,10);
+	initialize_stage6_challenges(0,8);
 	decode_stage_to_map(rle_stage6_values, sizeof(rle_stage6_values));	
 	run_stage(6, 0);  
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
@@ -2962,7 +2971,7 @@ quick_game:
 	run_stage(7, &animate_stage7); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
 	
-	g_pvec_map[0][1] = 3;  //< The fireballs are challenges that can't be defeated, so if 8 drops to 4, we know all the HYDRA were defeated
+	g_pvec_map[0][1] = 3;  //< The fireballs are challenges that can't be defeated, so if drops to 3, we know all the other challenges were defeated
 	ptr_blockers = blockers_stage8_values;
 	initialize_stage8_challenges();	
 	decode_stage_to_map(rle_stage8_values, sizeof(rle_stage8_values));
@@ -2990,8 +2999,7 @@ quick_game:
 	WRITE_STRING(10, 4, str_fired, STR_FIRED_LEN);
 	WRITE_PU_DIGIT(20, 4, global_destiny_status.arrows_fired, 4); 
 
-  WRITE_STRING(10, 5, str_time, STR_TIME_LEN);
-	g_pad_char = 48;  //< Back to 0 padded, necessary for 2nd runs of the game
+  WRITE_STRING(10, 5, str_time, STR_TIME_LEN);	
 	WRITE_PU_DIGIT(19, 5, delta_time_sec, 5);
 	WRITE_CHAR(24, 5, 46);  // '.' decimal
 	g_pad_char = '\0';  //< Required to ensure milliseconds is NOT padded

@@ -61,7 +61,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 	{
 		// GRAPHICS: DRAW STATUS UPDATE ON CURRENT VALUE OF SEED_MOD...
 #ifdef TARGET_C64
-		POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*1)+seed_mod, C64_COLOR_CYAN);
+		//POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*1)+seed_mod, C64_COLOR_CYAN);
 #endif
 		WRITE_CHAR(seed_mod, 1, SYMBOL_DIAMOND);
 		// ----------------------------------------------------------

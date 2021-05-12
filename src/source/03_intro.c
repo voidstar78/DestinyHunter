@@ -59,10 +59,26 @@ void conduct_intro()
   INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
 	text_banner_center(3, str_destiny_hunter, g_ptr_persona_status->direction);			
 
+#ifdef TARGET_C64
+  POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*7)+32, C64_COLOR_BLUE);
+#endif	
 	WRITE_STRING(6, 7, str_instruction_aim, STR_INSTRUCTION_AIM_LEN);
+	
+#ifdef TARGET_C64	
+	POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*9)+32, C64_COLOR_YELLOW);
+#endif	
 	WRITE_STRING(6, 9, str_instruction_move, STR_INSTRUCTION_MOVE_LEN);
+	
+#ifdef TARGET_C64	
+	POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*11)+32, C64_COLOR_GREEN);
+#endif
 	WRITE_STRING(6,11, str_instruction_fire, STR_INSTRUCTION_FIRE_LEN);
+		
 	WRITE_STRING(6,13, str_instruction_blessing, STR_INSTRUCTION_BLESSING_LEN);
+	
+#ifdef TARGET_C64		
+	POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*15)+32, C64_COLOR_DGREY);
+#endif	
 	WRITE_STRING(6,15, str_instruction_persistency, STR_INSTRUCTION_PERSISTENCY_LEN);
 	
 	text_banner_center(20, str_press_return_to_proceed, SOMETHING_ELSE);			

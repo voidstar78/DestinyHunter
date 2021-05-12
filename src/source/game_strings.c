@@ -307,7 +307,11 @@ char str_instructions[] =
 
 char str_instruction_aim[] =
 {
+#ifdef TARGET_C64
+	 1,  9, 13, 32, 32, 32, 32, 32, 32, 32, 32, 32, 138,  32,  47,  32, 140,  32,  32,  32, 23,  1, 20,  5, 18, 32, 102     // WATER
+#else
 	 1,  9, 13, 32, 32, 32, 32, 32, 32, 32, 32, 32, 180,  32,  47,  32, 182,  32,  32,  32, 23,  1, 20,  5, 18, 32, 102     // WATER
+#endif
 };
 
 char str_instruction_move[] =
@@ -327,7 +331,11 @@ char str_instruction_blessing[] =
 
 char str_instruction_persistency[] =
 {
+#ifdef TARGET_C64
+	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 139,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19, 32, 201     // ROCKS
+#else	
 	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 176,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19, 32, 201     // ROCKS
+#endif
 };
 /*
 char str_flashback[] =
