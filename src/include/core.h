@@ -37,8 +37,8 @@ DECIMAL  DESCRIPTION
 
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
 #define FINAL_BUILD
-//#define TARGET_C64
-#define TARGET_PET
+#define TARGET_C64
+//#define TARGET_PET
 
 // The following are optimizations intended for the cc65 compiler environment
 //#pragma inline-stdfuncs (on)

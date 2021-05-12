@@ -39,7 +39,7 @@ static unsigned char blockers_stage1_values[][] = {  // 23x5
 {60,0,0,0,0},
 {28,0,0,0,0},
 {0,0,0,0,0},
-{0,0,0,0,0},
+{0,0,0,0,0}
 };
 	
 static unsigned char blockers_stage2_values[][] = {	
@@ -65,12 +65,12 @@ static unsigned char blockers_stage2_values[][] = {
 {0,0,0,0,0},
 {0,0,0,0,112},
 {0,62,0,0,24},
-{128,35,0,0,12},
+{128,35,0,0,12}
 };
 
 static unsigned char blockers_stage3_values[][] = {	
-//{0,0,0,0,0},
-//{0,0,0,0,0},
+//[0,0,0,0,0],
+//[0,0,0,0,0],
 {0,0,0,0,112},
 {0,0,0,0,96},
 {0,0,0,0,0},
@@ -90,8 +90,8 @@ static unsigned char blockers_stage3_values[][] = {
 {0,0,0,0,0},
 {0,0,0,0,0},
 {31,0,0,0,0},
-{241,1,0,0,0},
-{255,7,0,0,0},
+{255,1,0,0,0},
+{255,7,0,0,0}
 };
 
 /*
@@ -145,7 +145,7 @@ static unsigned char blockers_stage5_values[][] = {
 {0,0,0,0,0},
 {0,0,0,128,127},
 {0,0,0,192,0},
-{0,0,0,112,0},
+{0,0,0,112,0}
 };
 
 static unsigned char blockers_stage6_values[][] = {	
@@ -171,7 +171,7 @@ static unsigned char blockers_stage6_values[][] = {
 {248,0,0,0,28},
 {143,7,0,192,119},
 {0,12,0,96,0},
-{0,8,0,32,0},
+{0,8,0,32,0}
 };
 
 static unsigned char blockers_stage7_values[][] = {	
@@ -197,7 +197,7 @@ static unsigned char blockers_stage7_values[][] = {
 {4,0,0,0,0},
 {12,24,0,0,0},
 {8,60,0,0,0},
-{8,124,0,0,0},
+{8,124,0,0,0}
 };
 
 static unsigned char blockers_stage8_values[][] = {	
@@ -223,5 +223,5 @@ static unsigned char blockers_stage8_values[][] = {
 {0,0,0,4,0},
 {0,0,8,7,0},
 {0,0,28,1,0},
-{0,0,22,1,0},
+{0,0,22,1,0}
 };
