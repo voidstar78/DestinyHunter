@@ -146,6 +146,7 @@ static signed char x2_delta;
 static signed char y2_delta;
 static unsigned char x_threshold;
 static unsigned char y_threshold;
+static unsigned char persona_name_len;
 
 static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
 static unsigned char num_locations_to_draw = 0;	
@@ -205,16 +206,16 @@ void draw_stage_overlay(char* stage_name)
 	*/
 	
   // reverse the persona name
-	y_delta = strlen(g_ptr_persona_status->name);
-	for (g_i = 0; g_i < y_delta; ++g_i)
+	persona_name_len = strlen(g_ptr_persona_status->name);
+	for (g_i = 0; g_i < persona_name_len; ++g_i)
 	{
 		SET_MASK(g_ptr_persona_status->name[g_i], MASK_HIGH_BIT);
 	}
-	x_delta = ((39 - y_delta) / 2)-1;   // CENTER the name
+	x_delta = ((39 - persona_name_len) / 2)-1;   // CENTER the name
 	WRITE_CHAR(x_delta, 0, 160);  // flank the name with an extra space
 	++x_delta;
-	WRITE_STRING(x_delta, 0, g_ptr_persona_status->name, y_delta);
-	x_delta += y_delta;
+	WRITE_STRING(x_delta, 0, g_ptr_persona_status->name, persona_name_len);
+	x_delta += persona_name_len;
 	WRITE_CHAR(x_delta, 0, 160);
 }
 
@@ -2991,7 +2992,7 @@ quick_game:
 	TIME       12345.123
 */
 
-  WRITE_STRING(10, 1, g_ptr_persona_status->name, MAX_NAME_LENGTH-1);
+  WRITE_STRING(10, 1, g_ptr_persona_status->name, persona_name_len);
 	
   WRITE_STRING(10, 3, str_steps, STR_STEPS_LEN);
 	WRITE_PU_DIGIT(20, 3, global_destiny_status.steps_performed, 4);
