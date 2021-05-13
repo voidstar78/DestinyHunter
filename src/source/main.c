@@ -1654,13 +1654,11 @@ void run_stage(
 #ifdef TARGET_C64
       // Background ends up WHITE, not applying this in C64 version
 #else
-	    /* out of memory...
-      // ** OPTIONAL -- make the arrow inverted when firing over a beach
+	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
   	  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
 	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
 	    else 
-		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
-			*/
+		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 			
 			// **********************************************************
 #endif
 
