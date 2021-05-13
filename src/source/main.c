@@ -1918,38 +1918,6 @@ void run_stage(
 						}								
 					}
 				}
-#ifdef TARGET_C64
-        else if (global_input_ch == PKEY_I)
-#else
-	      else if (global_input_ch == PKEY_8)
-#endif					
-				{					
-					/*
-					FLIP to the opposite direction that the bow is currently facing...
-					0 -> 4     0
-					1 -> 5    7 1
-					2 -> 6   6   2
-					3 -> 7    5 3
-					4 -> 0     4 
-					5 -> 1
-					6 -> 2
-					7 -> 3
-					*/			
-					if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_FLIPSKILL))
-					{				
-						if (global_destiny_status.curr_arrow_direction < 4)
-						{
-							global_destiny_status.curr_arrow_direction += 4;
-						}
-						else
-						{
-							global_destiny_status.curr_arrow_direction -= 4;
-						}					
-						
-						global_destiny_status.symbol_weapon = weapon_carried_symbols[global_destiny_status.curr_arrow_direction];										
-						//SET_MASK(global_destiny_status.motion_this_cycle, MOTION_WEAPON);  //<-- this should work and the above not required, but... idk, it caused a flicker.  so... I'm keeping it like this
-					}
-				}			
 				else if (global_input_ch == PKEY_O)
 				{
 					if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_ORB))
@@ -2090,6 +2058,38 @@ disallow_right:
 								;  				  
 							}
 						}		  
+#ifdef TARGET_C64
+						else if (global_input_ch == PKEY_I)
+#else
+						else if (global_input_ch == PKEY_8)
+#endif					
+						{					
+							/*
+							FLIP to the opposite direction that the bow is currently facing...
+							0 -> 4     0
+							1 -> 5    7 1
+							2 -> 6   6   2
+							3 -> 7    5 3
+							4 -> 0     4 
+							5 -> 1
+							6 -> 2
+							7 -> 3
+							*/			
+							if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_FLIPSKILL))
+							{				
+								if (global_destiny_status.curr_arrow_direction < 4)
+								{
+									global_destiny_status.curr_arrow_direction += 4;
+								}
+								else
+								{
+									global_destiny_status.curr_arrow_direction -= 4;
+								}					
+								
+								global_destiny_status.symbol_weapon = weapon_carried_symbols[global_destiny_status.curr_arrow_direction];										
+								//SET_MASK(global_destiny_status.motion_this_cycle, MOTION_WEAPON);  //<-- this should work and the above not required, but... idk, it caused a flicker.  so... I'm keeping it like this
+							}
+						}			
 						else
 						{
 							valid_key = FALSE;
@@ -2535,7 +2535,7 @@ move_due_to_loiter:
 											}
 											else
 											{				
-#ifdef TARGET_C64
+/* originally had NEXT/PREVIOUS - but too much memory for PET version - RANDOM works ok, I'll keep it consistent between the builds...
 												switch (rand_mod(4))
 												{
 												case 0:  // cycle to the NEXT target
@@ -2563,13 +2563,13 @@ move_due_to_loiter:
 													
 												case 2:  // go to a RANDOM target
 													{											  
-#endif
+*/
 														ptr_challenge->target_current = rand_mod(ptr_challenge->targetN);
-#ifdef TARGET_C64
+/*
 													}
 													break;																							
 												}
-#endif												
+*/
 											}
 											
 											// queue to loiter here for awhile before moving to next target
@@ -2991,7 +2991,7 @@ quick_game:
 	TIME       12345.123
 */
 
-  WRITE_STRING(10, 1, g_pvec_personas->name, MAX_NAME_LENGTH-1);
+  WRITE_STRING(10, 1, g_ptr_persona_status->name, MAX_NAME_LENGTH-1);
 	
   WRITE_STRING(10, 3, str_steps, STR_STEPS_LEN);
 	WRITE_PU_DIGIT(20, 3, global_destiny_status.steps_performed, 4);
