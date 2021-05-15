@@ -69,6 +69,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 		global_input_ch = GET_PKEY_VIEW;  //kbhit();  // was there a KEY hit?
 
 #ifdef TARGET_C64   
+    /*
     if (global_input_ch == PKEY_NO_KEY)
     {
   		g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
@@ -77,6 +78,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 				global_input_ch = PKEY_SPACE;
 			}
 		}
+		*/
 #endif
 
 		if (global_input_ch != PKEY_NO_KEY)
@@ -197,6 +199,7 @@ try_again:
 			global_input_ch = GET_PKEY_VIEW;
 			
 #ifdef TARGET_C64   
+      /*
       STORE_TIME_NO_CORRECTOR(global_timer);
 			UPDATE_DELTA_JIFFY_ONLY(global_timer, joy_timer);
 			if (delta_time > JIFFIES_EIGTH_SECOND)
@@ -211,6 +214,7 @@ try_again:
 				}
 				joy_timer = global_timer;
 			}
+			*/
 #endif
 			
 			if (global_input_ch != PKEY_NO_KEY)

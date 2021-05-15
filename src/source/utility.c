@@ -46,6 +46,7 @@ unsigned char flush_keyboard_and_wait_for_ENTER()
 	flush_keyboard_buffer();  // Make sure user doesn't accidently spam past this point
 	
 #ifdef TARGET_C64
+  /*
   while (TRUE)
 	{
     g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
@@ -54,12 +55,14 @@ unsigned char flush_keyboard_and_wait_for_ENTER()
 			break;
 		}
 	}
+	*/
 #endif	
 	while (TRUE)
 	{
 	  global_input_ch = GET_PKEY_VIEW; 
 		
 #ifdef TARGET_C64
+    /*
     if (global_input_ch == PKEY_NO_KEY)
     {
   		g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
@@ -68,6 +71,7 @@ unsigned char flush_keyboard_and_wait_for_ENTER()
 				global_input_ch = PKEY_RETURN;
 			}
 		}
+		*/
 #endif		
 		
 	  if (global_input_ch != PKEY_NO_KEY)

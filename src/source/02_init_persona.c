@@ -166,6 +166,7 @@ void choose_persona()  // Destiny_status* ptr_destiny_stats, vec* pvec_personas)
 	  global_input_ch = GET_PKEY_VIEW;
 
 #ifdef TARGET_C64
+    /*
     if (global_input_ch == PKEY_NO_KEY)
     {
   		g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
@@ -182,6 +183,7 @@ void choose_persona()  // Destiny_status* ptr_destiny_stats, vec* pvec_personas)
 				global_input_ch = PKEY_S;
 			}
 		}
+		*/
 #endif					
 		
 	  if (global_input_ch != PKEY_NO_KEY)

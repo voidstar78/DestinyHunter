@@ -14,15 +14,17 @@
   #include <01_destiny.h>
   #include <03_intro.h>
 #endif
-#include <02_init_persona.h>
+#include <02_init_persona.h>n
 #include <stage_rle_values.inc.h>
 #include <stage_blocker_values.inc.h>
 
 // SYSTEM INCLUDES COME AFTER THE ABOVE - since core.h is used to establish the target configuration
 #ifdef TARGET_C64
   #include <conio.h>	
-	unsigned char j_fire_prepare = FALSE;
+	//unsigned char j_fire_prepare = FALSE;
 #endif
+
+#include <snes_gamepad.h>
 
 static unsigned char rest_mode = FALSE;
 static unsigned char (*ptr_blockers)[5];  // of the current map
@@ -958,7 +960,8 @@ void initialize_stage8_challenges()
 #ifdef TARGET_C64
   // For some reason these extra CHALLENGES aren't working in the C64 version
 #else
-	initialize_stage6_challenges(challenges_count, 2);
+	// OPTIONAL: just for fun demo of adding extra challenges to a stage  (was done in STAGE3 and STAGE7)
+	//initialize_stage6_challenges(challenges_count, 2);
 #endif
 }
 
@@ -1066,7 +1069,7 @@ void run_stage(
   Target* ptr_target;
 	
 #ifdef TARGET_C64	
-	unsigned char joy_down_press_count = 0;
+	//unsigned char joy_down_press_count = 0;
 	Time_counter finish_timer;
 #endif
 	
@@ -1112,6 +1115,9 @@ void run_stage(
 	// OBJECTS ON THIS MAP....STAGE 4 CROCS
 	unsigned char item_orb_x = 35;
 	unsigned char item_orb_y = 3;
+	
+	unsigned char g_padA;
+	unsigned char g_padB;
 	// ---------------------------------------------		
 		
 #ifdef USE_TEST_MEM	
@@ -1655,10 +1661,12 @@ void run_stage(
       // Background ends up WHITE, not applying this in C64 version
 #else
 	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
+		  /*
   	  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
 	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
 	    else 
 		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 			
+			*/
 			// **********************************************************
 #endif
 
@@ -1682,6 +1690,66 @@ void run_stage(
     // ***** PRIORITY 1 KEYS - respond with no delay ************************************************
 		valid_key = TRUE;  //< Assume initially that some valid key was pressed (prevents having to explicitly set this for each valid key case)
 		
+		read_gamepad();
+		g_padA = PEEK(GPAD_RESULT_A);
+		g_padB = PEEK(GPAD_RESULT_B);
+		
+#ifdef TARGET_C64
+		if (global_input_ch == PKEY_NO_KEY) {
+#endif
+		if (IS_MASK_ON(g_padA, GPAD_BUTTON_B_MASK))
+		{
+			global_input_ch = PKEY_O;  // ORB
+		}
+		else if (IS_MASK_ON(g_padB, GPAD_BUTTON_Y_MASK))
+		{
+			global_input_ch = PKEY_0;  // PERSISTENCY
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_X_MASK))
+		{
+			global_input_ch = PKEY_8;  // FLIP_SKILL
+	  }
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TLEFT_MASK))
+		{
+			global_input_ch = PKEY_4;  // AIM LEFT
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TRIGHT_MASK))
+		{
+			global_input_ch = PKEY_6;  // AIM RIGHT
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_A_MASK))
+		{
+			global_input_ch = PKEY_SPACE;   // FIRE
+		}
+		// ========= PRIORITY 2's
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_UP))
+		{
+			global_input_ch = PKEY_W;
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_LEFT))
+		{
+			global_input_ch = PKEY_A;
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_DOWN))
+		{
+			global_input_ch = PKEY_S;
+		}
+		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_RIGHT))
+		{
+			global_input_ch = PKEY_D;
+		}
+		// ===================
+		else if (
+		  IS_MASK_ON(g_padB, GPAD_BUTTON_START_MASK)
+			|| IS_MASK_ON(g_padB, GPAD_BUTTON_SELECT_MASK)
+		)
+		{
+			global_input_ch = PKEY_F;
+		}
+#ifdef TARGET_C64
+		}
+#endif
+/*
 #ifdef TARGET_C64
     {
 			g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
@@ -1762,7 +1830,8 @@ void run_stage(
 			}
 		}
 #endif		
-			
+*/
+
 		if (global_input_ch == PKEY_NO_KEY)
 		{
 			valid_key = FALSE;  // quicky set this case without checking for the other keys
