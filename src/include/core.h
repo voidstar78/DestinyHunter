@@ -63,7 +63,7 @@ DECIMAL  DESCRIPTION
 #define C64_JOYSTICK_RIGHT    0x08  // 247 1111 0111
 #define C64_JOYSTICK_BUTTON   0x10  // 239 1110 1111
 #ifdef TARGET_C64
-  extern unsigned char g_joy;
+  //extern unsigned char g_joy;
 #endif
 
 // COMMODORE PET 4016 graphicUS KEYCODES (these are codes when using kbhit, cgetc)
@@ -401,15 +401,17 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 #endif
 
 #ifdef TARGET_C64
+  #define ADDR_CHARSET 53272U
 	#define ENABLE_CHARACTER_SET_A \
-		POKE(53272U,21);
+		POKE(ADDR_CHARSET,21);
 	#define ENABLE_CHARACTER_SET_B \
-		POKE(53272U,23);
+		POKE(ADDR_CHARSET,23);
 #else
+	#define ADDR_CHARSET 59468U
 	#define ENABLE_CHARACTER_SET_A \
-		POKEW(59468U,12);
+		POKEW(ADDR_CHARSET,12);
 	#define ENABLE_CHARACTER_SET_B \
-		POKEW(59468U,14);
+		POKEW(ADDR_CHARSET,14);
 #endif
 
 // VIDEO MODE CHANGES
