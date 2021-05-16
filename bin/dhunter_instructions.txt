@@ -144,6 +144,11 @@ COMBAT SYSTEM
   to run away, and work a balance
   between STAMINA and FIRING RANGE.
 
+- While CHALLENGES can chase you,
+  they can also "give up" on the chase
+  and go back to their patrol or
+  loitering condition.
+
 - The CHALLENGE ability to HIT when
   next to you is based on your DEFENSE
   (agility to dodge, etc).
@@ -161,6 +166,29 @@ COMBAT SYSTEM
   at the top right next to the STAGE
   name will show how much HEALTH that
   CHALLENGE has remaining.
+
+
+SCREEN LAYOUT
+=============
+The STAGE has an OVERLAY with some
+useful information at the top and bottom:
+
+- TOP LEFT: Items and Skills acquired.
+  e.g. BOW (, ORB, FLIP, GEM, BOOK.
+
+- TOP RIGHT: CHALLENGE health and 
+  STAGE name
+
+- TOP CENTER: Chosen PERSONA name.
+
+
+- BOTTOM LEFT: BLESSING count (B)
+
+- BOTTOM RIGHT: PERSISTENCY (0 or K)
+
+- BOTTOM CENTER: Your ARROWS and HEALTH 
+  remaining.
+
 
 
 KEY CONTROLS
