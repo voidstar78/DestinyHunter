@@ -1,0 +1,364 @@
+
+       _   _  __ ___ ___           
+      | \ |_ (_   |   |  |\ | \_/  
+      |_/ |_ __)  |  _|_ | \|  |   
+                     ___ _  _  
+         |_| | | |\ | | |_ |_) 
+         | | |_| | \| | |_ | \ 
+   
+            2021 by voidstar
+
+         www.destinyhunter.org
+      contact.steve.usa@gmail.com
+
+
+Introduction
+============
+Destiny Hunter begins with a mysterious character
+creation sequence!  Fate decides whether you follow the
+direction of LINGA or YONI.  You have some limited
+influence, by pressing the SPACEBAR (or really
+any key, but I recommend SPACEBAR).
+
+To learn more about Linga and Yoni, I suggest
+starting with the following:
+https://www.hinduwebsite.com/history/yin-and-yang-and-the-hindu-connection.asp
+
+Following this, there are EIGHT CHIMES.  Similarly
+ring each CHIME by pressing SPACEBAR.  It may not 
+look like much, but these chimes are deciding
+if you'll receive a Blessing!
+
+Sometimes the chimes will be indecisive, which
+means they are consulting a second opinion.
+During these moments, you'll receive a Persistency
+award while awaiting their decision.
+
+Once all the chimes are decided, you then have
+a last moment to make a very fateful decision:
+embrace this chosen destiny, or re-roll.
+
+
+Personas!
+=========
+The next task is to choose your Persona!  
+
+Personas reflect your spirtial connection to
+an ancient hunter.  They will be involved
+in your adventure. 
+
+To speak in the more traditional ways,
+the persona decides the difficulty of your
+adventure.  Choose accordingly to your skill
+(and how much coffee you've had recently!)
+
+
+Introduction (again)
+============
+Take heed of these instructions!  They
+tell you how to play the game.  As that is
+important, it is worth repeating:
+
+- W/A/S/D movement keys
+your character UP, LEFT, RIGHT, DOWN respectively.
+
+Once you have your hunting weapon:
+- 4 rotates your weapon LEFT    (J on C64)
+- 6 rotates your weapon RIGHT   (L on C64)
+- 8 is a FLIP skill that you learn later  (I on C64)
+
+Once you have arrows for your hunting weapon:
+
+- SPACEBAR to fire said arrows.
+
+Then there are two special abilities:
+
+- B for Blessings!  (if you have any)
+     These slow down the CHALLENGES in the STAGE
+
+- P for Persistency  (again, if you have any)
+     These HEAL your HEALTH.
+
+- F to FINISH a stage and go to the next one
+     once all the challenges are defeated.
+
+
+In addition, the introduction orients
+you with the variety of terrain you
+are likely to find along your way.
+
+- WATER - observe keenly, it sparkles
+as you walk within it!
+
+- BEACH - it's very bright
+
+- GRASS - it may look like a big X, but it's grass!
+
+- LAND - technically it is called SPACE, but
+        I felt that would cause confusion - this is
+        not a space game!
+
+- ROCKS  in general, you can't move through 
+         rocks. But there could be exceptions!
+         (just not in this DEMO!)
+
+
+STAMINA
+=======
+Ah, here is your reward for "RTFM" !  Due to 
+memory limitations, stamina is not described 
+in the game.  You'd be surprised how much 
+computer RAM memory English text quickly consumes!
+
+Stamina is your energy.  Just as in real life,
+running and exerting yourself will consume
+stamina.  This is as close as 1979 computer
+technology got to Virtual Reality!
+
+Let's go GEEK and describe Stamina like we're an RPG:
+
+You have 1000 total stamina points.  (in this DEMO!)
+
+For each movement, you will lose 60*V points
+of stamina on land, and 90*V points in water.
+And to clarify about land, I mean: NOT water.
+
+What's V? Well, it's a factor based on your 
+chosen persona corresponding land and water skills.
+Let's call it a Vitality factor, and that's 
+all I'm going to say about that.
+
+Firing your arrow cost 1D300+100 points of stamina.
+(yes, D here means DIE roll - computers are
+awesome at having very massive dice!)
+
+If your energy drops below 0, you can't move until
+it recovers above 200.  This is called REST mode.
+
+Each 1/8th of a second you will recover 1D200
+points of energy.
+
+You have a little stamina bar on the screen.  
+Don't run out, or you can't move for awhile.  
+You'll run out faster while in water.
+
+And that's about sums it up for stamina!
+
+
+
+THE STAGES
+==========
+
+After a brief introduction, you will then 
+begin your adventure in what is called
+THE STAGES.  (no ma'am, in this house we
+do NOT call them Levels! Don't you dare!)
+
+Each stage will have its name on the top
+right.  
+
+You complete a stage by activating and
+defeating a number of Challenges.
+
+When you've completed, a big "F" appears
+reminding you that you can now press F
+to "finish" the stage and proceed to the 
+next one.  It is done this way in case
+you want to explore something about the 
+stage first.  HINT: Only one stage
+really has a hidden secret!
+
+
+CREDITS
+=======
+
+The game concept and the programming is all my work,
+from an empty "int main()" to the functional
+game you can now experience, and multiple drafts
+of the story across the stages (which there is
+actually a story!).  This manual, the stage 
+design and stage editing tool, all my creation.  
+
+That said, this simply would not have been possible
+without a few things:
+
+- The creators of cc65, a C compiler for the 6502
+
+- The creators of DirMaster, that allow me to read
+  Commodore D64 files from Windows and copy and paste
+  the contents.  
+
+- "The 8-Bit Guy" (creator of PETSCII Robots) who 
+  inspired me to soldier on and actually complete this project!
+
+- Google did help me find some technical resources
+  about the Commodore PET address space.  Specially the 
+  Jiffy counter, key press polling, video address.
+  www.zimmers.net/cbmpics/cbm/PETx/petmem.txt  
+
+- and I'd like to give a salute to Chuck Peddle, for
+  his efforts in creating the 6502 processor, and
+  pioneering the path of Personal Computers in the mid-1970s!
+  He was indeed a solid character.
+
+I spent quite a bit of time wrestling with and understanding
+the standard vs extended "graphics" mode, and corresponding 
+characters sets, of the PET.  I get a chuckle out of
+visualizing Chuck and his son coming up with that character set!
+
+Figuring out the Jiffy timer was also fun, it was essential
+for getting a tempo to the game.
+
+My main pride is in the strategy I came up with to 
+do the flicker free animation over a populated background.  
+We take so much for granted in modern programming, with 
+many GHz and GBs at our disposal.  It's very humbling 
+to work with extremely limited sources, and I got a 
+taste of the ingenuity those early 1980s software pioneers 
+had to posses to make usable software products of that era.
+Every single byte truly matter, as code-space compete with
+your available resident RAM.  I haven't had to think
+about the compiled size of my code in years!
+
+Additional related videos:
+https://www.youtube.com/watch?v=Tk7uaLM_mCU (initial demo)
+https://www.youtube.com/watch?v=RCrBt0mpSb8 (flicker)
+https://www.youtube.com/watch?v=48Qq_ziKjMQ (smear)
+https://www.youtube.com/watch?v=wXhexS-ZkhE (level editor)
+
+If you are inclined to donate towards this effort,
+I would appreciate that very much.  Even if just a photo
+of playing Destiny Hunter Demo, or have a question. 
+
+Contact and/or PayPal:
+
+contact.steve.usa@gmail.com
+
+Sincerely,
+
+Steve
+
+
+
+LICENSING
+=========
+
+
+   Thank You for taking time to try my game!  While it is a short
+   game, such was the limitations of making a self-contained program
+   with no external files and only 32K RAM.
+
+   I wonder who will be first to find the orb!?
+
+   Screenshot your End Game with the time score!  Perhaps at the 
+   website we will make a list of the best times per persona.
+
+   For future updates, or to provide comments/feedback, refer to:
+
+   www.destinyhunter.org
+   contact.steve.usa@gmail.com
+
+   The license below permits you to copy the game, to as many devices 
+   and friends as you desire. But technically this text file must be included, 
+   to clarify that I am the owner of the copyright.
+
+   Thank You again,
+   v*
+
+
+   LICENSE
+   -------
+
+   Destiny Hunter
+   Copyright 2021 Steve Lewis / voidstar
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+
+
+
+********
+SPOILERS - inside scoop
+********
+
+GO NO FURTHER!  YOU HAVE BEEN WARNED!
+
+- The introduction sequence is intended to initialize
+  the random number generator.  By the user pressing
+  SPACE at somewhat random times, as well as during
+  each of the chimes, it compiles together a set of SEED
+  VALUES that are totaled up to seed that random number
+  generator.
+
+- Inside the code itself, I give each challenge a name
+  that starts with J.  The default character names also
+  start with J.  It's just a thing I started doing with
+  this project, no real reason for choosing J.
+
+  - The rats are JACK the younger (he moves faster), and JONAS
+  - The two sphynxs are JOSEPH and JIMMY - JIMMY is the one out 
+    of control, moving as fast as possible.
+
+- There is one use for a Blessing:
+  they will slow down the challenges 
+  by a factor of 2.
+
+- Instead of using the terms male/female, I chose to use
+  the term Direction.  I didn't want to focus on the gender
+  aspect.  I wanted to express that the differences 
+  between these is beyond just biological gender, but
+  there is a kind of "spiritual" difference in sentiments
+  and way of thinking.  And I think that's a form of 
+  diversity that is part of the balance of life (that balance
+  is reflected in yoni/linga, a kind of precursor to ying/yang).
+  At the very least, my hope is just mentioning these concepts
+  inspires folks to consider learning about things beyond
+  typical Western perspectives.  
+
+- There is some logic behind the chimes.  Your first Direction
+  decision establishes your MOD_VALUE (1-10).  Then based on
+  your direction, your seed values will either INCREASE or
+  DECREASE (that was really the original reason it was
+  called Direction, as it literally decided which direction
+  the numbers rolled).  The SEED_VALUE for that CHIME is
+  MODDED (%) with your MOD_VALUE.  If that is equals 0, you
+  get an "AGAIN" notice.  Your Persistence gift is the total
+  number of AGAINs.  BUT - your MOD_VALUE gravitates towards
+  being the value of 5 (neutral) after several CHIMES.  If 
+  the number of AGAIN tries exceeds the current MOD_VALUE, 
+  that's how you get a Blessing!
+
+- If you run out of arrows in this, more will 
+  randomly respawn.  Just go collect them.
+
+- I didn't want to use the term Creatures or Monsters
+  in this game, instead I just refer to them as
+  Challenges.  
+
+- The mobile challenges move between a few chosen
+  TARGET points.  BUT, they may randomly change
+  their mind on which target they are going towards.
+  The intended game mechanic will be that your
+  characters Stealth value will get interpreted
+  as a Scent value by these challenges.  In otherwords,
+  more Stealth and the challenges won't detect
+  as easily (by just not being as far of range).
+  BUT if they do attack you, they'll change mode
+  and go after you -- then return to patrolling their
+  TARGET points if you get out of "Stealth" range.
+  (in otherwords, internally, your Stealth value
+  will get inverted and becomes a Sense attribute
+  for the challenges)
+
+That's all :)
