@@ -141,7 +141,7 @@ COMBAT SYSTEM
   next to them (on any side).  However,
   CHALLENGES will "chase" you based
   on your STEALTH.  So you may need
-  to run away, as work a balance
+  to run away, and work a balance
   between STAMINA and FIRING RANGE.
 
 - The CHALLENGE ability to HIT when
