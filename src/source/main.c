@@ -21,7 +21,7 @@
 // SYSTEM INCLUDES COME AFTER THE ABOVE - since core.h is used to establish the target configuration
 #ifdef TARGET_C64
   #include <conio.h>	
-	//unsigned char j_fire_prepare = FALSE;
+	unsigned char j_fire_prepare = FALSE;
 #endif
 
 #include <snes_gamepad.h>
@@ -404,9 +404,16 @@ void draw_stage_map()
 #define STAGE_COMPLETED   3
 #define STAGE_DEATH       4
 
+#if 0
+static unsigned int addr;
+#define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
+		addr = 0x033E + (MAX_MAP_ROWS*data_y)+div4_table[data_x];  \
+		POKE(addr, PEEK(addr) | or_equal_modifier[mod4_table[data_x]]);
+#endif 
+
 #define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
 		/*ptr_pvec_value0[data_y] = TRUE;*/ \
-		cell_state[data_y][div4_table[data_x]] |= or_equal_modifier[mod4_table[data_x]];
+		cell_state[ data_y ][ div4_table[data_x] ] |= or_equal_modifier[mod4_table[data_x]]; 
 
 void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigned char target_symbol
 #ifdef TARGET_C64
@@ -437,7 +444,6 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 	case DIR_WW: global_destiny_status.weapon_y = global_destiny_status.location_y;     global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 93 221 */ 
 	case DIR_NW: global_destiny_status.weapon_y = global_destiny_status.location_y - 1; global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 85 213 */ 
 	} 
-	
 				
 #ifdef TARGET_C64
 	// This ends up looking wrong color on the C64, so looking worse.
@@ -1069,7 +1075,7 @@ void run_stage(
   Target* ptr_target;
 	
 #ifdef TARGET_C64	
-	//unsigned char joy_down_press_count = 0;
+	unsigned char joy_down_press_count = 0;
 	Time_counter finish_timer;
 #endif
 	
@@ -1397,7 +1403,7 @@ void run_stage(
 					ptr_value = g_pvec_map[temp_y];  
 					
 					for (temp_x = 0; temp_x < 10; ++temp_x)  //< 10 corresponds to the width of the cell_state array
-					{
+					{											
 						// 0x11 (3) was drawn this last animation frame (already on the screen)
 						//      (2) could be used to let icons linger one extra frame (not used here)
 						// 0x01 (1) was previously drawn on -- animation may stay (increase it back to 2) or it will drop back 0 (background)
@@ -1662,10 +1668,10 @@ void run_stage(
 #else
 	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
 		  /*
-  	  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
+		  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
 	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
 	    else 
-		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 			
+		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 						
 			*/
 			// **********************************************************
 #endif
@@ -1694,63 +1700,61 @@ void run_stage(
 		g_padA = PEEK(GPAD_RESULT_A);
 		g_padB = PEEK(GPAD_RESULT_B);
 		
+		if (global_input_ch == PKEY_NO_KEY) 
+		{
+			if (IS_MASK_ON(g_padA, GPAD_BUTTON_B_MASK))
+			{
+				global_input_ch = PKEY_O;  // ORB
+			}
+			else if (IS_MASK_ON(g_padB, GPAD_BUTTON_Y_MASK))
+			{
+				global_input_ch = PKEY_0;  // PERSISTENCY
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_X_MASK))
+			{
+				global_input_ch = PKEY_8;  // FLIP_SKILL
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TLEFT_MASK))
+			{
+				global_input_ch = PKEY_4;  // AIM LEFT
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TRIGHT_MASK))
+			{
+				global_input_ch = PKEY_6;  // AIM RIGHT
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_A_MASK))
+			{
+				global_input_ch = PKEY_SPACE;   // FIRE
+			}
+			// ========= PRIORITY 2's
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_UP))
+			{
+				global_input_ch = PKEY_W;
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_LEFT))
+			{
+				global_input_ch = PKEY_A;
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_DOWN))
+			{
+				global_input_ch = PKEY_S;
+			}
+			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_RIGHT))
+			{
+				global_input_ch = PKEY_D;
+			}
+			// ===================
+			else if (
+				IS_MASK_ON(g_padB, GPAD_BUTTON_START_MASK)
+				|| IS_MASK_ON(g_padB, GPAD_BUTTON_SELECT_MASK)
+			)
+			{
+				global_input_ch = PKEY_F;
+			}
+		}
+		
 #ifdef TARGET_C64
-		if (global_input_ch == PKEY_NO_KEY) {
-#endif
-		if (IS_MASK_ON(g_padA, GPAD_BUTTON_B_MASK))
-		{
-			global_input_ch = PKEY_O;  // ORB
-		}
-		else if (IS_MASK_ON(g_padB, GPAD_BUTTON_Y_MASK))
-		{
-			global_input_ch = PKEY_0;  // PERSISTENCY
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_X_MASK))
-		{
-			global_input_ch = PKEY_8;  // FLIP_SKILL
-	  }
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TLEFT_MASK))
-		{
-			global_input_ch = PKEY_4;  // AIM LEFT
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_TRIGHT_MASK))
-		{
-			global_input_ch = PKEY_6;  // AIM RIGHT
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_A_MASK))
-		{
-			global_input_ch = PKEY_SPACE;   // FIRE
-		}
-		// ========= PRIORITY 2's
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_UP))
-		{
-			global_input_ch = PKEY_W;
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_LEFT))
-		{
-			global_input_ch = PKEY_A;
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_DOWN))
-		{
-			global_input_ch = PKEY_S;
-		}
-		else if (IS_MASK_ON(g_padA, GPAD_BUTTON_DPAD_RIGHT))
-		{
-			global_input_ch = PKEY_D;
-		}
-		// ===================
-		else if (
-		  IS_MASK_ON(g_padB, GPAD_BUTTON_START_MASK)
-			|| IS_MASK_ON(g_padB, GPAD_BUTTON_SELECT_MASK)
-		)
-		{
-			global_input_ch = PKEY_F;
-		}
-#ifdef TARGET_C64
-		}
-#endif
-/*
-#ifdef TARGET_C64
+    if (global_input_ch == PKEY_NO_KEY)  //< If STILL no key-press after polling user-port gamepad... Try native joystick
     {
 			g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
 			
@@ -1830,7 +1834,6 @@ void run_stage(
 			}
 		}
 #endif		
-*/
 
 		if (global_input_ch == PKEY_NO_KEY)
 		{

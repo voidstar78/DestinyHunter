@@ -32,8 +32,8 @@ static char str_graph[][] =
 	9      II II II II    full + full + full + full
 	*/
 
-// Initialize some default values of a PERSONA and add it to the persona vector
 /*
+// Initialize some default values of a PERSONA and add it to the persona vector
 void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char num, ...)
 {
 	va_list valist;
@@ -51,8 +51,7 @@ void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char
 	persona_stats->att = va_arg(valist, unsigned char);
 	persona_stats->def = va_arg(valist, unsigned char);
 	
-	persona_stats->hp_max = va_arg(valist, unsigned char);
-	persona_stats->hp_current = persona_stats->hp_max;
+	persona_stats->hp_max = va_arg(valist, unsigned char);	
 	
 	persona_stats->direction = va_arg(valist, unsigned char);	
 
@@ -61,6 +60,7 @@ void INITIALIZE_PERSONA(Persona_status* persona_stats, char* name, unsigned char
 	++g_pvec_personas_count;	
 }
 */
+
 #define INITIALIZE_PERSONA(persona_stats, set_name, a_a, a_b, a_c, a_d, a_e, a_f, a_g, a_h, a_i, a_j) \
 	strcpy(persona_stats.name, set_name);		\
 	persona_stats.land_movement = a_b;      \
