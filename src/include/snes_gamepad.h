@@ -52,7 +52,6 @@ UP         128
 // -----------
 #define GPAD_RESULT_A        0x033A
 #define GPAD_RESULT_B        GPAD_RESULT_A + 1  //< consecutively after RESULT_A
-#define GPAD_POLL_MASK       0x033C
 
 void read_gamepad();
 

@@ -155,8 +155,7 @@ typedef struct
 	unsigned char att;             // ATTACK STAT, applies to player+persona    0-9  (includes precision, power)
 	unsigned char def;             // DEFENSE STAT, applies to player+persona   0-9  (includes agility, dodge)
 	
-	unsigned char hp_max;          // HP MAX of this persona                    0-8  (seeds Player initial HP MAX)
-	//unsigned char hp_current;      // HP currently remaining                    0-8    	
+	unsigned char hp_max;          // HP MAX of this persona                    0-8  (seeds Player initial HP MAX)	
 } Persona_status;
 extern Persona_status g_pvec_personas[MAX_PERSONAS_TO_SELECT];
 extern unsigned char g_pvec_personas_count;

@@ -37,8 +37,8 @@ DECIMAL  DESCRIPTION
 
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
 #define FINAL_BUILD
-//#define TARGET_C64
-#define TARGET_PET
+#define TARGET_C64
+//#define TARGET_PET
 
 // The following are optimizations intended for the cc65 compiler environment
 //#pragma inline-stdfuncs (on)
@@ -63,7 +63,7 @@ DECIMAL  DESCRIPTION
 #define C64_JOYSTICK_RIGHT    0x08  // 247 1111 0111
 #define C64_JOYSTICK_BUTTON   0x10  // 239 1110 1111
 #ifdef TARGET_C64
-  //extern unsigned char g_joy;
+  extern unsigned char g_joy;
 #endif
 
 // COMMODORE PET 4016 graphicUS KEYCODES (these are codes when using kbhit, cgetc)
