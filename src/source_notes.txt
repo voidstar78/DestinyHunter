@@ -2,7 +2,37 @@
 
 NOTES ABOUT THE SOURCE for the future...
 
-To adjust levels, you will need editor.c
+Steve Lewis
+b.1978 - made this code in 2021
+
+
+cfg
+===
+pet.cfg was changed to reduce the stack size from 2K down to 100 bytes.
+
+Since nearly everything in DH is a global variable, very little stack space
+is needed for passing arguments to functions.
+
+
+main
+====
+The main starts in main.c, as all main's should!
+
+The "game engine" is managed by stages, each one with the same basic idea:  RLE decode that stage,
+initialize any "challenges" for that stage, set any animation pointers and blockers for that stage, 
+run that stage.
+
+Each stage might have a few stage-specific variety, but they all share the same basic
+rules of draw, move, poll keyboard, react, and repeat...
+
+
+
+ADJUSTING LEVELS
+================
+This section explains the contents of stage_rle_values.inc.h and stage_blocker_values.inc.h
+
+
+You will need editor.c in the source folder (has its own main, it is its own executable)
 
 Use the VICE tool to run editor.c (turn NUM LOCK off since it uses arrow key codes, not num pad codes)
 
@@ -10,6 +40,8 @@ Attach the dhlevels_real.d64 disk using the "File|Attach disk image" menu option
 (make a backup of this or copy it to another filename, to avoid losing the original)
 
 Use  [  and  ] keys to switch to which level to be edited (1-9).
+
+(use ALT-W in the VICE emulator to speed up the L and X commands - but while editing, turn OFF WARP mode)
 
 L = LOAD level edit for the current level index (reads from disk)
      RLE_x_B.txt   (x is the level number, 1-9)
