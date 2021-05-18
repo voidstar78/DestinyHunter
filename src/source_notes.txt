@@ -1,0 +1,196 @@
+
+
+NOTES ABOUT THE SOURCE for the future...
+
+To adjust levels, you will need editor.c
+
+Use the VICE tool to run editor.c (turn NUM LOCK off since it uses arrow key codes, not num pad codes)
+
+Attach the dhlevels_real.d64 disk using the "File|Attach disk image" menu option (Drive #8 is fine)
+(make a backup of this or copy it to another filename, to avoid losing the original)
+
+Use  [  and  ] keys to switch to which level to be edited (1-9).
+
+L = LOAD level edit for the current level index (reads from disk)
+     RLE_x_B.txt   (x is the level number, 1-9)
+     (B is because this is actually the 2nd format version of the file)
+ 
+     BLOCKERS_x.txt  (x is the level number, 1-9)
+
+X = RLE compress the current map and blocker codes to files
+    Written to RLE_x_B.txt and BLOCKERS_x.txt
+
+W = WATER
+B = BEACH
+G = GRASS
+R = ROCK
+S = SPACE (land)
+Z = SPECIAL
+
+Q = Fill entire map with whatever terrain is at the current cursor position
+E = Fill a row from the cursor to the end of that row with the current terrain
+
+ARROW KEYS = move cursor around
+
+SPACE        toggle block bit for the current cursor location
+
+
+Once done editing, use the DirMaster program to open the D64 file.
+
+
+The top part of BLOCKERS_x.txt is for debug.  It is just the column (e.g. 16) and row (2) that contains the blocker bit.
+That section ends at the "255 255" part.  After that, the data used in the DH source code is
+output.  The first rows (0 and 1) are not used, always 0 (since the map does not go to those columns).
+But the rest of the rows are used, 2 - 22.   Each byte is 8 columns (8 * 5 = 40, and the last
+column is not currently used).  It is this section that is pasted in the code.
+NOTE:  While C needs { }, the editor doesn't output {} because those aren't standard ASCII on the 
+PET side and don't translate correctly over to the PC side when this file is copied and pasted.
+The [] are used since they are easier to search-and-replace into {} characters.
+Example:
+...
+255 255
+255 255
+0 [0,0,0,0,0],
+1 [0,0,0,0,0],
+2 [0,0,3,0,0],
+3 [0,0,0,0,0],
+4 [0,0,0,0,0],
+5 [0,0,0,0,0],
+6 [0,0,0,0,0],
+7 [0,0,0,0,0],
+8 [0,0,0,0,0],
+9 [0,0,0,48,0],
+10 [0,0,0,60,0],
+11 [0,0,0,100,0],
+12 [0,0,0,70,0],
+13 [0,0,0,118,0],
+14 [0,0,0,28,0],
+
+
+
+The RLE_x_B.txt file is:
+<RLE BYTE>     <type> <count>   (where type is 3-bit and count is 5-bit)
+
+e.g. 
+130 = 82 hex = 1000 0010 ==>  100 00010  terrain type 4 (100bin) and count of 2 (which becomes 3 when uncompressed)
+78  = 4E hex = 0100 1110 ==>  010 01110  terrain type 2 (010bin) and count of 14 (which becomes 15 when uncompressed)
+
+The RLE encoding ends when we counter "255 255", which is then followed by the number of "transitions" between
+terrain types of 32-count limits (or in otherwords the number of bytes this map encoding consumes).
+
+e.g. (at the end "255 255" marker and 108 byte count)
+255 255 108
+
+
+Example:
+4 1 2
+18 0 18
+33 1 1
+67 2 3
+128 4 0
+98 3 2
+130 4 2
+68 2 4
+33 1 1
+18 0 18
+33 1 1
+67 2 3
+129 4 1
+97 3 1
+128 4 0
+70 2 6
+33 1 1
+18 0 18
+33 1 1
+68 2 4
+130 4 2
+71 2 7
+33 1 1
+18 0 18
+34 1 2
+78 2 14
+33 1 1
+19 0 19
+33 1 1
+78 2 14
+34 1 2
+18 0 18
+33 1 1
+78 2 14
+34 1 2
+18 0 18
+33 1 1
+79 2 15
+33 1 1
+18 0 18
+33 1 1
+79 2 15
+33 1 1
+7 0 7
+34 1 2
+7 0 7
+33 1 1
+80 2 16
+32 1 0
+7 0 7
+34 1 2
+7 0 7
+33 1 1
+80 2 16
+32 1 0
+7 0 7
+34 1 2
+7 0 7
+33 1 1
+79 2 15
+33 1 1
+18 0 18
+34 1 2
+78 2 14
+33 1 1
+19 0 19
+33 1 1
+78 2 14
+34 1 2
+18 0 18
+33 1 1
+78 2 14
+34 1 2
+18 0 18
+34 1 2
+77 2 13
+34 1 2
+19 0 19
+33 1 1
+78 2 14
+33 1 1
+19 0 19
+33 1 1
+68 2 4
+133 4 5
+67 2 3
+33 1 1
+19 0 19
+33 1 1
+68 2 4
+100 3 4
+132 4 4
+33 1 1
+19 0 19
+33 1 1
+68 2 4
+104 3 8
+130 4 2
+19 0 19
+34 1 2
+67 2 3
+106 3 10
+128 4 0
+20 0 20
+33 1 1
+67 2 3
+255 255 108
+
+
+
+
