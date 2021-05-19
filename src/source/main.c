@@ -687,6 +687,7 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 			break;
 			
 		case 1:  // X+ Y-   RIGHT      
+		  if ((count == 1) && (rand_y < 6)) rand_y = 6;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		
 		  initialize_challengeI(&challenges[start], 5,     38+rand_x,  rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
@@ -695,7 +696,8 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 		  initialize_challengeI(&challenges[start], 5,     rand_x+12,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
-		case 3:  // X- Y+   LEFT		  
+		case 3:  // X- Y+   LEFT
+      if ((count == 1) && (rand_y > 18)) rand_y = 18;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		
 		  initialize_challengeI(&challenges[start], 5,     0-rand_x,  rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 		}
@@ -994,7 +996,7 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 		{		  
 			if (virtual_x == 39)
 			{
- 			  g_pvec_map[virtual_y][virtual_x] = '\0';
+ 			  //g_pvec_map[virtual_y][virtual_x] = '\0';
 			  virtual_x = 0;
         ++virtual_y;				
 			}
@@ -1354,8 +1356,12 @@ void run_stage(
 					&& (global_destiny_status.location_y == item_gem_y)
 				)
 				{							  	
-					SET_MASK(global_destiny_status.inventory, INVENTORY_GEM);  //< Set flag indicating the player now possess the bow.
+				  global_destiny_status.persistency_count += rand_mod(3)+1;
+					SET_MASK(which_stats_modified, STATS_PERSISTENCY);
+					
+					SET_MASK(global_destiny_status.inventory, INVENTORY_GEM);  //< Set flag indicating the player now possess the bow.										
 					SET_MASK(which_stats_modified, STATS_INVENTORY);
+					
 				}
 			}
 			
@@ -2351,11 +2357,11 @@ disallow_right:
 									//   attack player									
 
 								  // As used here, these are not really DELTA values.  They are absolute x/y screen coordinates, +1 area around the challenge icon
-									x_delta = ptr_challenge->x - 1;
-									y_delta = ptr_challenge->y - 1;
+									x_delta = ptr_challenge->x - 2;
+									y_delta = ptr_challenge->y - 2;
 									
-									x2_delta = (ptr_challenge->x + ptr_challenge->longest_icon_width);
-									y2_delta = (ptr_challenge->y + ptr_challenge->longest_icon_height);
+									x2_delta = (ptr_challenge->x + ptr_challenge->longest_icon_width + 1);
+									y2_delta = (ptr_challenge->y + ptr_challenge->longest_icon_height + 1);
 									
 									UPDATE_DELTA_JIFFY_ONLY(global_timer, ptr_challenge->last_attack_time);
 									if (delta_time > ptr_challenge->attack_speed)
