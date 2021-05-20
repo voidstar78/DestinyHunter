@@ -1,0 +1,1187 @@
+Modules list:
+-------------
+main.o:
+    CODE              Offs=000000  Size=004E3E  Align=00001  Fill=0000   <-- 20030 decimal code bytes
+    RODATA            Offs=000000  Size=00001D  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=000539  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=00078D  Align=00001  Fill=0000                    1933 decimal bytes (div/mod tables, animation symbols, map buffer, stage names)
+core.o:
+    CODE              Offs=004E3E  Size=0001FB  Align=00001  Fill=0000   <-- 507
+    BSS               Offs=000539  Size=000016  Align=00001  Fill=0000
+    DATA              Offs=00078D  Size=00001A  Align=00001  Fill=0000                    (banner codes, a few globals)
+utility.o:
+    CODE              Offs=005039  Size=000467  Align=00001  Fill=0000   <-- 1127
+    BSS               Offs=00054F  Size=000009  Align=00001  Fill=0000
+    DATA              Offs=0007A7  Size=00001B  Align=00001  Fill=0000                    (keyboard codes, 20XX and 40XX)
+01_destiny.o:
+    CODE              Offs=0054A0  Size=000423  Align=00001  Fill=0000   <-- 1059
+    RODATA            Offs=00001D  Size=00000A  Align=00001  Fill=0000
+    BSS               Offs=000558  Size=00000D  Align=00001  Fill=0000                    
+02_init_persona.o:
+    CODE              Offs=0058C3  Size=0005E0  Align=00001  Fill=0000   <-- 1504
+    RODATA            Offs=000027  Size=000002  Align=00001  Fill=0000
+    BSS               Offs=000565  Size=000004  Align=00001  Fill=0000
+    DATA              Offs=0007C2  Size=000028  Align=00001  Fill=0000   <--              40 (stat graphs)
+03_intro.o:
+    CODE              Offs=005EA3  Size=000102  Align=00001  Fill=0000   <-- 258
+destiny_structs.o:
+    BSS               Offs=000569  Size=00050B  Align=00001  Fill=0000   <--              1385 decimal data bytes (RLE maps and blockers)
+    DATA              Offs=0007EA  Size=000002  Align=00001  Fill=0000
+game_strings.o:
+    DATA              Offs=0007EC  Size=000273  Align=00001  Fill=0000   <--              627  (all game strings)
+snes_gamepad.o:
+    CODE              Offs=005FA5  Size=00004C  Align=00001  Fill=0000   <-- 76
+		                                                                         =====     ======
+																																						 24561       3985              (code   data)
+		
+
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(add.o):                    <-- 1779 decimal bytes (code and data of PET.lib)
+    CODE              Offs=005FF1  Size=00001C  Align=00001  Fill=0000       (~1200 bytes reserved by "system", code starts at ~$400 and stack of 100 bytes) 
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(addysp.o):
+    CODE              Offs=00600D  Size=00000E  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(aslax2.o):
+    CODE              Offs=00601B  Size=00000B  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(aslax3.o):
+    CODE              Offs=006026  Size=00000E  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(asleax1.o):
+    CODE              Offs=006034  Size=00000C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(asrax1.o):
+    CODE              Offs=006040  Size=00000A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(axlong.o):
+    CODE              Offs=00604A  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(callmain.o):
+    CODE              Offs=006057  Size=000017  Align=00001  Fill=0000
+    DATA              Offs=000A5F  Size=000004  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(checkst.o):
+    CODE              Offs=00606E  Size=00000A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(condes.o):
+    CODE              Offs=006078  Size=00000C  Align=00001  Fill=0000
+    DATA              Offs=000A63  Size=000025  Align=00001  Fill=0000
+    ONCE              Offs=000000  Size=00000C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(crt0.o):
+    BSS               Offs=000A74  Size=000002  Align=00001  Fill=0000
+    STARTUP           Offs=000000  Size=000040  Align=00001  Fill=0000
+    INIT              Offs=000000  Size=00001A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(decsp2.o):
+    CODE              Offs=006084  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(decsp3.o):
+    CODE              Offs=006091  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(decsp4.o):
+    CODE              Offs=00609E  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(decsp5.o):
+    CODE              Offs=0060AB  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(decsp6.o):
+    CODE              Offs=0060B8  Size=00000D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(enter.o):
+    CODE              Offs=0060C5  Size=00000E  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(exehdr.o):
+    EXEHDR            Offs=000000  Size=00000C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(icmp.o):
+    CODE              Offs=0060D3  Size=00002E  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp1.o):
+    CODE              Offs=006101  Size=000007  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp2.o):
+    CODE              Offs=006108  Size=000016  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp3.o):
+    CODE              Offs=00611E  Size=000005  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp4.o):
+    CODE              Offs=006123  Size=000005  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp5.o):
+    CODE              Offs=006128  Size=000005  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp6.o):
+    CODE              Offs=00612D  Size=000005  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(incsp7.o):
+    CODE              Offs=006132  Size=000005  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(jmpvec.o):
+    DATA              Offs=000A88  Size=000003  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(kbsout.o):
+    CODE              Offs=006137  Size=000006  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lcmp.o):
+    CODE              Offs=00613D  Size=00003B  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(ldai.o):
+    CODE              Offs=006178  Size=00000C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(ldeaxi.o):
+    CODE              Offs=006184  Size=000017  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(ldeaxysp.o):
+    CODE              Offs=00619B  Size=000013  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(ldec.o):
+    CODE              Offs=0061AE  Size=000015  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(leaaxsp.o):
+    CODE              Offs=0061C3  Size=00000C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(leave.o):
+    CODE              Offs=0061CF  Size=00001D  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(leq.o):
+    CODE              Offs=0061EC  Size=000006  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(linc.o):
+    CODE              Offs=0061F2  Size=000011  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lmul.o):
+    CODE              Offs=006203  Size=00005C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lne.o):
+    CODE              Offs=00625F  Size=000006  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(loadaddr.o):
+    LOADADDR          Offs=000000  Size=000002  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lpush.o):
+    CODE              Offs=006265  Size=000021  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lsub.o):
+    CODE              Offs=006286  Size=000027  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(ludiv.o):
+    CODE              Offs=0062AD  Size=00007A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lugt.o):
+    CODE              Offs=006327  Size=000006  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lult.o):
+    CODE              Offs=00632D  Size=000006  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(lumod.o):
+    CODE              Offs=006333  Size=000019  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(makebool.o):
+    CODE              Offs=00634C  Size=00002C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mod.o):
+    CODE              Offs=006378  Size=000011  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mul.o):
+    CODE              Offs=006389  Size=000045  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mul8.o):
+    CODE              Offs=0063CE  Size=00003A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mulax10.o):
+    CODE              Offs=006408  Size=000019  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mulax3.o):
+    CODE              Offs=006421  Size=000011  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(mulax5.o):
+    CODE              Offs=006432  Size=000014  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(negabs.o):
+    CODE              Offs=006446  Size=000012  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(popptr1.o):
+    CODE              Offs=006458  Size=00000E  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(pusha.o):
+    CODE              Offs=006466  Size=000016  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(pushax.o):
+    CODE              Offs=00647C  Size=00001A  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(pushwsp.o):
+    CODE              Offs=006496  Size=00001C  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(rand.o):
+    CODE              Offs=0064B2  Size=000034  Align=00001  Fill=0000
+    DATA              Offs=000A8B  Size=000004  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(shelp.o):
+    CODE              Offs=0064E6  Size=000020  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(shrax1.o):
+    CODE              Offs=006506  Size=000008  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(staspidx.o):
+    CODE              Offs=00650E  Size=000016  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(status.o):
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(staxspi.o):
+    CODE              Offs=006524  Size=00001B  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(steaxsp.o):
+    CODE              Offs=00653F  Size=000015  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(steaxspi.o):
+    CODE              Offs=006554  Size=000022  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(strlen.o):
+    CODE              Offs=006576  Size=000016  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(sub.o):
+    CODE              Offs=00658C  Size=000015  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(udiv.o):
+    CODE              Offs=0065A1  Size=00004F  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(umod.o):
+    CODE              Offs=0065F0  Size=000011  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(zerobss.o):
+    CODE              Offs=006601  Size=000023  Align=00001  Fill=0000
+F:\PET\cc65-snapshot-win32\lib/..\lib\pet.lib(zeropage.o):
+    ZEROPAGE          Offs=000000  Size=00001A  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+ZEROPAGE              000055  00006E  00001A  00001
+LOADADDR              0003FF  000400  000002  00001
+EXEHDR                000401  00040C  00000C  00001
+STARTUP               00040D  00044C  000040  00001
+ONCE                  00044D  000458  00000C  00001
+CODE                  000459  006A7C  006624  00001
+RODATA                006A7D  006AA5  000029  00001
+DATA                  006AA6  007534  000A8F  00001
+INIT                  007535  00754E  00001A  00001
+BSS                   00754F  007FC4  000A76  00001
+
+
+Exports list by name:
+---------------------
+BSOUT                     006590 RLA    ST                        000096 RLZ    
+_INVERT_BANNER_STYLE      005573 RLA    _PKEY_0                   007242 RLA    
+_PKEY_1                   007243 RLA    _PKEY_2                   007244 RLA    
+_PKEY_3                   007245 RLA    _PKEY_4                   007246 RLA    
+_PKEY_5                   007247 RLA    _PKEY_6                   007248 RLA    
+_PKEY_7                   007249 RLA    _PKEY_8                   00724A RLA    
+_PKEY_A                   007235 RLA    _PKEY_B                   007236 RLA    
+_PKEY_D                   007237 RLA    _PKEY_F                   007238 RLA    
+_PKEY_I                   007239 RLA    _PKEY_J                   00723A RLA    
+_PKEY_K                   00723B RLA    _PKEY_L                   00723C RLA    
+_PKEY_NO_KEY              00724B RLA    _PKEY_O                   00723D RLA    
+_PKEY_P                   00723E RLA    _PKEY_RETURN              007233 RLA    
+_PKEY_S                   00723F RLA    _PKEY_SPACE               007234 RLA    
+_PKEY_W                   007240 RLA    _PKEY_X                   007241 RLA    
+_WRITE_PU_DIGIT           005297 RLA    _WRITE_STRING             005433 RLA    
+__BSS_RUN__               00754F RLA    __BSS_SIZE__              000A76 REA    
+__CONSTRUCTOR_COUNT__     000000 REA    __CONSTRUCTOR_TABLE__     000459 RLA    
+__DESTRUCTOR_COUNT__      000000 REA    __DESTRUCTOR_TABLE__      006AA6 RLA    
+__EXEHDR__                000001 REA    __LOADADDR__              000001 REA    
+__STACKSIZE__             000032 REA    __STARTUP__               000001 REA    
+_challenges               007B45 RLA    _challenges_count         007291 RLA    
+_choose_persona           005D1C RLA    _conduct_intro            0062FC RLA    
+_delta_time               007A8D RLA    _delta_time_ms            007A95 RLA    
+_delta_time_sec           007A91 RLA    _determine_destiny        0058F9 RLA    
+_flush_keyboard_and_wait_for_ENTER 0054B4 RLA    _flush_keyboard_buffer    0054A9 RLA    
+_g_enter_result           007AA0 RLA    _g_i                      007A9F RLA    
+_g_pad_char               00724C RLA    _g_ptr_persona_status     007B43 RLA    
+_g_pvec_personas          007ADD RLA    _g_pvec_personas_count    007290 RLA    
+_global_destiny_status    007AB8 RLA    _global_input_ch          007A9E RLA    
+_global_timer             007A88 RLA    _main                     004DF3 RLA    
+_rand                     006917 RLA    _rand_mod                 005492 RLA    
+_read_gamepad             0063FE RLA    _srand                    00690B RLA    
+_str_LINGA_reverse        0072D1 RLA    _str_YONI_reverse         0072C2 RLA    
+_str_bless                0072EA RLA    _str_chime                0072DF RLA    
+_str_choose_your_persona  00735A RLA    _str_destiny_hunter       007401 RLA    
+_str_email                0074EA RLA    _str_fates_have_forged_reverse 0072F5 RLA    
+_str_finish_map           0073F7 RLA    _str_fired                0074BA RLA    
+_str_game_over            0074AC RLA    _str_instruction_aim      007424 RLA    
+_str_instruction_blessing 007475 RLA    _str_instruction_fire     00745A RLA    
+_str_instruction_move     00743F RLA    _str_instruction_persistency 007491 RLA    
+_str_intro_notice         007292 RLA    _str_persona_alcyone      007333 RLA    
+_str_persona_cyrene       007341 RLA    _str_persona_orion        00734E RLA    
+_str_persona_rudra        007348 RLA    _str_persona_sidon        007354 RLA    
+_str_persona_skadi        00733B RLA    _str_press_a_key_reverse  0072B7 RLA    
+_str_press_return_to_proceed 00731B RLA    _str_select_persona       00736E RLA    
+_str_stage_instruction    0073D0 RLA    _str_stat_attack          0073BA RLA    
+_str_stat_defense         0073C1 RLA    _str_stat_hp_max          0073C9 RLA    
+_str_stat_land_move       00738C RLA    _str_stat_max_arrows      0073A9 RLA    
+_str_stat_range           0073B4 RLA    _str_stat_stealth         0073A1 RLA    
+_str_stat_water_move      007396 RLA    _str_steps                0074B5 RLA    
+_str_thank_you            0074C3 RLA    _str_time                 0074BF RLA    
+_strlen                   0069CF RLA    _text_banner_center       0058A8 RLA    
+addysp                    006467 RLA    addysp1                   006466 RLA    
+aslax2                    006474 RLA    aslax3                    00647F RLA    
+asrax1                    006499 RLA    axlong                    0064A3 RLA    
+booleq                    0067AB RLA    boolne                    0067A5 RLA    
+boolugt                   0067CA RLA    boolult                   0067C4 RLA    
+callmain                  0064B0 RLA    checkst                   0064C7 RLA    
+deceaxy                   006607 RLA    decsp2                    0064DD RLA    
+decsp3                    0064EA RLA    decsp4                    0064F7 RLA    
+decsp5                    006504 RLA    decsp6                    006511 RLA    
+donelib                   0064D1 RLA    enter                     00651E RLA    
+getlop                    006717 RLA    inceaxy                   00664B RLA    
+incsp1                    00655A RLA    incsp2                    006569 RLA    
+incsp3                    006577 RLA    incsp4                    00657C RLA    
+incsp5                    006581 RLA    incsp6                    006586 RLA    
+incsp7                    00658B RLA    initlib                   00044D RLA    
+jmpvec                    00752E RLA    ldaidx                    0065D1 RLA    
+ldeaxi                    0065DD RLA    ldeaxidx                  0065DF RLA    
+ldeaxysp                  0065F6 RLA    leaa0sp                   00661C RLA    
+leave                     006635 RLA    mul8x16                   006829 RLA    
+mul8x16a                  006833 RLA    mulax10                   006861 RLA    
+mulax3                    00687A RLA    mulax5                    00688B RLA    
+negax                     0068A3 RLA    popax                     006561 RLA    
+popptr1                   0068B1 RLA    popsargsudiv16            00693F RLA    
+ptr1                      00005D RLZ    ptr2                      00005F RLZ    
+ptr3                      000061 RLZ    ptr4                      000063 RLZ    
+push0                     0068D5 RLA    push0ax                   0066C1 RLA    
+pusha                     0068C3 RLA    pusha0                    0068D7 RLA    
+pushax                    0068D9 RLA    pusheax                   0066C7 RLA    
+pushl0                    0066BE RLA    pushwysp                  0068F1 RLA    
+regbank                   000069 RLZ    regsave                   000059 RLZ    
+shleax1                   00648D RLA    shrax1                    00695F RLA    
+sp                        000055 RLZ    sreg                      000057 RLZ    
+staspidx                  006967 RLA    staxspidx                 00697D RLA    
+steax0sp                  006998 RLA    steaxspidx                0069AD RLA    
+steaxysp                  00699A RLA    tmp1                      000065 RLZ    
+tmp2                      000066 RLZ    tmp3                      000067 RLZ    
+tmp4                      000068 RLZ    tosadda0                  00644A RLA    
+tosaddax                  00644C RLA    toseqeax                  006645 RLA    
+tosicmp                   00652E RLA    tosicmp0                  00652C RLA    
+toslcmp                   006596 RLA    tosmoda0                  0067D1 RLA    
+tosmula0                  006827 RLA    tosneeax                  0066B8 RLA    
+tossuba0                  0069E5 RLA    tossubax                  0069E7 RLA    
+tossubeax                 0066E5 RLA    tosudiv0ax                006706 RLA    
+tosudiva0                 0069FA RLA    tosudivax                 0069FC RLA    
+tosudiveax                00670C RLA    tosugteax                 006780 RLA    
+tosulteax                 006786 RLA    tosumoda0                 006A49 RLA    
+tosumodeax                006792 RLA    tosumul0ax                00665C RLA    
+tosumula0                 006827 RLA    tosumulax                 0067E2 RLA    
+udiv16                    006A0B RLA    udiv32                    00673B RLA    
+zerobss                   006A5A RLA    
+
+
+Exports list by value:
+----------------------
+__CONSTRUCTOR_COUNT__     000000 REA    __DESTRUCTOR_COUNT__      000000 REA    
+__STARTUP__               000001 REA    __LOADADDR__              000001 REA    
+__EXEHDR__                000001 REA    __STACKSIZE__             000032 REA    
+sp                        000055 RLZ    sreg                      000057 RLZ    
+regsave                   000059 RLZ    ptr1                      00005D RLZ    
+ptr2                      00005F RLZ    ptr3                      000061 RLZ    
+ptr4                      000063 RLZ    tmp1                      000065 RLZ    
+tmp2                      000066 RLZ    tmp3                      000067 RLZ    
+tmp4                      000068 RLZ    regbank                   000069 RLZ    
+ST                        000096 RLZ    initlib                   00044D RLA    
+__CONSTRUCTOR_TABLE__     000459 RLA    __BSS_SIZE__              000A76 REA    
+_main                     004DF3 RLA    _WRITE_PU_DIGIT           005297 RLA    
+_WRITE_STRING             005433 RLA    _rand_mod                 005492 RLA    
+_flush_keyboard_buffer    0054A9 RLA    _flush_keyboard_and_wait_for_ENTER 0054B4 RLA    
+_INVERT_BANNER_STYLE      005573 RLA    _text_banner_center       0058A8 RLA    
+_determine_destiny        0058F9 RLA    _choose_persona           005D1C RLA    
+_conduct_intro            0062FC RLA    _read_gamepad             0063FE RLA    
+tosadda0                  00644A RLA    tosaddax                  00644C RLA    
+addysp1                   006466 RLA    addysp                    006467 RLA    
+aslax2                    006474 RLA    aslax3                    00647F RLA    
+shleax1                   00648D RLA    asrax1                    006499 RLA    
+axlong                    0064A3 RLA    callmain                  0064B0 RLA    
+checkst                   0064C7 RLA    donelib                   0064D1 RLA    
+decsp2                    0064DD RLA    decsp3                    0064EA RLA    
+decsp4                    0064F7 RLA    decsp5                    006504 RLA    
+decsp6                    006511 RLA    enter                     00651E RLA    
+tosicmp0                  00652C RLA    tosicmp                   00652E RLA    
+incsp1                    00655A RLA    popax                     006561 RLA    
+incsp2                    006569 RLA    incsp3                    006577 RLA    
+incsp4                    00657C RLA    incsp5                    006581 RLA    
+incsp6                    006586 RLA    incsp7                    00658B RLA    
+BSOUT                     006590 RLA    toslcmp                   006596 RLA    
+ldaidx                    0065D1 RLA    ldeaxi                    0065DD RLA    
+ldeaxidx                  0065DF RLA    ldeaxysp                  0065F6 RLA    
+deceaxy                   006607 RLA    leaa0sp                   00661C RLA    
+leave                     006635 RLA    toseqeax                  006645 RLA    
+inceaxy                   00664B RLA    tosumul0ax                00665C RLA    
+tosneeax                  0066B8 RLA    pushl0                    0066BE RLA    
+push0ax                   0066C1 RLA    pusheax                   0066C7 RLA    
+tossubeax                 0066E5 RLA    tosudiv0ax                006706 RLA    
+tosudiveax                00670C RLA    getlop                    006717 RLA    
+udiv32                    00673B RLA    tosugteax                 006780 RLA    
+tosulteax                 006786 RLA    tosumodeax                006792 RLA    
+boolne                    0067A5 RLA    booleq                    0067AB RLA    
+boolult                   0067C4 RLA    boolugt                   0067CA RLA    
+tosmoda0                  0067D1 RLA    tosumulax                 0067E2 RLA    
+tosmula0                  006827 RLA    tosumula0                 006827 RLA    
+mul8x16                   006829 RLA    mul8x16a                  006833 RLA    
+mulax10                   006861 RLA    mulax3                    00687A RLA    
+mulax5                    00688B RLA    negax                     0068A3 RLA    
+popptr1                   0068B1 RLA    pusha                     0068C3 RLA    
+push0                     0068D5 RLA    pusha0                    0068D7 RLA    
+pushax                    0068D9 RLA    pushwysp                  0068F1 RLA    
+_srand                    00690B RLA    _rand                     006917 RLA    
+popsargsudiv16            00693F RLA    shrax1                    00695F RLA    
+staspidx                  006967 RLA    staxspidx                 00697D RLA    
+steax0sp                  006998 RLA    steaxysp                  00699A RLA    
+steaxspidx                0069AD RLA    _strlen                   0069CF RLA    
+tossuba0                  0069E5 RLA    tossubax                  0069E7 RLA    
+tosudiva0                 0069FA RLA    tosudivax                 0069FC RLA    
+udiv16                    006A0B RLA    tosumoda0                 006A49 RLA    
+zerobss                   006A5A RLA    __DESTRUCTOR_TABLE__      006AA6 RLA    
+_PKEY_RETURN              007233 RLA    _PKEY_SPACE               007234 RLA    
+_PKEY_A                   007235 RLA    _PKEY_B                   007236 RLA    
+_PKEY_D                   007237 RLA    _PKEY_F                   007238 RLA    
+_PKEY_I                   007239 RLA    _PKEY_J                   00723A RLA    
+_PKEY_K                   00723B RLA    _PKEY_L                   00723C RLA    
+_PKEY_O                   00723D RLA    _PKEY_P                   00723E RLA    
+_PKEY_S                   00723F RLA    _PKEY_W                   007240 RLA    
+_PKEY_X                   007241 RLA    _PKEY_0                   007242 RLA    
+_PKEY_1                   007243 RLA    _PKEY_2                   007244 RLA    
+_PKEY_3                   007245 RLA    _PKEY_4                   007246 RLA    
+_PKEY_5                   007247 RLA    _PKEY_6                   007248 RLA    
+_PKEY_7                   007249 RLA    _PKEY_8                   00724A RLA    
+_PKEY_NO_KEY              00724B RLA    _g_pad_char               00724C RLA    
+_g_pvec_personas_count    007290 RLA    _challenges_count         007291 RLA    
+_str_intro_notice         007292 RLA    _str_press_a_key_reverse  0072B7 RLA    
+_str_YONI_reverse         0072C2 RLA    _str_LINGA_reverse        0072D1 RLA    
+_str_chime                0072DF RLA    _str_bless                0072EA RLA    
+_str_fates_have_forged_reverse 0072F5 RLA    _str_press_return_to_proceed 00731B RLA    
+_str_persona_alcyone      007333 RLA    _str_persona_skadi        00733B RLA    
+_str_persona_cyrene       007341 RLA    _str_persona_rudra        007348 RLA    
+_str_persona_orion        00734E RLA    _str_persona_sidon        007354 RLA    
+_str_choose_your_persona  00735A RLA    _str_select_persona       00736E RLA    
+_str_stat_land_move       00738C RLA    _str_stat_water_move      007396 RLA    
+_str_stat_stealth         0073A1 RLA    _str_stat_max_arrows      0073A9 RLA    
+_str_stat_range           0073B4 RLA    _str_stat_attack          0073BA RLA    
+_str_stat_defense         0073C1 RLA    _str_stat_hp_max          0073C9 RLA    
+_str_stage_instruction    0073D0 RLA    _str_finish_map           0073F7 RLA    
+_str_destiny_hunter       007401 RLA    _str_instruction_aim      007424 RLA    
+_str_instruction_move     00743F RLA    _str_instruction_fire     00745A RLA    
+_str_instruction_blessing 007475 RLA    _str_instruction_persistency 007491 RLA    
+_str_game_over            0074AC RLA    _str_steps                0074B5 RLA    
+_str_fired                0074BA RLA    _str_time                 0074BF RLA    
+_str_thank_you            0074C3 RLA    _str_email                0074EA RLA    
+jmpvec                    00752E RLA    __BSS_RUN__               00754F RLA    
+_global_timer             007A88 RLA    _delta_time               007A8D RLA    
+_delta_time_sec           007A91 RLA    _delta_time_ms            007A95 RLA    
+_global_input_ch          007A9E RLA    _g_i                      007A9F RLA    
+_g_enter_result           007AA0 RLA    _global_destiny_status    007AB8 RLA    
+_g_pvec_personas          007ADD RLA    _g_ptr_persona_status     007B43 RLA    
+_challenges               007B45 RLA    
+
+
+Imports list:
+-------------
+BSOUT (kbsout.o):
+    crt0.o                    pet/crt0.s(10)
+ST (status.o):
+    checkst.o                 pet/checkst.s(9)
+    crt0.o                    pet/crt0.s(11)
+_INVERT_BANNER_STYLE (utility.o):
+    03_intro.o                03_intro.s(18)
+_PKEY_0 (core.o):
+    utility.o                 utility.s(37)
+    main.o                    main.s(32)
+_PKEY_1 (core.o):
+    02_init_persona.o         02_init_persona.s(17)
+    utility.o                 utility.s(38)
+_PKEY_2 (core.o):
+    02_init_persona.o         02_init_persona.s(18)
+    utility.o                 utility.s(39)
+_PKEY_3 (core.o):
+    02_init_persona.o         02_init_persona.s(19)
+    utility.o                 utility.s(40)
+_PKEY_4 (core.o):
+    02_init_persona.o         02_init_persona.s(20)
+    utility.o                 utility.s(41)
+    main.o                    main.s(33)
+_PKEY_5 (core.o):
+    02_init_persona.o         02_init_persona.s(21)
+    utility.o                 utility.s(42)
+_PKEY_6 (core.o):
+    02_init_persona.o         02_init_persona.s(22)
+    utility.o                 utility.s(43)
+    main.o                    main.s(34)
+_PKEY_7 (core.o):
+    utility.o                 utility.s(44)
+_PKEY_8 (core.o):
+    utility.o                 utility.s(45)
+    main.o                    main.s(35)
+_PKEY_A (core.o):
+    utility.o                 utility.s(24)
+    main.o                    main.s(24)
+_PKEY_B (core.o):
+    utility.o                 utility.s(25)
+    main.o                    main.s(25)
+_PKEY_D (core.o):
+    utility.o                 utility.s(26)
+    main.o                    main.s(26)
+_PKEY_F (core.o):
+    utility.o                 utility.s(27)
+    main.o                    main.s(27)
+_PKEY_I (core.o):
+    utility.o                 utility.s(28)
+_PKEY_J (core.o):
+    utility.o                 utility.s(29)
+_PKEY_K (core.o):
+    utility.o                 utility.s(30)
+_PKEY_L (core.o):
+    utility.o                 utility.s(31)
+_PKEY_NO_KEY (core.o):
+    02_init_persona.o         02_init_persona.s(23)
+    01_destiny.o              01_destiny.s(14)
+    utility.o                 utility.s(46)
+    main.o                    main.s(36)
+_PKEY_O (core.o):
+    utility.o                 utility.s(32)
+    main.o                    main.s(28)
+_PKEY_P (core.o):
+    utility.o                 utility.s(33)
+    main.o                    main.s(29)
+_PKEY_RETURN (core.o):
+    02_init_persona.o         02_init_persona.s(16)
+    utility.o                 utility.s(22)
+_PKEY_S (core.o):
+    utility.o                 utility.s(34)
+    main.o                    main.s(30)
+_PKEY_SPACE (core.o):
+    utility.o                 utility.s(23)
+    main.o                    main.s(23)
+_PKEY_W (core.o):
+    utility.o                 utility.s(35)
+    main.o                    main.s(31)
+_PKEY_X (core.o):
+    utility.o                 utility.s(36)
+_WRITE_PU_DIGIT (core.o):
+    01_destiny.o              01_destiny.s(15)
+    main.o                    main.s(42)
+_WRITE_STRING (core.o):
+    03_intro.o                03_intro.s(14)
+    02_init_persona.o         02_init_persona.s(24)
+    01_destiny.o              01_destiny.s(16)
+    utility.o                 utility.s(47)
+    main.o                    main.s(43)
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__CONSTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__CONSTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__DESTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__DESTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__EXEHDR__ (exehdr.o):
+    [linker generated]        F:\PET\cc65-snapshot-win32\cfg/pet.cfg(3)
+__LOADADDR__ (loadaddr.o):
+    [linker generated]        F:\PET\cc65-snapshot-win32\cfg/pet.cfg(2)
+__STACKSIZE__ ([linker generated]):
+    [linker generated]        F:\PET\cc65-snapshot-win32\cfg/pet.cfg(10)
+__STARTUP__ (crt0.o):
+    main.o                    main.s(13)
+_challenges (destiny_structs.o):
+    main.o                    main.s(46)
+_challenges_count (destiny_structs.o):
+    main.o                    main.s(47)
+_choose_persona (02_init_persona.o):
+    main.o                    main.s(60)
+_conduct_intro (03_intro.o):
+    main.o                    main.s(59)
+_delta_time (core.o):
+    main.o                    main.s(38)
+_delta_time_ms (core.o):
+    main.o                    main.s(40)
+_delta_time_sec (core.o):
+    main.o                    main.s(39)
+_determine_destiny (01_destiny.o):
+    main.o                    main.s(58)
+_flush_keyboard_and_wait_for_ENTER (utility.o):
+    03_intro.o                03_intro.s(17)
+    main.o                    main.s(22)
+_flush_keyboard_buffer (utility.o):
+    01_destiny.o              01_destiny.s(26)
+_g_enter_result (utility.o):
+    03_intro.o                03_intro.s(16)
+    main.o                    main.s(20)
+_g_i (utility.o):
+    02_init_persona.o         02_init_persona.s(26)
+    01_destiny.o              01_destiny.s(25)
+    main.o                    main.s(19)
+_g_pad_char (core.o):
+    main.o                    main.s(41)
+_g_ptr_persona_status (destiny_structs.o):
+    03_intro.o                03_intro.s(15)
+    02_init_persona.o         02_init_persona.s(48)
+    main.o                    main.s(45)
+_g_pvec_personas (destiny_structs.o):
+    02_init_persona.o         02_init_persona.s(46)
+_g_pvec_personas_count (destiny_structs.o):
+    02_init_persona.o         02_init_persona.s(47)
+_global_destiny_status (destiny_structs.o):
+    02_init_persona.o         02_init_persona.s(45)
+    01_destiny.o              01_destiny.s(17)
+    main.o                    main.s(44)
+_global_input_ch (utility.o):
+    02_init_persona.o         02_init_persona.s(25)
+    01_destiny.o              01_destiny.s(24)
+    main.o                    main.s(18)
+_global_timer (core.o):
+    main.o                    main.s(37)
+_main (main.o):
+    callmain.o                runtime/callmain.s(11)
+_rand (rand.o):
+    utility.o                 utility.s(49)
+_rand_mod (utility.o):
+    main.o                    main.s(21)
+_read_gamepad (snes_gamepad.o):
+    main.o                    main.s(61)
+_srand (rand.o):
+    main.o                    main.s(17)
+_str_LINGA_reverse (game_strings.o):
+    01_destiny.o              01_destiny.s(20)
+_str_YONI_reverse (game_strings.o):
+    01_destiny.o              01_destiny.s(19)
+_str_bless (game_strings.o):
+    01_destiny.o              01_destiny.s(22)
+_str_chime (game_strings.o):
+    01_destiny.o              01_destiny.s(21)
+_str_choose_your_persona (game_strings.o):
+    02_init_persona.o         02_init_persona.s(35)
+_str_destiny_hunter (game_strings.o):
+    03_intro.o                03_intro.s(21)
+_str_email (game_strings.o):
+    main.o                    main.s(57)
+_str_fates_have_forged_reverse (game_strings.o):
+    01_destiny.o              01_destiny.s(23)
+_str_finish_map (game_strings.o):
+    main.o                    main.s(51)
+_str_fired (game_strings.o):
+    main.o                    main.s(54)
+_str_game_over (game_strings.o):
+    main.o                    main.s(52)
+_str_instruction_aim (game_strings.o):
+    03_intro.o                03_intro.s(22)
+_str_instruction_blessing (game_strings.o):
+    03_intro.o                03_intro.s(25)
+_str_instruction_fire (game_strings.o):
+    03_intro.o                03_intro.s(24)
+_str_instruction_move (game_strings.o):
+    03_intro.o                03_intro.s(23)
+_str_instruction_persistency (game_strings.o):
+    03_intro.o                03_intro.s(26)
+_str_intro_notice (game_strings.o):
+    main.o                    main.s(48)
+_str_persona_alcyone (game_strings.o):
+    02_init_persona.o         02_init_persona.s(29)
+_str_persona_cyrene (game_strings.o):
+    02_init_persona.o         02_init_persona.s(31)
+_str_persona_orion (game_strings.o):
+    02_init_persona.o         02_init_persona.s(33)
+_str_persona_rudra (game_strings.o):
+    02_init_persona.o         02_init_persona.s(32)
+_str_persona_sidon (game_strings.o):
+    02_init_persona.o         02_init_persona.s(34)
+_str_persona_skadi (game_strings.o):
+    02_init_persona.o         02_init_persona.s(30)
+_str_press_a_key_reverse (game_strings.o):
+    01_destiny.o              01_destiny.s(18)
+_str_press_return_to_proceed (game_strings.o):
+    03_intro.o                03_intro.s(20)
+    02_init_persona.o         02_init_persona.s(28)
+    main.o                    main.s(49)
+_str_select_persona (game_strings.o):
+    02_init_persona.o         02_init_persona.s(36)
+_str_stage_instruction (game_strings.o):
+    main.o                    main.s(50)
+_str_stat_attack (game_strings.o):
+    02_init_persona.o         02_init_persona.s(42)
+_str_stat_defense (game_strings.o):
+    02_init_persona.o         02_init_persona.s(43)
+_str_stat_hp_max (game_strings.o):
+    02_init_persona.o         02_init_persona.s(44)
+_str_stat_land_move (game_strings.o):
+    02_init_persona.o         02_init_persona.s(37)
+_str_stat_max_arrows (game_strings.o):
+    02_init_persona.o         02_init_persona.s(40)
+_str_stat_range (game_strings.o):
+    02_init_persona.o         02_init_persona.s(41)
+_str_stat_stealth (game_strings.o):
+    02_init_persona.o         02_init_persona.s(39)
+_str_stat_water_move (game_strings.o):
+    02_init_persona.o         02_init_persona.s(38)
+_str_steps (game_strings.o):
+    main.o                    main.s(53)
+_str_thank_you (game_strings.o):
+    main.o                    main.s(56)
+_str_time (game_strings.o):
+    main.o                    main.s(55)
+_strlen (strlen.o):
+    02_init_persona.o         02_init_persona.s(15)
+    utility.o                 utility.s(48)
+    main.o                    main.s(14)
+_text_banner_center (utility.o):
+    03_intro.o                03_intro.s(19)
+    02_init_persona.o         02_init_persona.s(27)
+addysp (addysp.o):
+    leave.o                   runtime/leave.s(14)
+    incsp7.o                  runtime/incsp7.s(8)
+    incsp6.o                  runtime/incsp6.s(8)
+    incsp5.o                  runtime/incsp5.s(8)
+    incsp4.o                  runtime/incsp4.s(8)
+    incsp3.o                  runtime/incsp3.s(8)
+addysp1 (addysp.o):
+    sub.o                     runtime/sub.s(8)
+    ludiv.o                   runtime/ludiv.s(9)
+    lsub.o                    runtime/lsub.s(11)
+    lmul.o                    runtime/lmul.s(9)
+aslax2 (aslax2.o):
+    02_init_persona.o         02_init_persona.s(804)
+aslax3 (aslax3.o):
+    main.o                    main.s(11710)
+asrax1 (asrax1.o):
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    main.o                    main.s(11710)
+axlong (axlong.o):
+    main.o                    main.s(11710)
+booleq (makebool.o):
+    leq.o                     runtime/leq.s(8)
+    main.o                    main.s(11710)
+boolne (makebool.o):
+    lne.o                     runtime/lne.s(8)
+boolugt (makebool.o):
+    lugt.o                    runtime/lugt.s(8)
+boolult (makebool.o):
+    lult.o                    runtime/lult.s(8)
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    main.o                    main.s(11710)
+callmain (callmain.o):
+    crt0.o                    pet/crt0.s(9)
+checkst (checkst.o):
+    kbsout.o                  pet/kbsout.s(10)
+deceaxy (ldec.o):
+    main.o                    main.s(11710)
+decsp2 (decsp2.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+decsp3 (decsp3.o):
+    03_intro.o                03_intro.s(163)
+    02_init_persona.o         02_init_persona.s(804)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+decsp4 (decsp4.o):
+    lpush.o                   runtime/lpush.s(12)
+    03_intro.o                03_intro.s(163)
+    02_init_persona.o         02_init_persona.s(804)
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    utility.o                 utility.s(745)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+decsp5 (decsp5.o):
+    02_init_persona.o         02_init_persona.s(804)
+    utility.o                 utility.s(745)
+decsp6 (decsp6.o):
+    01_destiny.o              01_destiny.s(545)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+donelib (condes.o):
+    crt0.o                    pet/crt0.s(7)
+enter (enter.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+getlop (ludiv.o):
+    lumod.o                   runtime/lumod.s(9)
+inceaxy (linc.o):
+    core.o                    core.s(371)
+incsp1 (incsp1.o):
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    main.o                    main.s(11710)
+incsp2 (incsp2.o):
+    staxspi.o                 runtime/staxspi.s(9)
+    staspidx.o                runtime/staspidx.s(8)
+    popptr1.o                 runtime/popptr1.s(8)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+incsp3 (incsp3.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+incsp4 (incsp4.o):
+    lcmp.o                    runtime/lcmp.s(9)
+    utility.o                 utility.s(745)
+incsp5 (incsp5.o):
+    core.o                    core.s(371)
+incsp6 (incsp6.o):
+    02_init_persona.o         02_init_persona.s(804)
+    utility.o                 utility.s(745)
+incsp7 (incsp7.o):
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+initlib (condes.o):
+    crt0.o                    pet/crt0.s(7)
+jmpvec (jmpvec.o):
+    main.o                    main.s(11710)
+ldaidx (ldai.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+ldeaxi (ldeaxi.o):
+    main.o                    main.s(11710)
+ldeaxidx (ldeaxi.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+ldeaxysp (ldeaxysp.o):
+    core.o                    core.s(371)
+leaa0sp (leaaxsp.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+leave (leave.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+mul8x16 (mul8.o):
+    mul.o                     runtime/mul.s(8)
+mul8x16a (mul8.o):
+    mul.o                     runtime/mul.s(8)
+mulax10 (mulax10.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+mulax3 (mulax3.o):
+    utility.o                 utility.s(745)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+mulax5 (mulax5.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+negax (negabs.o):
+    shelp.o                   runtime/shelp.s(11)
+    mod.o                     runtime/mod.s(11)
+popax (incsp2.o):
+    shelp.o                   runtime/shelp.s(11)
+popptr1 (popptr1.o):
+    umod.o                    runtime/umod.s(8)
+    udiv.o                    runtime/udiv.s(9)
+    steaxspi.o                runtime/steaxspi.s(9)
+    mul8.o                    runtime/mul8.s(9)
+    mul.o                     runtime/mul.s(9)
+popsargsudiv16 (shelp.o):
+    mod.o                     runtime/mod.s(11)
+ptr1 (zeropage.o):
+    lcmp.o                    runtime/lcmp.s(10)
+    zerobss.o                 common/zerobss.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    steaxspi.o                runtime/steaxspi.s(10)
+    staxspi.o                 runtime/staxspi.s(10)
+    staspidx.o                runtime/staspidx.s(9)
+    shelp.o                   runtime/shelp.s(12)
+    popptr1.o                 runtime/popptr1.s(9)
+    mulax5.o                  runtime/mulax5.s(9)
+    mulax3.o                  runtime/mulax3.s(9)
+    mulax10.o                 runtime/mulax10.s(9)
+    mul8.o                    runtime/mul8.s(10)
+    mul.o                     runtime/mul.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+    ldeaxi.o                  runtime/ldeaxi.s(8)
+    ldai.o                    runtime/ldai.s(8)
+    03_intro.o                03_intro.s(11)
+    02_init_persona.o         02_init_persona.s(11)
+    01_destiny.o              01_destiny.s(11)
+    utility.o                 utility.s(11)
+    core.o                    core.s(11)
+    main.o                    main.s(11)
+ptr2 (zeropage.o):
+    strlen.o                  common/strlen.s(12)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    main.o                    main.s(11)
+ptr3 (zeropage.o):
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+ptr4 (zeropage.o):
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    shelp.o                   runtime/shelp.s(12)
+    mul8.o                    runtime/mul8.s(10)
+    mul.o                     runtime/mul.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+    linc.o                    runtime/linc.s(8)
+push0 (pushax.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+push0ax (lpush.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pusha (pusha.o):
+    02_init_persona.o         02_init_persona.s(804)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pusha0 (pushax.o):
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pushax (pushax.o):
+    callmain.o                runtime/callmain.s(11)
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pusheax (lpush.o):
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pushl0 (lpush.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+pushwysp (pushwsp.o):
+    main.o                    main.s(11710)
+regbank (zeropage.o):
+    main.o                    main.s(10)
+regsave (zeropage.o):
+    02_init_persona.o         02_init_persona.s(10)
+    01_destiny.o              01_destiny.s(10)
+    main.o                    main.s(10)
+shleax1 (asleax1.o):
+    main.o                    main.s(11710)
+shrax1 (shrax1.o):
+    utility.o                 utility.s(745)
+sp (zeropage.o):
+    lcmp.o                    runtime/lcmp.s(10)
+    addysp.o                  runtime/addysp.s(8)
+    sub.o                     runtime/sub.s(9)
+    steaxsp.o                 runtime/steaxsp.s(8)
+    staxspi.o                 runtime/staxspi.s(10)
+    staspidx.o                runtime/staspidx.s(9)
+    pushwsp.o                 runtime/pushwsp.s(8)
+    pushax.o                  runtime/pushax.s(8)
+    pusha.o                   runtime/pusha.s(8)
+    popptr1.o                 runtime/popptr1.s(9)
+    ludiv.o                   runtime/ludiv.s(10)
+    lsub.o                    runtime/lsub.s(12)
+    lpush.o                   runtime/lpush.s(13)
+    lmul.o                    runtime/lmul.s(10)
+    leave.o                   runtime/leave.s(15)
+    leaaxsp.o                 runtime/leaaxsp.s(8)
+    ldeaxysp.o                runtime/ldeaxysp.s(12)
+    incsp2.o                  runtime/incsp2.s(8)
+    incsp1.o                  runtime/incsp1.s(8)
+    icmp.o                    runtime/icmp.s(9)
+    enter.o                   runtime/enter.s(8)
+    decsp6.o                  runtime/decsp6.s(8)
+    decsp5.o                  runtime/decsp5.s(8)
+    decsp4.o                  runtime/decsp4.s(8)
+    decsp3.o                  runtime/decsp3.s(8)
+    decsp2.o                  runtime/decsp2.s(8)
+    crt0.o                    /home/travis/build/cc65/cc65/asminc/zeropage.inc(11)
+    add.o                     runtime/add.s(12)
+    03_intro.o                03_intro.s(10)
+    02_init_persona.o         02_init_persona.s(10)
+    01_destiny.o              01_destiny.s(10)
+    utility.o                 utility.s(10)
+    core.o                    core.s(10)
+    main.o                    main.s(10)
+sreg (zeropage.o):
+    lcmp.o                    runtime/lcmp.s(10)
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    steaxspi.o                runtime/steaxspi.s(10)
+    steaxsp.o                 runtime/steaxsp.s(8)
+    mod.o                     runtime/mod.s(12)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lsub.o                    runtime/lsub.s(12)
+    lpush.o                   runtime/lpush.s(13)
+    lmul.o                    runtime/lmul.s(10)
+    linc.o                    runtime/linc.s(8)
+    ldec.o                    runtime/ldec.s(9)
+    ldeaxysp.o                runtime/ldeaxysp.s(12)
+    ldeaxi.o                  runtime/ldeaxi.s(8)
+    icmp.o                    runtime/icmp.s(9)
+    axlong.o                  runtime/axlong.s(9)
+    asleax1.o                 runtime/asleax1.s(8)
+    01_destiny.o              01_destiny.s(10)
+    core.o                    core.s(10)
+    main.o                    main.s(10)
+staspidx (staspidx.o):
+    02_init_persona.o         02_init_persona.s(804)
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+staxspidx (staxspi.o):
+    main.o                    main.s(11710)
+steax0sp (steaxsp.o):
+    01_destiny.o              01_destiny.s(545)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+steaxspidx (steaxspi.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+steaxysp (steaxsp.o):
+    core.o                    core.s(371)
+tmp1 (zeropage.o):
+    steaxspi.o                runtime/steaxspi.s(10)
+    staxspi.o                 runtime/staxspi.s(10)
+    staspidx.o                runtime/staspidx.s(9)
+    shrax1.o                  runtime/shrax1.s(8)
+    shelp.o                   runtime/shelp.s(12)
+    mul.o                     runtime/mul.s(10)
+    mod.o                     runtime/mod.s(12)
+    ldec.o                    runtime/ldec.s(9)
+    asrax1.o                  runtime/asrax1.s(8)
+    asleax1.o                 runtime/asleax1.s(8)
+    aslax3.o                  runtime/aslax3.s(8)
+    aslax2.o                  runtime/aslax2.s(8)
+    add.o                     runtime/add.s(12)
+tmp2 (zeropage.o):
+    steaxspi.o                runtime/steaxspi.s(10)
+    shelp.o                   runtime/shelp.s(12)
+    lmul.o                    runtime/lmul.s(10)
+tmp3 (zeropage.o):
+    steaxspi.o                runtime/steaxspi.s(10)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+tmp4 (zeropage.o):
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+tosadda0 (add.o):
+    main.o                    main.s(11710)
+tosaddax (add.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+toseqeax (leq.o):
+    main.o                    main.s(11710)
+tosicmp (icmp.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+tosicmp0 (icmp.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+toslcmp (lcmp.o):
+    lult.o                    runtime/lult.s(8)
+    lugt.o                    runtime/lugt.s(8)
+    lne.o                     runtime/lne.s(8)
+    leq.o                     runtime/leq.s(8)
+tosmoda0 (mod.o):
+    utility.o                 utility.s(745)
+tosmula0 (mul8.o):
+    02_init_persona.o         02_init_persona.s(804)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+tosneeax (lne.o):
+    main.o                    main.s(11710)
+tossuba0 (sub.o):
+    02_init_persona.o         02_init_persona.s(804)
+tossubax (sub.o):
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+tossubeax (lsub.o):
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+tosudiv0ax (ludiv.o):
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+tosudiva0 (udiv.o):
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+tosudivax (udiv.o):
+    01_destiny.o              01_destiny.s(545)
+tosudiveax (ludiv.o):
+    core.o                    core.s(371)
+tosugteax (lugt.o):
+    main.o                    main.s(11710)
+tosulteax (lult.o):
+    core.o                    core.s(371)
+tosumoda0 (umod.o):
+    01_destiny.o              01_destiny.s(545)
+tosumodeax (lumod.o):
+    core.o                    core.s(371)
+tosumul0ax (lmul.o):
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+tosumula0 (mul8.o):
+    02_init_persona.o         02_init_persona.s(804)
+    01_destiny.o              01_destiny.s(545)
+    utility.o                 utility.s(745)
+    core.o                    core.s(371)
+    core.o                    core.s(371)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+    main.o                    main.s(11710)
+tosumulax (mul.o):
+    01_destiny.o              01_destiny.s(545)
+    utility.o                 utility.s(745)
+udiv16 (udiv.o):
+    umod.o                    runtime/umod.s(8)
+    shelp.o                   runtime/shelp.s(11)
+udiv32 (ludiv.o):
+    lumod.o                   runtime/lumod.s(9)
+zerobss (zerobss.o):
+    crt0.o                    pet/crt0.s(8)
+
