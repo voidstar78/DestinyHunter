@@ -6,7 +6,7 @@ www.destinyhunter.org
 
 *Destiny Hunter* is a tribute-game made in *2021* for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K system RAM is required, the game can be loaded by cassette or disk (or use of emulators).   The game was written in C and is also an exercise in using the cc65 compiler.  It is also hoped that the code-baseline here can be a reference for future C base projects on the upcoming Commander 16 system!   
 
-Release builds are available in the *BIN* folder: dhunter_final.zip is a complete package (with TXT file instructions and both PET and C64 PRG files), or you may access the individual PRG files.  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+Release builds are available in the *BIN* folder: dhunter_final.zip is a complete package (with TXT file instructions and both PET and C64 PRG files), or you may access the individual PRG files directly if you prefer.  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
 
 As a tribute-game, DH is intentionally standalone and short (to support 20XX PET tape-based systems), about 5-10 minutes long (though maximizes the full 32K available of the PET system).  The C64 version is functionally equivalent and only adds the addition of color (i.e. this is a PET game that happens to run also on the C64, but clearly does not take advantage of the extra potential of the C64 system - but it does demonstrate that commonality of the PETSCII symbol set between the two systems).
 
