@@ -50,7 +50,7 @@ https://texelec.com/product/snes-adapter-commodore/
 PET CONTROLS
 ============
 
-NOTE: If playing on a laptop that has no NUMPAD, I apologies for the inconvenience (you might consider trying the C64 version instead, since the C64 has no KEYPAD either)
+NOTE: If playing on a laptop that has no NUMPAD, I apologies for the inconvenience (you might consider trying the C64 version instead, since the C64 has no KEYPAD either; or try some "remapping" features of your system).  The limited memory and performance of the PET does make it impractical to simutaneously support a variety of keyboard configurations.  If you would prefer a different configuration, the source is available for making a custom build :)
 
 SPACE    = FIRE ARROW  (must have some arrows collected.  When run out of arrows, spirits will gift another set - but you must go collect them)
 
@@ -122,4 +122,30 @@ X-BUTTON            = FLIP BOW 180 (active after about 200 movement steps)
 B-BUTTON            = USE 1 PERSISTENCY to RESTORE 1 HEALTH
 Y-BUTTON            = ACTIVATE ORB (if equipped)
 START/SELECT        = FINISH MAP (once all CHALLENGES defeated)
+
+
+
+SOURCE CODE
+===========
+The full source code is available in the "src" folder (including the STAGE editor and associated data files that represent the level-data while editing them).
+
+The main compiler used to build DH is cc65.  But the C code has been arranged, such that it should be fairly easy to "port" the code to other systems that offer a native 40x25 "text-mode" option.
+
+I did not prepare formal makefiles.  I just depend on the "go_XXX.bat" scripts in the src/source folder.
+
+CORE.h/.c are my "core" macros, function, declarations that I think any application/program would likely need.  These files may be of interest to many programmers.
+
+UTILITY.h/.c are more specialized functions that I think a game-type application would likely need.  Specifically, thinks like "press RETURN" or displaying centered banners.
+
+GAME_STRINGS.h is all the string-related data of the game.  Each of these must be declared using SCREEN codes, not actual ASCII codes.  A reference list of these codes is available in the "DOC" folder.
+
+SNES_GAMEPAD.h/.c is code to poll the buton states of the SNES GAMEPAD.
+
+DESTINY_STRUCTS.h/.c are data structures associated more specifically to the DH gameplay (player state, challenge/persona state, etc.).
+
+EDITOR.C is the STAGE editor code.  DH itself does not depend on any external files.  The EDITOR creates level data in the format required by the DH code.  These are stored in the D64 file, and the generated codes must be copy-pasted into the DH code when updated.   In the "DOCS" folder are more notes about this.
+
+01_xxx, 02_yyy, 03_zzz.c are in the order of the main "flow" of the game: "choose destiny", "select persona", "show intro".  
+
+main.c is the main "game engine" that draws the encoded maps, moves the challenges along their target paths, monitors input controls, and animates or updates the game "icons."
 
