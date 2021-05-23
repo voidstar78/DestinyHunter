@@ -34,7 +34,7 @@ Once all the CHALLENGES are defeated, a notice will display indicating to press 
 
 Some more tips:
 
-- Your number of arrows and remaining HEALTH is along the bottom of the STAGE map.  
+- Your number of ARROWS (up arrow) and remaining HEALTH (heart) is along the bottom of the STAGE map.  
 
 - CHALLENGES can attack you up to "two spaces" away, so you do want to evade them (CHALLENGES will chase you, depending on your STEALTH attributes).    
 
