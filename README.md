@@ -1,15 +1,27 @@
 
-*Destiny Hunter* is a game for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K RAM is required, the game can be loaded by cassette or disk (or use of emulators).  The builds are available in the BIN folder: dhunter_final.zip is a complete package, or use the individual PRG files (for Commodore system, these PRG files are like EXE files on more modern PC equipment).  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+INTRODUCTION
+============
 
+*Destiny Hunter* is a tribute-game made in *2021* for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K system RAM is required, the game can be loaded by cassette or disk (or use of emulators).   The game was written in C and was also an exercise in using the cc65 compiler.   Release builds are available in the *BIN* folder: dhunter_final.zip is a complete package (with TXT file instructions and both PET and C64 PRG files), or access the individual PRG files.  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+
+As a tribute-game, DH is intentionally short, about 5-10 minutes long (but maximizes the full 32K available of the PET system).  The C64 version is functionally equivalent and only adds the addition of color.
+
+
+HOW TO PLAY
+===========
 When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
 DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle).  CHIMES offer gifts of BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
 
-When you defeat creatures, you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+NOTE: Internally, DIRECTION and CHIMES are being used to initialize the random number generator!  It really *doing stuff* :)
 
 After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For new players, I suggest #6 SIDON (good health and defense).  Choice #1 is the expected "normal" difficult.   #4 RUDRA is a good choice also, as he carries the most arrows.    #3 CYRENE is probably the hardest difficulty.  Press RETURN to select and begin the game.
 
-On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA has told you to begin your hunting training at this island.  Therefore, you are starting along a beach.   So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That's the "adventure" part of the game: observe and find them (they are not far :) )
+On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach.   So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far :) )
+
+When you defeat creatures, you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+
+
 
 Once you do so, then you will begin the game, which requires you to defeat CHALLENGES that appear by aiming and firing arrows.  Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
 
