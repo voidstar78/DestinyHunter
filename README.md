@@ -27,7 +27,7 @@ After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For
 
 On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach (observe that moving in the WATER will consume more STAMINA and slow you down faster).  The game is in a TOP-DOWN perspective (like the original Zelda was).
 
-To begin, use the MOVEMENT keys (WASD) to collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far!).  One you are armed, then the game begins as the first CHALLENGES will enter the STAGE.   When you defeat creatures (by firing ARROWS from the BOW), you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+To begin, use the MOVEMENT keys (WASD) to collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far!).  Once you are armed, then the game begins as the first CHALLENGES will enter the STAGE.   When you defeat creatures (by firing ARROWS from the BOW), you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
 
 Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
 
