@@ -142,7 +142,7 @@ typedef struct
 {
 	char name[MAX_NAME_LENGTH];
 	
-	unsigned char direction;	   // players can only use persona of matching direction
+	unsigned char direction;
 	
 	unsigned char land_movement;   // speed when NOT on water                   0-9  (0 is NOT movable)
 	unsigned char water_movement;  // speed when in water "W"                   0-9
@@ -161,16 +161,14 @@ extern Persona_status g_pvec_personas[MAX_PERSONAS_TO_SELECT];
 extern unsigned char g_pvec_personas_count;
 extern Persona_status* g_ptr_persona_status;	
 
+#ifdef TARGET_C64
 typedef struct 
 {
-	//unsigned char x;
-	//unsigned char y;
 	unsigned int offset;  // address
 	unsigned char symbol;
-#ifdef TARGET_C64	
 	unsigned char color;
-#endif	
 } Location_to_draw;
+#endif
 
 typedef struct 
 {
@@ -182,8 +180,8 @@ typedef struct
 	
 	//unsigned char random_offset;  // how much random offset to allow for x/y target location
 	
-	unsigned long loiter_max;  // how long to loiter when reached the target location before going to next target
-	unsigned long loiter_current;  // how long to loiter when reached the target location before going to next target
+	unsigned char loiter_max;  // how long to loiter when reached the target location before going to next target
+	unsigned char loiter_current;  // how long to loiter when reached the target location before going to next target
 } Target;
 
 // queue challenges

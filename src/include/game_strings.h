@@ -88,7 +88,6 @@ extern char str_finish_map[];
 
 extern char str_destiny_hunter[];
 
-#if 0
 #define STR_YOU_ARE_DREAMING_LEN 19
 extern char str_you_are_dreaming[];
 
@@ -112,7 +111,6 @@ extern char str_disembark_on_coast[];
 
 #define STR_INSTRUCTION_LEN 12
 extern char str_instructions[];
-#endif
 
 #define STR_INSTRUCTION_AIM_LEN 27
 extern char str_instruction_aim[];
@@ -130,7 +128,7 @@ extern char str_instruction_blessing[];
 extern char str_instruction_persistency[];
 
 #define STR_FLASHBACK_LEN 11
-//extern char str_flashback[];
+extern char str_flashback[];
 
 #define STR_GAME_OVER_LEN 9
 extern char str_game_over[];

@@ -325,14 +325,18 @@ extern unsigned long delta_time_ms;   //< Instead of wasting that information wh
 // WARNING: STORE_TIME_NO_CORRECTOR does not initialize target_timer.data.d to 0.
 #ifdef TARGET_C64
 	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
+	    __asm__("sei");  \
 		POKE(&target_timer.data.c, PEEK(160));  \
 		POKE(&target_timer.data.b, PEEK(161));  \
-		POKE(&target_timer.data.a, PEEK(162));
+		POKE(&target_timer.data.a, PEEK(162));  \
+		__asm__("cli");
 #else
 	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
+        __asm__("sei");  \
 		POKE(&target_timer.data.c, PEEK(141));  \
 		POKE(&target_timer.data.b, PEEK(142));  \
-		POKE(&target_timer.data.a, PEEK(143));
+		POKE(&target_timer.data.a, PEEK(143));  \
+		__asm__("cli");
 #endif  
   
 /*
