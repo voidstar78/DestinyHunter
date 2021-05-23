@@ -1,5 +1,5 @@
 
-[DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+*Destiny Hunter* is a game for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K RAM is required, the game can be loaded by cassette or disk (or use of emulators).  The builds are available in the BIN folder: dhunter_final.zip is a complete package, or use the individual PRG files (for Commodore system, these PRG files are like EXE files on more modern PC equipment).  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
 
 When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
