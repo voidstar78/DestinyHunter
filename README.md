@@ -1,32 +1,22 @@
 
-DHUNTERPET.PRG for Commodore PET
-DHUNTERC64.PRG for Commodore C64
+[DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
 
-When the game starts, just press any key to decide
-a DIRECTION and ring CHIMES.  Eventually you will be asked
-to press RETURN to continue (or press X to choose DIRECTION
-and CHIMES again).
+When the game starts, just press any key to decide a DIRECTION and ring CHIMES.  Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
-DIRECTION is mostly cosmetic (e.g. character will be FILLED 
-circle or HOLLOW circle).  CHIMES are used to be gifted
-BLESSINGS or PERSISTENCY at the start of the game.  These are
-not essential, but having them will help reaching the end easier.
-(BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
+DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle).  CHIMES are used to be gifted BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
 
-If using real/physical Commodore hardware, both versions support
-the SNES GAMEPAD adapter that is available here:
+If using real/physical Commodore hardware, both versions support the SNES GAMEPAD adapter that is available here:
 https://texelec.com/product/snes-adapter-commodore/
 
 
-Commodore PET CONTROLS:
-(if playing on a laptop that has no NUMPAD, I apologies for the
-inconvenience - the VICE emulator has provisions for remapping keys;
-you may consider trying the C64 version instead)
 
-SPACE    = FIRE ARROW
-           Must have some arrows collected.  When
-				  	run out of arrows, spirits will gift
-					 another set (but you must go collect them)
+
+PET CONTROLS
+============
+
+(if playing on a laptop that has no NUMPAD, I apologies for the inconvenience - the VICE emulator has provisions for remapping keys; you may consider trying the C64 version instead)
+
+SPACE    = FIRE ARROW  (must have some arrows collected.  When run out of arrows, spirits will gift another set - but you must go collect them)
 
 W/A/S/D  = MOVEMENT UP/LEFT/DOWN/RIGHT
 
