@@ -233,7 +233,6 @@ void text_banner_center(unsigned char y, const char* text_to_say, unsigned char 
 	);
 }
 
-/*
 void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigned char delay)
 {		
 	unsigned char i;
@@ -291,4 +290,4 @@ void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigne
 		WRITE_CHAR(x+i, y, temp_str[i]);
 	}
 }
-*/
+

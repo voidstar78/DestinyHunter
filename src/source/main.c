@@ -14,7 +14,7 @@
   #include <01_destiny.h>
   #include <03_intro.h>
 #endif
-#include <02_init_persona.h>n
+#include <02_init_persona.h>
 #include <stage_rle_values.inc.h>
 #include <stage_blocker_values.inc.h>
 
@@ -150,7 +150,11 @@ static unsigned char x_threshold;
 static unsigned char y_threshold;
 static unsigned char persona_name_len;
 
+#ifdef TARGET_C64
 static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
+#else
+  #define TAPE_BUFFER1_ADDR 0x027A
+#endif
 static unsigned char num_locations_to_draw = 0;	
 
 typedef void (*ptr_animate_icon_func_type)(Challenge *);
@@ -407,13 +411,13 @@ void draw_stage_map()
 #if 0
 static unsigned int addr;
 #define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
-		addr = 0x033E + (MAX_MAP_ROWS*data_y)+div4_table[data_x];  \
+		addr = 0x033D + (10*data_y)+div4_table[data_x];  \
 		POKE(addr, PEEK(addr) | or_equal_modifier[mod4_table[data_x]]);
-#endif 
+#endif
 
 #define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
 		/*ptr_pvec_value0[data_y] = TRUE;*/ \
-		cell_state[ data_y ][ div4_table[data_x] ] |= or_equal_modifier[mod4_table[data_x]]; 
+		cell_state[ data_y ][ div4_table[data_x] ] |= or_equal_modifier[mod4_table[data_x]];
 
 void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigned char target_symbol
 #ifdef TARGET_C64
@@ -421,11 +425,14 @@ void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigne
 #endif
 )
 {
-	MARK_LOCATION_AS_DRAWN(data_x,data_y);  
-	locations_to_draw[num_locations_to_draw].symbol = target_symbol;  
+	MARK_LOCATION_AS_DRAWN(data_x,data_y);
+#ifdef TARGET_C64	
 	locations_to_draw[num_locations_to_draw].offset = BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*data_y)+data_x;  
-#ifdef TARGET_C64
-  locations_to_draw[num_locations_to_draw].color = a_color;
+	locations_to_draw[num_locations_to_draw].symbol = target_symbol;  
+	locations_to_draw[num_locations_to_draw].color = a_color;
+#else
+	POKEW(TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)  , BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*data_y)+data_x);
+	POKE (TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)+2, target_symbol);
 #endif	
 	++num_locations_to_draw;
 }
@@ -498,22 +505,23 @@ void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon
 	va_end(valist);			
 }
 
-void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
+void initialize_challengeI(Challenge* ptr_challenge, signed char x, signed char y, unsigned char hpmax, unsigned long mspeed, unsigned char athres, unsigned char aspeed)
+//void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
 {
-	va_list valist;
-	va_start(valist, num);		
+	//va_list valist;
+	//va_start(valist, num);		
 	
-	ptr_challenge->x = va_arg(valist, signed char);
-	ptr_challenge->y = va_arg(valist, signed char);
+	ptr_challenge->x = x; //va_arg(valist, signed char);
+	ptr_challenge->y = y;  //va_arg(valist, signed char);
 	
-	ptr_challenge->hp_max = va_arg(valist, unsigned char);
+	ptr_challenge->hp_max = hpmax;  //va_arg(valist, unsigned char);
 	ptr_challenge->hp_remaining = ptr_challenge->hp_max;
 	
-	ptr_challenge->move_speed = va_arg(valist, unsigned long);
+	ptr_challenge->move_speed = mspeed;  //va_arg(valist, unsigned long);
 	
-	ptr_challenge->aggressiveness_threshold = va_arg(valist, unsigned char);
+	ptr_challenge->aggressiveness_threshold = athres;  //va_arg(valist, unsigned char);
 	
-	ptr_challenge->attack_speed = va_arg(valist, unsigned char);
+	ptr_challenge->attack_speed = aspeed; //va_arg(valist, unsigned char);
 	
 	INIT_TIMER(ptr_challenge->last_move_timer);	
 	INIT_TIMER(ptr_challenge->last_attack_time);	
@@ -528,34 +536,20 @@ void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
 	
 	++challenges_count;
 
-  va_end(valist);	
+  //va_end(valist);	
 }
                               
-void initialize_challengeT(Challenge* ptr_challenge, unsigned char num, ...)
-{
-	unsigned char index;
+void initialize_challengeT(Challenge* ptr_challenge, unsigned char index, signed char x, signed char y, unsigned char loiter_max)
+{	
+	ptr_challenge->targets[index].target_x = x;
+	ptr_challenge->targets[index].target_y = y;	
 	
-	va_list valist;
-	va_start(valist, num);	
-	
-  index = va_arg(valist, unsigned char);
-	
-  //ptr_challenge->targets[index].orig_x = va_arg(valist, signed char);
-	//ptr_challenge->targets[index].orig_y = va_arg(valist, signed char);	
-	//ptr_challenge->targets[index].target_x = ptr_challenge->targets[index].orig_x;	
-	//ptr_challenge->targets[index].target_y = ptr_challenge->targets[index].orig_y;
-	
-	ptr_challenge->targets[index].target_x = va_arg(valist, signed char);
-	ptr_challenge->targets[index].target_y = va_arg(valist, signed char);	
-	
-	ptr_challenge->targets[index].loiter_max = va_arg(valist, unsigned char); 
+	ptr_challenge->targets[index].loiter_max = loiter_max; 
 	ptr_challenge->targets[index].loiter_current = ptr_challenge->targets[index].loiter_max;
 	
 	ptr_challenge->direction_state = CD_LEFT;  // default all challeges initially facing/going left	
 	
 	ptr_challenge->targetN = (index+1);
-	
-	va_end(valist);	
 }
 
 void initialize_stage1_challenges()
@@ -572,24 +566,24 @@ void initialize_stage1_challenges()
   // JACK the younger
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[0], 5,     43, 12,  4,  8UL,  80,  JIFFIES_TWELTH_SECOND);	
+	initialize_challengeI(&challenges[0],        43, 12,  4,  8UL,  80,  JIFFIES_TWELTH_SECOND);	
 	                                //                  
 	                                //   num  N   x   y loiter
-	initialize_challengeT(&challenges[0], 4,  0, 30, 10, 3);
-	initialize_challengeT(&challenges[0], 4,  1, 25,  9, 2);
-	initialize_challengeT(&challenges[0], 4,  2, 17, 12, 3);		
-	initialize_challengeT(&challenges[0], 4,  3, 20,  2, 4);		
+	initialize_challengeT(&challenges[0],     0, 30, 10, 3);
+	initialize_challengeT(&challenges[0],     1, 25,  9, 2);
+	initialize_challengeT(&challenges[0],     2, 17, 12, 3);		
+	initialize_challengeT(&challenges[0],     3, 20,  2, 4);		
 
 	
 	// JONAS
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[1], 5,     44, 18,  3, 20UL,  40,  JIFFIES_TWELTH_SECOND);
+	initialize_challengeI(&challenges[1],        44, 18,  3, 20UL,  40,  JIFFIES_TWELTH_SECOND);
 	                                //                  
 	                                //   num  N   x   y  loiter
-	initialize_challengeT(&challenges[1], 4,  0, 32, 16, 5);
-	initialize_challengeT(&challenges[1], 4,  1, 20, 20, 3);
-	initialize_challengeT(&challenges[1], 4,  2, 14, 14, 6);		
+	initialize_challengeT(&challenges[1],     0, 32, 16, 5);
+	initialize_challengeT(&challenges[1],     1, 20, 20, 3);
+	initialize_challengeT(&challenges[1],     2, 14, 14, 6);		
 }
 
 void initialize_stage2_challenges()
@@ -603,13 +597,13 @@ void initialize_stage2_challenges()
   // JERRY the komodo
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[0], 5,     42, 10,  6,  1UL,  90, JIFFIES_EIGTH_SECOND);	
+	initialize_challengeI(&challenges[0],        42, 10,  6,  1UL,  90, JIFFIES_EIGTH_SECOND);	
 	                                //                  
 	                                //   num  N   x   y  loiter
-	initialize_challengeT(&challenges[0], 4,  0, 22,  5, 5);
-	initialize_challengeT(&challenges[0], 4,  1, 18, 10, 5);
-	initialize_challengeT(&challenges[0], 4,  2, 15, 20, 5);		
-	initialize_challengeT(&challenges[0], 4,  3, 37, 12, 7);
+	initialize_challengeT(&challenges[0],     0, 22,  5, 5);
+	initialize_challengeT(&challenges[0],     1, 18, 10, 5);
+	initialize_challengeT(&challenges[0],     2, 15, 20, 5);		
+	initialize_challengeT(&challenges[0],     3, 37, 12, 7);
 	
 	set_icon_char(&challenges[0], 0, CD_LEFT, 5,  233,  172, 227, 98, 121);	
 	set_icon_char(&challenges[0], 1, CD_LEFT, 3,    0,  108, 108 );
@@ -636,17 +630,17 @@ void initialize_stage3_challenges(unsigned char start, unsigned char count)
     switch (rand_mod(2))
 		{
 		case 0:  // X- Y-
-		  initialize_challengeI(&challenges[start], 5,     rand_x+9,  0-rand_y,   3,  rand_mov, 70,  JIFFIES_HALF_SECOND);	 
+		  initialize_challengeI(&challenges[start],        rand_x+9,  0-rand_y,   3,  rand_mov, 70,  JIFFIES_HALF_SECOND);	 
 			break;
 			
 		case 1:  // X+ Y-
-		  initialize_challengeI(&challenges[start], 5,     rand_x+9,  22+rand_y,  3,  rand_mov, 60,  JIFFIES_HALF_SECOND);	 
+		  initialize_challengeI(&challenges[start],        rand_x+9,  22+rand_y,  3,  rand_mov, 60,  JIFFIES_HALF_SECOND);	 
 			break;			
 		}		
 																		//       num  N      X                  Y            loiter
-		initialize_challengeT(&challenges[start], 4,  0, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(3)+2);
-		initialize_challengeT(&challenges[start], 4,  1, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(2)+3);
-		initialize_challengeT(&challenges[start], 4,  2, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(4)+1);		
+		initialize_challengeT(&challenges[start],     0, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(3)+2);
+		initialize_challengeT(&challenges[start],     1, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(2)+3);
+		initialize_challengeT(&challenges[start],     2, rand_mod(19)+9,  rand_mod(20)+2, rand_mod(4)+1);		
 
 		memset(challenges[start].icon, 0, sizeof(challenges[0].icon));
 		
@@ -675,7 +669,7 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 	{		
     rand_x = rand_mod(40);
 		rand_y = rand_mod(22);		
-		rand_mov = rand_mod(4)+3;
+		rand_mov = rand_mod(4)+3;  // minimum movement of 3
 		
                                   //                                         HP    mov  
                                   //           num         X        Y       max    spd    aggr   attk_speed
@@ -683,29 +677,29 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 		{
 		case 0:  // X- Y-   TOP 
 		  // The -4 accounts for TOP RIGHT corner blockers when this spawn is used for STAGE3
-		  initialize_challengeI(&challenges[start], 5,     rand_x-4,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 			
+		  initialize_challengeI(&challenges[start],        rand_x-4,  0-rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 			
 			break;
 			
 		case 1:  // X+ Y-   RIGHT      
-		  if ((count == 1) && (rand_y < 6)) rand_y = 6;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		
-		  initialize_challengeI(&challenges[start], 5,     38+rand_x,  rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
+		  if ((rand_y < 6)) rand_y = 6;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		 (used to be only if count == 1, but don't think anyone will notice; save some bytes not doing that)
+		  initialize_challengeI(&challenges[start],        38+rand_x,  rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
 		case 2:  // X+ Y+   BOTTOM
 		  // The +12 accounts for BOTTOM LEFT corner blockers when this spawn is used for STAGE3
-		  initialize_challengeI(&challenges[start], 5,     rand_x+12,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
+		  initialize_challengeI(&challenges[start],        rand_x+12,  22+rand_y,  2,  rand_mov, 40,   JIFFIES_HALF_SECOND);	 
 			break;
 			
 		case 3:  // X- Y+   LEFT
-      if ((count == 1) && (rand_y > 18)) rand_y = 18;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		
-		  initialize_challengeI(&challenges[start], 5,     0-rand_x,  rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
+      if ((rand_y > 18)) rand_y = 18;  // OPTIONAL: fix bug with SAMUEL spawning in the rocks		(used to be only if count == 1, but don't think anyone will notice; save some bytes not doing that)
+		  initialize_challengeI(&challenges[start],        0-rand_x,  rand_y,   2,  rand_mov, 60,   JIFFIES_HALF_SECOND);	 
 			break;
 		}
 
 																		//       num  N      X               Y            loiter
-		initialize_challengeT(&challenges[start], 4,  0, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+2);
-		initialize_challengeT(&challenges[start], 4,  1, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+1);
-		initialize_challengeT(&challenges[start], 4,  2, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+1);		
+		initialize_challengeT(&challenges[start],     0, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+2);
+		initialize_challengeT(&challenges[start],     1, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+1);
+		initialize_challengeT(&challenges[start],     2, rand_mod(38),  rand_mod(20)+2, rand_mod(3)+1);		
 	
 		memset(challenges[start].icon, 0, sizeof(challenges[0].icon));
 		
@@ -736,12 +730,12 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
   // JAMES the scorpion
                                   //                                      HP   mov  
                                   //       num      X              Y     max   spd   aggr   attk_speed
-	initialize_challengeI(&challenges[index], 5,     initial_x,  initial_y, 12,  0UL,  90,  JIFFIES_QUARTER_SECOND);	
+	initialize_challengeI(&challenges[index],        initial_x,  initial_y, 12,  0UL,  90,  JIFFIES_QUARTER_SECOND);	
 	                                //   num  N   x   y    loiter
-	initialize_challengeT(&challenges[index], 4,  0, 14,  7, rand_mod(2)+2);
-	initialize_challengeT(&challenges[index], 4,  1, 35, 12, rand_mod(3)+3);
-	initialize_challengeT(&challenges[index], 4,  2, 18, 18, rand_mod(3)+3);		
-	initialize_challengeT(&challenges[index], 4,  3, 25, 16, rand_mod(1)+4);
+	initialize_challengeT(&challenges[index],     0, 14,  7, rand_mod(2)+2);
+	initialize_challengeT(&challenges[index],     1, 35, 12, rand_mod(3)+3);
+	initialize_challengeT(&challenges[index],     2, 18, 18, rand_mod(3)+3);		
+	initialize_challengeT(&challenges[index],     3, 25, 16, rand_mod(1)+4);
 	
 	if (initial_x < 1)  // JUSTIN
 	{
@@ -781,21 +775,21 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 
 																	//                                         HP    mov  
 																	//           num         X        Y       max    spd    aggr   attk_speed		
-		initialize_challengeI(&challenges[start], 5,     ofs_x+rand_x,  rand_y+5,  2,  rand_mov, 100,   JIFFIES_THIRD_SECOND);	 
+		initialize_challengeI(&challenges[start],        ofs_x+rand_x,  rand_y+5,  2,  rand_mov, 100,   JIFFIES_THIRD_SECOND);	 
 
     if (rand_mod(2) == 0)  // EVENs cluster in the middle
 		{
 																		//         num  N     x                   y           loiter
-			initialize_challengeT(&challenges[start], 4,  0, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);
-			initialize_challengeT(&challenges[start], 4,  1, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);
-			initialize_challengeT(&challenges[start], 4,  2, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);					
+			initialize_challengeT(&challenges[start],     0, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);
+			initialize_challengeT(&challenges[start],     1, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);
+			initialize_challengeT(&challenges[start],     2, rand_mod(12)+12,  rand_mod(12)+6, rand_mov);					
 		}
 		else  // ODDs explore a little further out
 		{
 																		//         num  N     x                   y           loiter
-			initialize_challengeT(&challenges[start], 4,  0, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);
-			initialize_challengeT(&challenges[start], 4,  1, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);
-			initialize_challengeT(&challenges[start], 4,  2, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);					
+			initialize_challengeT(&challenges[start],     0, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);
+			initialize_challengeT(&challenges[start],     1, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);
+			initialize_challengeT(&challenges[start],     2, rand_mod(24)+7,  rand_mod(16)+4, rand_mov);					
 		}
 	
 		//memset(challenges[start].icon, 0, sizeof(challenges[0].icon));		
@@ -828,13 +822,13 @@ void initialize_stage7_challenges()
   // JOSEPH the drake
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[0], 5,     42, 10,  6,  8UL,  85,  JIFFIES_TWELTH_SECOND);	
+	initialize_challengeI(&challenges[0],        42, 10,  6,  8UL,  85,  JIFFIES_TWELTH_SECOND);	
 
 	                                //   num  N   x   y  loiter
-	initialize_challengeT(&challenges[0], 4,  0, 22,  5,  2);
-	initialize_challengeT(&challenges[0], 4,  1, 18, 10,  3);
-	initialize_challengeT(&challenges[0], 4,  2, 12,  6,  1);		
-	initialize_challengeT(&challenges[0], 4,  3, 37, 12,  4);
+	initialize_challengeT(&challenges[0],     0, 22,  5,  2);
+	initialize_challengeT(&challenges[0],     1, 18, 10,  3);
+	initialize_challengeT(&challenges[0],     2, 12,  6,  1);		
+	initialize_challengeT(&challenges[0],     3, 37, 12,  4);
 		
 	set_icon_char(&challenges[0], 0, CD_LEFT, 2,  233,   73);
 	set_icon_char(&challenges[0], 1, CD_LEFT, 5,    0,   74,  160, 160, 73);
@@ -847,13 +841,13 @@ void initialize_stage7_challenges()
   // JIMMY the crazy-fast drake		
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[1], 5,     40, 18, 8,  0UL,  85, JIFFIES_TWELTH_SECOND);	
+	initialize_challengeI(&challenges[1],        40, 18, 8,  0UL,  85, JIFFIES_TWELTH_SECOND);	
 
 	                                //   num  N   x   y  loiter
-	initialize_challengeT(&challenges[1], 4,  0, 22, 12, 0);
-	initialize_challengeT(&challenges[1], 4,  1, 20, 15, 0);
-	initialize_challengeT(&challenges[1], 4,  2, 15, 20, 0);		
-	initialize_challengeT(&challenges[1], 4,  3, 30, 16, 0);	
+	initialize_challengeT(&challenges[1],     0, 22, 12, 0);
+	initialize_challengeT(&challenges[1],     1, 20, 15, 0);
+	initialize_challengeT(&challenges[1],     2, 15, 20, 0);		
+	initialize_challengeT(&challenges[1],     3, 30, 16, 0);	
 	
 	set_icon_char(&challenges[1], 0, CD_LEFT, 2,  233,   73);
 	set_icon_char(&challenges[1], 1, CD_LEFT, 5,    0,   74,  160, 160, 73);
@@ -881,12 +875,12 @@ void initialize_stage8_challenges()
 	// head1 HEART
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[0], 5,     30,  4, 10,  1UL,  100,  JIFFIES_FULL_SECOND);	
+	initialize_challengeI(&challenges[0],        30,  4, 10,  1UL,  100,  JIFFIES_FULL_SECOND);	
 
 	                                //   num  N   x   y loiter
-	initialize_challengeT(&challenges[0], 4,  0, 20,  4, 8);
-	initialize_challengeT(&challenges[0], 4,  1, 18, 20, 3);
-	initialize_challengeT(&challenges[0], 4,  2, 19,  3, 4);
+	initialize_challengeT(&challenges[0],     0, 20,  4, 8);
+	initialize_challengeT(&challenges[0],     1, 18, 20, 3);
+	initialize_challengeT(&challenges[0],     2, 19,  3, 4);
 
 	set_icon_char(&challenges[0], 0, CD_LEFT, 3,  233, 128,  75);
 	set_icon_char(&challenges[0], 1, CD_LEFT, 3,    0,  95, 211);
@@ -894,12 +888,12 @@ void initialize_stage8_challenges()
   // head2  DIAMOND	
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[1], 5,     30,  8,  8,  0UL,  100,  JIFFIES_FULL_SECOND);	
+	initialize_challengeI(&challenges[1],        30,  8,  8,  0UL,  100,  JIFFIES_FULL_SECOND);	
 
 	                                //   num  N   x   y loiter
-	initialize_challengeT(&challenges[1], 4,  0, 19,  7, 0);
-	initialize_challengeT(&challenges[1], 4,  1, 20, 19, 0);	
-	initialize_challengeT(&challenges[1], 4,  2, 26,  9, 0);	
+	initialize_challengeT(&challenges[1],     0, 19,  7, 0);
+	initialize_challengeT(&challenges[1],     1, 20, 19, 0);	
+	initialize_challengeT(&challenges[1],     2, 26,  9, 0);	
 	
 			
 	set_icon_char(&challenges[1], 0, CD_LEFT, 3,  233, 128,  75);
@@ -909,11 +903,11 @@ void initialize_stage8_challenges()
 	// head3  CLUB/CLOVER	
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[1], 5,     30, 12,  8,  2UL,  100,  JIFFIES_FULL_SECOND);	
+	initialize_challengeI(&challenges[1],        30, 12,  8,  2UL,  100,  JIFFIES_FULL_SECOND);	
 	                                //   num  N   x   y ofs loiter
-	initialize_challengeT(&challenges[1], 4,  0, 20, 11, 2);
-	initialize_challengeT(&challenges[1], 4,  1, 22, 18, 1);
-	initialize_challengeT(&challenges[1], 4,  2, 25,  8, 3);
+	initialize_challengeT(&challenges[1],     0, 20, 11, 2);
+	initialize_challengeT(&challenges[1],     1, 22, 18, 1);
+	initialize_challengeT(&challenges[1],     2, 25,  8, 3);
 			
 	set_icon_char(&challenges[1], 0, CD_LEFT, 3,  233, 128,  75);
 	set_icon_char(&challenges[1], 1, CD_LEFT, 3,    0,  95, 216);
@@ -922,11 +916,11 @@ void initialize_stage8_challenges()
 	
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[2], 5,     30, 16,  8,  0UL,  100,  JIFFIES_FULL_SECOND);	
+	initialize_challengeI(&challenges[2],        30, 16,  8,  0UL,  100,  JIFFIES_FULL_SECOND);	
 	                                //   num  N   x   y ofs loiter
-	initialize_challengeT(&challenges[2], 4,  0, 20, 15, 7);
-	initialize_challengeT(&challenges[2], 4,  2, 18,  8, 3);
-	initialize_challengeT(&challenges[2], 4,  3, 26, 18, 6);
+	initialize_challengeT(&challenges[2],     0, 20, 15, 7);
+	initialize_challengeT(&challenges[2],     2, 18,  8, 3);
+	initialize_challengeT(&challenges[2],     3, 26, 18, 6);
 			
 	set_icon_char(&challenges[2], 0, CD_LEFT, 3,  233, 128,  75);
 	set_icon_char(&challenges[2], 1, CD_LEFT, 3,    0,  95, 193);
@@ -934,9 +928,9 @@ void initialize_stage8_challenges()
   // FIREBALLs
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
-	initialize_challengeI(&challenges[3], 5,     40, 40, 99,  0UL, 100, JIFFIES_EIGTH_SECOND);
+	initialize_challengeI(&challenges[3],        40, 40, 99,  0UL, 100, JIFFIES_EIGTH_SECOND);
 	                                //   num  N   x   y loiter
-	initialize_challengeT(&challenges[3], 4,  0, 40, 40, 0);
+	initialize_challengeT(&challenges[3],     0, 40, 40, 0);
 	
 	challenges[3].behavior = BEHAVIOR_DEAD;
   challenges[3].max_direction_state = 1;
@@ -1152,6 +1146,7 @@ void run_stage(
 		
 	// -- reset animation bits to 0; this is done in-between each stage ---
 	memset(cell_state, 0, sizeof(cell_state));
+	//memset((unsigned int *)0x033D, 0, 230);
 	// --------------------------------------------------------------------
 	
 	// Assume all the challenges for this stage were already initialized before calling the run_stage function
@@ -1200,12 +1195,10 @@ void run_stage(
 	draw_stage_overlay( stage_names[stage_index] );
 	draw_stage_map();
 
-/*	
 	if (stage_index == 4)
 	{				
 		WRITE_STRING(22, 23, str_flashback, 11);
 	}
-*/	
 	
 	update_stats(which_stats_modified);		
 	
@@ -1416,6 +1409,7 @@ void run_stage(
 						// 0x00 (0) no change
 						
 						i = cell_state[temp_y][temp_x];
+						//i = PEEK(((0x033D)+10*temp_y)+temp_x);
 						
 						// 1 2 3 4 5 6 7 8
 						// [1] [2] [3] [4]
@@ -1496,7 +1490,8 @@ void run_stage(
 								i &= 0xFC;  //< reduce cell_4_state from 1 to 0
 							}
 							
-							cell_state[temp_y][temp_x] = i;
+							cell_state[temp_y][temp_x] = i;							
+							//POKE((0x033D+10*temp_y)+temp_x, i);
 						}
 					}
 				}
@@ -1510,11 +1505,16 @@ void run_stage(
 			--num_locations_to_draw;
 #ifdef TARGET_C64
 			POKE(BASE_COLOR_ADDRESS+(locations_to_draw[num_locations_to_draw].offset - BASE_SCREEN_ADDRESS), locations_to_draw[num_locations_to_draw].color);
-#endif
 			POKE(				
 				locations_to_draw[num_locations_to_draw].offset,
 				locations_to_draw[num_locations_to_draw].symbol
 			);			
+#else
+			POKE(				
+				PEEKW(TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)  ),
+				PEEK (TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)+2)
+			);			
+#endif	
 		}
 		// ***************************************************************
 				
@@ -1615,7 +1615,6 @@ void run_stage(
 										  (challenges_remaining == g_pvec_map[0][1])
 									  )
 										{
-											//print_fancy(0, 23, str_finish_map, JIFFIES_EIGTH_SECOND);
 											WRITE_STRING(0, 23, str_finish_map, STR_FINISH_MAP_LEN);
 											
 #ifdef TARGET_C64											
@@ -1673,12 +1672,10 @@ void run_stage(
       // Background ends up WHITE, not applying this in C64 version
 #else
 	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
-		  /*
 		  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
 	  	  SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
 	    else 
-		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 						
-			*/
+		    CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT);
 			// **********************************************************
 #endif
 
@@ -1708,13 +1705,13 @@ void run_stage(
 		
 		if (global_input_ch == PKEY_NO_KEY) 
 		{
-			if (IS_MASK_ON(g_padA, GPAD_BUTTON_B_MASK))
+			if (IS_MASK_ON(g_padB, GPAD_BUTTON_B_MASK))
 			{
-				global_input_ch = PKEY_O;  // ORB
+				global_input_ch = PKEY_0;  // PERSISTENCY				
 			}
 			else if (IS_MASK_ON(g_padB, GPAD_BUTTON_Y_MASK))
 			{
-				global_input_ch = PKEY_0;  // PERSISTENCY
+				global_input_ch = PKEY_O;  // ORB
 			}
 			else if (IS_MASK_ON(g_padA, GPAD_BUTTON_X_MASK))
 			{
@@ -2908,7 +2905,8 @@ void animate_stage8(Challenge* ptr_challenge)
 			// vvvv manually doing a MIN using g_i as storage
 			// p_corresponding_fireball->targets[MAX_MOVE_TARGETS_PER_CHALLENGE - 1].target_x = MIN(3,  global_destiny_status.location_x);
 			g_i = global_destiny_status.location_x;
-			if (g_i < 2) g_i = 3;  //< Let the BEACH be a safe area, fireballs can't go there (sand doesn't burn)
+			if (g_i < 4) g_i = 4;  //< Let the BEACH be a SAFE area, fireballs can't go there (sand doesn't burn)
+				   //   ^- used to be 3, but since CHALLENGES attack area is +2, had to increase this to 4
 		  p_corresponding_fireball->targets[MAX_MOVE_TARGETS_PER_CHALLENGE - 1].target_x = g_i;
 			// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 			
@@ -2919,15 +2917,15 @@ void animate_stage8(Challenge* ptr_challenge)
 
 void main(void)
 {	
-	Time_counter started_timer;
+	//Time_counter started_timer;
 	unsigned char temp_hp;
 	
 start_over:
 
 	INIT_TIMER(global_timer);			
 	
-	INIT_TIMER(started_timer);				
-	//INIT_TIMER((*(Time_counter*)(g_pvec_map[1][0])));
+	//INIT_TIMER(started_timer);				
+	INIT_TIMER((*(Time_counter*)(g_pvec_map[1])));  // using g_pvec_map[1][0] seems to conflict in the C64 build for some reason
 	
 	g_pad_char = 48;  //< Back to 0 padded, necessary for 2nd runs of the game
 	check_for_flipskill_learned = TRUE;
@@ -2979,8 +2977,8 @@ quick_game:
 	//global_destiny_status.arrows_current = 0;	
 	// ^^ these are already set to 0 during a memset up above
 
-	STORE_TIME_NO_CORRECTOR(started_timer);
-  //STORE_TIME_NO_CORRECTOR((*(Time_counter*)(g_pvec_map[1][0])));
+	//STORE_TIME_NO_CORRECTOR(started_timer);
+  STORE_TIME_NO_CORRECTOR((*(Time_counter*)(g_pvec_map[1])));  // using g_pvec_map[1][0] seems to crash on the C64 build for some reason
   	
 	srand(global_destiny_status.seed_value);  // initiate RNG based on seed_value	    
 			
@@ -3056,8 +3054,8 @@ quick_game:
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
          
 	STORE_TIME_NO_CORRECTOR(global_timer);
-	UPDATE_DELTA_TIME_FULL(global_timer, started_timer);
-	//UPDATE_DELTA_TIME_FULL(global_timer, (*(Time_counter*)(g_pvec_map[1][0])));
+	//UPDATE_DELTA_TIME_FULL(global_timer, started_timer);
+	UPDATE_DELTA_TIME_FULL(global_timer, (*(Time_counter*)(g_pvec_map[1])));  // using g_pvec_map[1][0] seems to crash on the C64 for some reason
 
   // ********* END GAME **********************************************				 
   CLRSCR;

@@ -236,13 +236,13 @@ char str_destiny_hunter[] =
 	0
 };
 
-#if 0
 char str_you_are_dreaming[] =
 {
 	25, 15, 21, 32,   // you
 	1,  18,  5, 32,   // are 
 	4,  18,  5,  1, 13, 9, 14, 7,   // dreaming
-	46, 46, 46  // ...	
+	46, 46, 46,  // ...	
+	0
 };
 
 char str_you_are_sailing[] =
@@ -260,7 +260,8 @@ char str_towards_an_island[] =
 {
 	20, 15, 23, 1, 18, 4, 19, 32,  // towards  8
 	1, 14, 32,   // an  3
-	9, 19, 12, 1, 14, 4, 46  // island.  8
+	9, 19, 12, 1, 14, 4, 46,  // island.  8
+	0
 };
 
 char str_is_with_you[] =
@@ -270,6 +271,7 @@ char str_is_with_you[] =
 	 9, 19, 32,                 // is 
 	23,  9, 20, 8, 32,          // with
 	25, 15, 21, 46,             // you.	
+	0
 };
 
 char str_points_to_island[] =
@@ -278,7 +280,8 @@ char str_points_to_island[] =
 	16, 15, 9, 14, 20, 19, 32,  // point   6
 	20, 15, 23, 1, 18, 4, 32,  // toward 8
 	20, 8, 5, 32,  // the  4
-	9, 19, 12, 1, 14, 4, 44  // island,  7	
+	9, 19, 12, 1, 14, 4, 44,  // island,  7	
+	0
 };
 
 char str_your_training_begins[] =
@@ -286,7 +289,8 @@ char str_your_training_begins[] =
 	34, 25, 15, 21, 18, 32,  // "your     6
 	20, 18, 1, 9, 14, 9, 14, 7, 32,  // training  9
 	2, 5, 7, 9, 14, 19, 32,  // begins  7
-	8, 5, 18, 5, 33, 34 // here!"  6
+	8, 5, 18, 5, 33, 34, // here!"  6
+	0
 };
 
 char str_disembark_on_coast[] =
@@ -295,7 +299,8 @@ char str_disembark_on_coast[] =
 	4, 9, 19, 5, 13, 2, 1, 18, 11, 32,  // disembark  10
 	1, 12, 15, 14, 7, 32,  // along  6
 	20, 8, 5, 32,   // the    4
-	3, 15, 1, 19, 20, 46, 46, 46  // coast...  9
+	3, 15, 1, 19, 20, 46, 46, 46,  // coast...  9
+	0
 };
 
 char str_instructions[] =
@@ -303,7 +308,6 @@ char str_instructions[] =
 	137, 142, 147, 148, 146, 149, 131, 148, 137, 143, 142, 147,  // instructions
 	0
 };
-#endif
 
 char str_instruction_aim[] =
 {
@@ -337,12 +341,12 @@ char str_instruction_persistency[] =
 	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 176,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19, 32, 201     // ROCKS
 #endif
 };
-/*
+
 char str_flashback[] =
 {
 	115, 140, 143, 142, 135, 160, 129, 135, 143, 161, 107    // ]LONG AGO![
 };
-*/
+
 char str_game_over[] =
 {
 	135, 129, 141, 133, 160, 143, 150, 133, 146  // game over
