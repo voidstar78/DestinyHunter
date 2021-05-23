@@ -12,7 +12,7 @@ As a tribute-game, DH is intentionally standalone and short (to support 20XX PET
 
 Thank You for visiting!  Chuck Peddle, the electrical engineer creator of the highly affordable 6502 processor and KIM-1 single-board computer (that became the Commodore PET), passed away in 2019.  So as a tribute to the origin of home/office personal computers, this game is dedicated to the amazing hardware capability that was introduced to the world in that decade of the 1970s - and recognition that we are the last generation that knew the world before personal computers.  Just as we are curious to know exactly "how it happened" 2000 years ago, centuries from now historians may want to know "how it happened" about the Computer Age - what was it like to be non-networked, and how was this new-media of Software introduced to the world.  DH won't answer these questions, but I will be providing various thoughts along these lines at links available in the "reference" section of the DH blog:  www.destinyhunter.org 
 
-- voidstar, May 2021
+v/r - voidstar, May 2021
 
 
 HOW TO PLAY
