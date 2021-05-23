@@ -80,7 +80,7 @@ B        = USE A BLESSINGS
 					 
 O        = ACTIVE THE ORB
            There is only one ORB in the game.  It is quite visible,
-					 but I leave it as a surprise to players to find it.
+					 but I leave it as a surprise to players to actually locate it.
 					 You may only activate it once!  It will basically give you
 					 unlimited STAMINA.
 
@@ -95,7 +95,9 @@ Since the C64 has no NUMPAD, the only difference in the controls
 for the C64 is:
 
 J/L     = AIM BOW LEFT/RIGHT    (NUMPAD 4/6 for the PET build)
+
 I       = "FLIP" BOW            (NUMPAD 8 for the PET build)
+
 K       = USE PERSISTENCY       (NUMPAD 0 for the PET build)
 
 (all other keys remain the same as the PET version)
