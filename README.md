@@ -1,14 +1,25 @@
 
 [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
 
-When the game starts, just press any key to decide a DIRECTION and ring CHIMES.  Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
+When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
-DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle).  CHIMES are used to be gifted BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
+DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle).  CHIMES offer gifts of BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
+
+When you defeat creatures, you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+
+After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For new players, I suggest #6 SIDON (good health and defense).  Choice #1 is the expected "normal" difficult.   #4 RUDRA is a good choice also, as he carries the most arrows.    #3 CYRENE is probably the hardest difficulty.  Press RETURN to select and begin the game.
+
+On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA has told you to begin your hunting training at this island.  Therefore, you are starting along a beach.   So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That's the "adventure" part of the game: observe and find them (they are not far :) )
+
+Once you do so, then you will begin the game, which requires you to defeat CHALLENGES that appear by aiming and firing arrows.  Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
+
 
 If using real/physical Commodore hardware, both versions support the SNES GAMEPAD adapter that is available here:
 https://texelec.com/product/snes-adapter-commodore/
 
 
+Thank You for visiting!
+voidstar
 
 
 PET CONTROLS
