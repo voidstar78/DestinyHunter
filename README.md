@@ -25,9 +25,9 @@ NOTE: Internally, DIRECTION and CHIMES are being used to initialize the random n
 
 After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For new players, I suggest #6 SIDON (good health and defense) to get familiar with the controls.  Choice #1 is the expected "normal" difficult.   #4 RUDRA is a good choice also, as he carries the most arrows.    #3 CYRENE is probably the hardest difficulty.  Press RETURN to select and begin the game.
 
-On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach (observe that moving in the WATER will consume more STAMINA and slow you down faster).
+On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach (observe that moving in the WATER will consume more STAMINA and slow you down faster).  The game is in a TOP-DOWN perspective (like the original Zelda was).
 
-So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far!).  One you are armed, then the game begins as the first CHALLENGES will enter the STAGE.   When you defeat creatures (by firing ARROWS from the BOW), you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+To begin, collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far!).  One you are armed, then the game begins as the first CHALLENGES will enter the STAGE.   When you defeat creatures (by firing ARROWS from the BOW), you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
 
 Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
 
