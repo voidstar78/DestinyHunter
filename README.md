@@ -2,35 +2,37 @@
 INTRODUCTION
 ============
 
-*Destiny Hunter* is a tribute-game made in *2021* for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K system RAM is required, the game can be loaded by cassette or disk (or use of emulators).   The game was written in C and was also an exercise in using the cc65 compiler.   Release builds are available in the *BIN* folder: dhunter_final.zip is a complete package (with TXT file instructions and both PET and C64 PRG files), or access the individual PRG files.  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+www.destinyhunter.org
 
-As a tribute-game, DH is intentionally short, about 5-10 minutes long (but maximizes the full 32K available of the PET system).  The C64 version is functionally equivalent and only adds the addition of color.
+*Destiny Hunter* is a tribute-game made in *2021* for the Commodore PET (the original personal computer from 1977 that was based on the 6502 microprocessor).  32K system RAM is required, the game can be loaded by cassette or disk (or use of emulators).   The game was written in C and is also an exercise in using the cc65 compiler.  It is also hoped that the code-baseline here can be a reference for future C base projects on the upcoming Commander 16!   
+
+Release builds are available in the *BIN* folder: dhunter_final.zip is a complete package (with TXT file instructions and both PET and C64 PRG files), or you may access the individual PRG files.  [DHUNTERPET.PRG for Commodore PET] [DHUNTERC64.PRG for Commodore C64]
+
+As a tribute-game, DH is intentionally standalone and short (to support 20XX PET tape-based systems), about 5-10 minutes long (but maximizes the full 32K available of the PET system).  The C64 version is functionally equivalent and only adds the addition of color (i.e. this is a PET game that happens to run also on the C64, but clearly does not take advantage of the extra potential of the C64 system - but it does demonstrate that commonality of the PETSCII symbol set between the two systems).
 
 
 HOW TO PLAY
 ===========
 When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
-DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle).  CHIMES offer gifts of BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
+DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle based on the result).  CHIMES offer gifts of BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
 
-NOTE: Internally, DIRECTION and CHIMES are being used to initialize the random number generator!  It really *doing stuff* :)
+NOTE: Internally, DIRECTION and CHIMES are being used to initialize the random number generator!  It really is *doing stuff* :)
 
-After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For new players, I suggest #6 SIDON (good health and defense).  Choice #1 is the expected "normal" difficult.   #4 RUDRA is a good choice also, as he carries the most arrows.    #3 CYRENE is probably the hardest difficulty.  Press RETURN to select and begin the game.
+After the CHIME section, you then select a PERSONA.    Press 1-6 to choose.  For new players, I suggest #6 SIDON (good health and defense) to get familiar with the controls.  Choice #1 is the expected "normal" difficult.   #4 RUDRA is a good choice also, as he carries the most arrows.    #3 CYRENE is probably the hardest difficulty.  Press RETURN to select and begin the game.
 
-On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach.   So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far :) )
+On the first map, you start empty handed!  The story is that you are in a dream and your chosen PERSONA (your ancestor hunter) has told you to begin your training at this island.  Therefore, you are starting along a beach (observe that moving in the WATER will consume more STAMINA and slow you down faster).
 
-When you defeat creatures, you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
+So to begin, collect the BOW and ARROWS that you see randomly located along the beach.  That is the "adventure" part of the game: observe and find them (they are not far :) ).  One you are armed, then the game begins as the first CHALLENGES will enter the STAGE.   When you defeat creatures (by firing ARROWS from the BOW), you will automatically gain some PERSISTENCY, and have the option to collect ARROWS from those creatures.  But the CHIMES at the beginning is the only way to get BLESSINGS.
 
-
-
-Once you do so, then you will begin the game, which requires you to defeat CHALLENGES that appear by aiming and firing arrows.  Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
-
+Once all the CHALLENGES are defeated, a notice will display indicating to press F to FINISH that stage and proceed to the next one. 
 
 If using real/physical Commodore hardware, both versions support the SNES GAMEPAD adapter that is available here:
 https://texelec.com/product/snes-adapter-commodore/
 
 
-Thank You for visiting!
+Thank You for visiting!  Chuck Peddle, the electrical engineer creator of the highly affordable 6502 processor and KIM-1 single-board computer (that became the Commodore PET), passed away in 2019.  So as a tribute to the origin of home/office personal computers, this game is dedicated to the amazing hardware capability that was introduced to the world in that decade of the 1970s - and recognition that we are the last generation that knew the world before personal computers.  Just as we are curious to know exactly "how it happened" 2000 years ago, centuries from now historians may want to know "how it happened" about the Computer Age - what was it like to be non-networked, and how was this new-media of Software introduced to the world.  DH won't answer these questions, but I will be providing various thoughts along these lines at links available from the DH blog:  www.destinyhunter.org 
+
 voidstar
 
 
