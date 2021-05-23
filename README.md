@@ -34,11 +34,17 @@ Once all the CHALLENGES are defeated, a notice will display indicating to press 
 
 Some more tips:
 
-- Your number of arrows and remaining HEALTH is along the bottom of the STAGE map.  CHALLENGES can attack you up to "two spaces" away, so you do want to evade them (CHALLENGES will chase you, depending on your STEALTH attributes.    Use PERSISTENCY to recover health.  The screen will "flicker" when you are HIT (and your health will drop by 1).
+- Your number of arrows and remaining HEALTH is along the bottom of the STAGE map.  
+
+- CHALLENGES can attack you up to "two spaces" away, so you do want to evade them (CHALLENGES will chase you, depending on your STEALTH attributes).    
+
+- Use PERSISTENCY to recover health.  The screen will "flicker" when you are HIT (and your health will drop by 1).
 
 - When you HIT a challenge, their health will also reduce by 1.  The number of health of the last CHALLENGE you hit is displayed at the TOP RIGHT next to the name of the STAGE you are on.
 
-- STAGE 4 is an "optional stage" that is a "dream within a dream."  This means you can't die on STAGE 4, and your original health before entering the stage is stored upon exit.  If you play well, STAGE 4 can be used to gather up a lot of arrows and PERSISTENCY.   STAGE 4 is entered by collecting the Divinity Gem at the center of the island, and then using that GEM to read the BOOK that appears (which transports you to Divinity Island).
+- STAGE 4 is an "optional stage" that is a "dream within a dream."  This means you can't die on STAGE 4, and your original health before entering the stage is restored upon exit.  If you play well, STAGE 4 can be used to gather up a lot of arrows and PERSISTENCY.   STAGE 4 is entered by collecting the Divinity Gem at the center of the island, and then using that GEM to read the BOOK that appears (which transports you to Divinity Island).  NOTE: Just by reading the book, you gain a BLESSING!
+
+- If your health reaches 0 (on any STAGE besides the 4th one), you will get G.O. (Game Over), press RETURN to try again from the beginning.
 
 
 If using real/physical Commodore hardware, both versions support the SNES GAMEPAD adapter that is available here:
