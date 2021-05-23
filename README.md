@@ -17,7 +17,7 @@ v/r - voidstar, May 2021
 
 HOW TO PLAY
 ===========
-When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. Eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
+When the game starts, press any key to decide a DIRECTION and ring CHIMES.  These are explained in a moment. After you "press any key" for several times in a row, eventually you will be asked to press RETURN to continue (or press X to choose DIRECTION and CHIMES again).
 
 DIRECTION is mostly cosmetic (e.g. character will be FILLED circle or HOLLOW circle based on the result).  CHIMES offer gifts of BLESSINGS or PERSISTENCY at the start of the game.  These are not essential, but having them will help reaching the end easier.  (BLESSINGS slow down the creatures, while PERSISTENCY recover HEALTH)
 
