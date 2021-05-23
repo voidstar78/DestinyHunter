@@ -112,9 +112,13 @@ ACTION-MODE
 HOLD BUTTON 1
 
 When in ACTION-MODE:
+
 D-PAD LEFT/RIGHT = AIM BOW
+
 D-PAD UP         = USE PERSISTENCY
+
 D-PAD DOWN       = FLIP BOW
+
 D-PAD DOWN (2x)  = CANCEL FIRING ARROW 
 
 
@@ -124,12 +128,19 @@ SNES GAMEPAD CONTROLS
 NOTE: GAMEPAD is active only during STAGE maps, not in the menus.
 
 D-PAD               = MOVEMENT (up/down/left/riht)
+
 TOP LEFT/TOP RIGHT  = AIM BOW LEFT/RIGHT
+
 A-BUTTON            = FIRE ARROW
+
 X-BUTTON            = FLIP BOW 180 (active after about 200 movement steps)
+
 B-BUTTON            = USE 1 PERSISTENCY to RESTORE 1 HEALTH
+
 Y-BUTTON            = ACTIVATE ORB (if equipped)
+
 START/SELECT        = FINISH MAP (once all CHALLENGES defeated)
+
 
 
 
