@@ -31,12 +31,14 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 	unsigned char block_progress = 0;  // how far into the available block progress we currently are
 	
   unsigned char symbol_index = 0;
-	//static const char* symbols_spiral = "\xA3\xA4\xAF\xC0\xC3\xC4\xC5\xC6\xD2\xA2";	
+	
+	//static const char* symbols_spiral = "\xA3\xA4\xAF\xC0\xC3\xC4\xC5\xC6\xD2\xA2";	  //< old way...
 	                                      // 0    1   2   3   4    5   6   7  8   9 
   static const char symbols_spiral[] =   {100, 70, 64, 67, 68, 69, 68, 67, 64, 70};
 	
 #ifdef TARGET_C64   
   Time_counter joy_timer;
+	INIT_TIMER(joy_timer);
 	STORE_TIME_NO_CORRECTOR(joy_timer);
 #endif	
 		
@@ -149,11 +151,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 
 		//WRITE_STRING(25,temp_y, str_CHIME_reverse, STR_CHIME_REVERSE_LEN);
 		WRITE_STRING(25,temp_y, str_press_a_key_reverse, STR_PRESS_A_KEY_REVERSE_LEN);
-		
-//		WRITE_1U_DIGIT(33,temp_y, g_i);
-//		WRITE_CHAR(34,temp_y, 47);  // SLASH /
-//		WRITE_1U_DIGIT(37,temp_y, NUM_SEEDS_TO_USE);
-				
+
     // Converge back to the average...
 		if (seed_mod > 5)
 		{
@@ -218,7 +216,7 @@ try_again:
 #endif
 			
 			if (global_input_ch != PKEY_NO_KEY)
-			{
+			{						
 				
 				if (seed_delta < MIN_SEED_DELTA)
 				{				
@@ -243,8 +241,37 @@ try_again:
 					// EXAMINE if this resulting intermediate/temporary seed_value is "BLESSED" (with possibility of a retry)
 					if ((temp_seed_value % seed_mod) == 0)
 					{
+#ifdef TARGET_C64
+
+#else
+	          AUDIO_TURN_ON;
+					
+						AUDIO_SET_OCTAVE(51U); //audio_octv[symbol_index*2]);
+						AUDIO_SET_FREQUENCY(audio_frq0[symbol_index+14]);
+						
+						jiffy_delay(JIFFIES_SIXTEENTH_SECOND);
+						AUDIO_TURN_OFF;
+#endif
+						
 						if (attempts > seed_mod)
 						{							
+#ifdef TARGET_C64					
+
+#else
+	            // BLESSING!
+						  AUDIO_TURN_ON;
+							
+							AUDIO_SET_OCTAVE(51U);  //audio_octv[20]);
+							AUDIO_SET_FREQUENCY(69U);  //audio_frq0[24]);  // A
+							
+							jiffy_delay(JIFFIES_EIGTH_SECOND);
+							
+							AUDIO_SET_FREQUENCY(65U);  //audio_frq0[25]);  // A#
+							jiffy_delay(JIFFIES_EIGTH_SECOND);
+							
+							AUDIO_TURN_OFF;
+#endif
+					
 					    ++global_destiny_status.blessing_count;
 							
 							// Exceed the "MOD" number of re-tries.  Consider this seed_value to be CURSED!
@@ -256,20 +283,13 @@ try_again:
 							}
 #endif							
 							WRITE_STRING(25, temp_y, str_bless, STR_BLESS_LEN);
-							//WRITE_1U_DIGIT(33,temp_y, attempts);
-							//WRITE_CHAR(34,temp_y, 62);  // GT GREATER-THAN >
-							//WRITE_1U_DIGIT(37,temp_y, seed_mod);
 							WRITE_1U_DIGIT(36,temp_y, seed_mod);
 						}
 						else
 						{									
               ++global_destiny_status.persistency_count;						
 												
-							//WRITE_STRING(25, temp_y, str_again, strlen(str_again));
-							//WRITE_1U_DIGIT(33,temp_y, attempts);
-							//WRITE_CHAR(34,temp_y, 33);  // !
 							WRITE_1U_DIGIT(36,temp_y, attempts);
-							//WRITE_CHAR(37,temp_y, 33);  // !
 							flush_keyboard_buffer();
 							goto try_again;
 						}
@@ -284,8 +304,8 @@ try_again:
 					break;
 				}		
 			}			
-		}	
-		
+		}
+				
 		// Store this temporary value...		
 		global_destiny_status.seed_value += temp_seed_value;
 	}	

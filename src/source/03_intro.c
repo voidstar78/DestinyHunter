@@ -18,21 +18,22 @@ void conduct_intro()
 	
 	text_banner_center(3, str_destiny_hunter, g_ptr_persona_status->direction);			
 
-  print_fancy(3, 7, str_you_are_dreaming, JIFFIES_TWELTH_SECOND);
-	//WRITE_STRING(3, 7, str_you_are_dreaming, STR_YOU_ARE_DREAMING_LEN);
+  //print_fancy(3, 7, str_you_are_dreaming, JIFFIES_TWELTH_SECOND);
+	WRITE_STRING(3, 7, str_you_are_dreaming, STR_YOU_ARE_DREAMING_LEN);
 	
-	print_fancy(3, 9, str_you_are_sailing, JIFFIES_TWELTH_SECOND);
-	//WRITE_STRING(3, 9, str_you_are_sailing, STR_YOU_ARE_SAILING_LEN);
+	//print_fancy(3, 9, str_you_are_sailing, JIFFIES_TWELTH_SECOND);
+	WRITE_STRING(3, 9, str_you_are_sailing, STR_YOU_ARE_SAILING_LEN);
 	
-	print_fancy(3,10, str_towards_an_island, JIFFIES_EIGTH_SECOND);  
-	//WRITE_STRING(3,10, str_towards_an_island, STR_TOWARDS_AN_ISLAND_LEN);
+	//print_fancy(3,10, str_towards_an_island, JIFFIES_EIGTH_SECOND);  
+	WRITE_STRING(3,10, str_towards_an_island, STR_TOWARDS_AN_ISLAND_LEN);
 
 	WRITE_CHAR(3, 12, 27);  // [
 	g_i = strlen(g_ptr_persona_status->name);
 	WRITE_STRING(4, 12, g_ptr_persona_status->name, g_i);
 	WRITE_CHAR(4+g_i, 12, 29);  // ]
-	print_fancy(6+g_i, 12, str_is_with_you, JIFFIES_TWELTH_SECOND);	
-	//WRITE_STRING(6+g_i, 12, str_is_with_you, STR_IS_WITH_YOU_LEN);	
+	
+	//print_fancy(6+g_i, 12, str_is_with_you, JIFFIES_TWELTH_SECOND);	
+	WRITE_STRING(6+g_i, 12, str_is_with_you, STR_IS_WITH_YOU_LEN);	
 	
 	g_i = 0;
   if (g_ptr_persona_status->direction == FORWARD_YONI_BLACK)
@@ -41,14 +42,14 @@ void conduct_intro()
 		WRITE_CHAR(3, 14, 19);  // S
 	}		
       // 1234567890123456789012345678901234567890		
-	print_fancy(3+g_i, 14, str_points_to_island, JIFFIES_TWELTH_SECOND);
-	//WRITE_STRING(3+g_i, 14, str_points_to_island, STR_POINTS_TO_ISLAND_LEN);
+	//print_fancy(3+g_i, 14, str_points_to_island, JIFFIES_TWELTH_SECOND);
+	WRITE_STRING(3+g_i, 14, str_points_to_island, STR_POINTS_TO_ISLAND_LEN);
 	
-	print_fancy(3, 16, str_your_training_begins, JIFFIES_EIGTH_SECOND);  
-	//WRITE_STRING(3, 15, str_your_training_begins, STR_YOUR_TRAINING_BEGINS_LEN);  
+	//print_fancy(3, 16, str_your_training_begins, JIFFIES_EIGTH_SECOND);  
+	WRITE_STRING(3, 15, str_your_training_begins, STR_YOUR_TRAINING_BEGINS_LEN);  
 	
-	print_fancy(3, 18, str_disembark_on_coast, JIFFIES_SIXTEENTH_SECOND);
-	//WRITE_STRING(3, 17, str_disembark_on_coast, STR_DISEMBARK_ON_COAST_LEN);	
+	//print_fancy(3, 18, str_disembark_on_coast, JIFFIES_SIXTEENTH_SECOND);
+	WRITE_STRING(3, 17, str_disembark_on_coast, STR_DISEMBARK_ON_COAST_LEN);	
 
 	text_banner_center(22, str_press_return_to_proceed, SOMETHING_ELSE);	
 		
@@ -85,7 +86,5 @@ void conduct_intro()
 
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
 
-  // TBD: Monitor for R key to "reverse" keyboard controls
-	
 	g_enter_result = flush_keyboard_and_wait_for_ENTER();    
 }

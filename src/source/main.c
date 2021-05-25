@@ -133,7 +133,7 @@ static unsigned char arrow_locations_y_mod[] = { 0,  5,12, 3, 6,16,12,12,12};
 static unsigned char arrow_locations_y_ofs[] = { 0, 10, 3,11, 9, 4, 5, 5, 5};	
 																						 //  0   1  2  3  4  5  6  7  8   STAGE
 
-//static const char step_symbol[4] = {126, 124, 108, 123};  // 190 188  172  187
+//static const char step_symbol[4] = {126, 124, 108, 123};  // 190 188  172  187    Used to know an "animation" of the player making steps/movements
 
 													 //  YONI  LANGI
 //static char vertical_barL[] = {  72, 93  };
@@ -151,9 +151,11 @@ static unsigned char y_threshold;
 static unsigned char persona_name_len;
 
 #ifdef TARGET_C64
-static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
+  static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
 #else
-  #define TAPE_BUFFER1_ADDR 0x027A
+  #define TAPE_BUFFER1_ADDR 0x027A  // Not available on C64
+  #define TAPE_BUFFER2_ADDR 0x033D  //< Actually starts at 0x033A, but 33A-33C are reserved for the SNES GAMEPAD, so offset by 3 bytes
+	// TAPE BUFFER2 is same address on 2.0, 4.0, and C64
 #endif
 static unsigned char num_locations_to_draw = 0;	
 
@@ -230,7 +232,7 @@ void draw_stage_overlay(char* stage_name)
 #define STATS_ARROWS      0x02  // 0000 0010
 #define STATS_BLESS       0x04  // 0000 0100
 #define STATS_PERSISTENCY 0x08  // 0000 1000
-#define STATS_STEPS       0x10  // 0001 0000
+//#define STATS_STEPS       0x10  // 0001 0000  (no longer actively displaying the number of steps on the map overlay)
 #define STATS_STAMINA     0x20  // 0010 0000
 #define STATS_INVENTORY   0x40  // 0100 0000
 #define STATS_ALL         0xFF
@@ -321,7 +323,7 @@ void update_stats(unsigned char which_ones)
 	
 	if (
 	  (IS_MASK_ON(which_ones, STATS_ARROWS))       // firing an arrow reduced stamina
-		|| (IS_MASK_ON(which_ones, STATS_STEPS))     // moving reduced stamina
+		// || (IS_MASK_ON(which_ones, STATS_STEPS))     // moving reduced stamina
 		|| (IS_MASK_ON(which_ones, STATS_STAMINA))   // some stamina was regained
 		|| (rest_mode == TRUE)                       // explicit rest mode was declared
 	)
@@ -431,8 +433,8 @@ void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigne
 	locations_to_draw[num_locations_to_draw].symbol = target_symbol;  
 	locations_to_draw[num_locations_to_draw].color = a_color;
 #else
-	POKEW(TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)  , BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*data_y)+data_x);
-	POKE (TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)+2, target_symbol);
+	POKEW(TAPE_BUFFER2_ADDR+(4*num_locations_to_draw)  , BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*data_y)+data_x);
+	POKE (TAPE_BUFFER2_ADDR+(4*num_locations_to_draw)+2, target_symbol);
 #endif	
 	++num_locations_to_draw;
 }
@@ -455,7 +457,7 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 #ifdef TARGET_C64
 	// This ends up looking wrong color on the C64, so looking worse.
 #else
-	// Invert the weapon when it is on BEACH tiles, just makes it look nicer...
+	// OPTIONAL: Invert the weapon when it is on BEACH tiles, just makes it look nicer...
 	if (g_pvec_map[global_destiny_status.weapon_y][global_destiny_status.weapon_x] == MAP_BEACH) 
 		SET_MASK(global_destiny_status.symbol_weapon, MASK_HIGH_BIT); 
 	else 
@@ -483,7 +485,186 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 						global_destiny_status.energy_current -= (60 * g_ptr_persona_status->land_movement);  \
 					}					  \
 					if (global_destiny_status.energy_current > 0) goto allow_target;  \
-					rest_mode = TRUE;
+					rest_mode = TRUE;  \
+					audio_rest();
+					
+void audio_rest()
+{
+	/*
+#ifdef TARGET_C64
+	
+	// S+0   [ _ _ _ _  _ _ _ _ ]  freq LOW  BYTE
+	// S+1   [ _ _ _ _  _ _ _ _ ]  freq HIGH BYTE
+	
+	// S+4   [ _ _   _ _  _ _ _    _   ]
+	//               W F          gate
+	
+	// S+5   [ _ _ _ _  _ _ _ _ ]
+	//         attack   decay 
+	// S+6   [ _ _ _ _  _ _ _ _ ]
+	//         sustain  release
+	
+	// 7217 = 1C31 hex
+	
+	//POKEW(AUDIO_C64_BASE_ADDR, audio_freq[0]);
+	
+	POKE(AUDIO_C64_BASE_ADDR  , 0x31);
+	POKE(AUDIO_C64_BASE_ADDR+1, 0x1C);
+	
+	POKE (AUDIO_C64_BASE_ADDR+4, (1 * 16) | 1);
+	jiffy_delay(JIFFIES_THIRTIETH_SECOND);
+	POKE (AUDIO_C64_BASE_ADDR+4, (1 * 16)    );
+
+#else			
+	*/
+	
+	AUDIO_TURN_ON;
+	
+	AUDIO_SET_OCTAVE(15U);  // audio_octv[0]);
+	AUDIO_SET_FREQUENCY(140U);  //  audio_frq0[0]);  A
+	
+	//jiffy_delay(JIFFIES_THIRTIETH_SECOND);
+	//AUDIO_TURN_OFF;  //< Sound will go off at end of main-loop
+
+}	
+
+void audio_hp()
+{
+	AUDIO_TURN_ON;
+	
+	AUDIO_SET_OCTAVE(15U);  //audio_octv[global_destiny_status.hp_current]);
+	AUDIO_SET_FREQUENCY(audio_frq0[global_destiny_status.hp_current]);
+	
+	//jiffy_delay(JIFFIES_THIRTIETH_SECOND);
+	//AUDIO_TURN_OFF;  //< Sound will go off at end of main-loop
+}	
+
+void audio_item()
+{	
+	AUDIO_TURN_ON;
+	
+	AUDIO_SET_OCTAVE(15U);  //audio_octv[7]);       
+	AUDIO_SET_FREQUENCY(93U);  //audio_frq0[7]);       // E	
+	jiffy_delay(JIFFIES_FIFTEENTH_SECOND);
+
+	AUDIO_SET_FREQUENCY(69U);  //audio_frq0[12]);      // A
+	jiffy_delay(JIFFIES_FIFTEENTH_SECOND);
+
+  // OPTIONAL
+	//AUDIO_SET_OCTAVE(51U);  // audio_octv[15]);
+	//AUDIO_SET_FREQUENCY(118U);  //audio_frq0[15]);     // C
+	//jiffy_delay(JIFFIES_FIFTEENTH_SECOND);
+	
+	//AUDIO_TURN_OFF;  //< Sound will go off at end of main-loop
+}
+
+void audio_game_over()
+{
+	AUDIO_TURN_ON;                         
+	
+	AUDIO_SET_OCTAVE(51U);                 
+	
+	AUDIO_SET_FREQUENCY(118U); /* C */     
+	jiffy_delay(JIFFIES_FIFTEENTH_SECOND); 
+	
+	AUDIO_SET_OCTAVE(15U);                 
+	
+	AUDIO_SET_FREQUENCY(69U);  /* A */     
+	jiffy_delay(JIFFIES_FIFTEENTH_SECOND); 
+	
+	AUDIO_SET_FREQUENCY(93U);   /* E */    
+	jiffy_delay(JIFFIES_FIFTEENTH_SECOND); 
+	
+	AUDIO_SET_OCTAVE(51U);                 
+	
+	AUDIO_SET_FREQUENCY(125U);  /* B */    
+	jiffy_delay(JIFFIES_TWELTH_SECOND);	   
+	
+	AUDIO_SET_OCTAVE(15U);                 
+	
+	AUDIO_SET_FREQUENCY(78U);   /* G */    
+	jiffy_delay(JIFFIES_TWELTH_SECOND);	   
+	
+	AUDIO_SET_FREQUENCY(104U);  /* D */    
+	jiffy_delay(JIFFIES_TWELTH_SECOND);	   
+	
+	AUDIO_SET_FREQUENCY(69U);   /* A */    
+	jiffy_delay(JIFFIES_EIGTH_SECOND);	   
+	
+	AUDIO_SET_OCTAVE(15U);                 
+	
+	AUDIO_SET_FREQUENCY(88U);   /* F */    
+	jiffy_delay(JIFFIES_EIGTH_SECOND);	   
+	
+	AUDIO_SET_FREQUENCY(118U);  /* C */    
+	jiffy_delay(JIFFIES_QUARTER_SECOND);   
+	
+	AUDIO_TURN_OFF;
+}
+
+void audio_end_game()
+{
+	g_i = 2;
+	while (g_i > 0)
+	{
+		if (GET_PKEY_VIEW == PKEY_RETURN) break;
+		
+		AUDIO_TURN_ON;
+		
+		// GROUP 1
+		AUDIO_SET_OCTAVE(15U);
+		AUDIO_SET_FREQUENCY(118U);      // C	  1	
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+				
+		AUDIO_SET_FREQUENCY(78U);       // G  2
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+
+		AUDIO_SET_OCTAVE(51U);
+		AUDIO_SET_FREQUENCY(118U);      // C  3
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+
+		AUDIO_SET_FREQUENCY(93U);       // A  4
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+		
+		if (GET_PKEY_VIEW == PKEY_RETURN) break;
+		
+		// GROUP 2
+		AUDIO_SET_OCTAVE(15U);
+		AUDIO_SET_FREQUENCY(125U);      // B  5
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+		
+		AUDIO_SET_FREQUENCY(88U);       // F  6
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+
+		AUDIO_SET_OCTAVE(51U);
+		AUDIO_SET_FREQUENCY(125U);      // B  7
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+		
+		AUDIO_SET_FREQUENCY(104U);      // D  8
+		jiffy_delay(JIFFIES_EIGTH_SECOND);
+		
+		if (GET_PKEY_VIEW == PKEY_RETURN) break;
+
+		// GROUP 3
+		AUDIO_SET_OCTAVE(15U);
+		AUDIO_SET_FREQUENCY(140U);      // A  9
+		jiffy_delay(JIFFIES_QUARTER_SECOND);
+
+		AUDIO_SET_FREQUENCY(93U);       // E  10
+		jiffy_delay(JIFFIES_QUARTER_SECOND);
+		
+		AUDIO_SET_FREQUENCY(69U);       // A  11
+		jiffy_delay(JIFFIES_QUARTER_SECOND);
+
+		AUDIO_SET_OCTAVE(51U);
+		AUDIO_SET_FREQUENCY(118U);      // C 12
+		jiffy_delay(JIFFIES_QUARTER_SECOND);
+		
+		--g_i;
+	}
+
+	AUDIO_TURN_OFF;	
+}
 
 void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon_index, int num, ...)
 {
@@ -1319,6 +1500,8 @@ void run_stage(
 				
 				SET_MASK(global_destiny_status.inventory, INVENTORY_BOW);  //< Set flag indicating the player now possess the bow.
 				SET_MASK(which_stats_modified, STATS_INVENTORY);
+				
+				audio_item();
 			}
 		}
 				
@@ -1355,6 +1538,7 @@ void run_stage(
 					SET_MASK(global_destiny_status.inventory, INVENTORY_GEM);  //< Set flag indicating the player now possess the bow.										
 					SET_MASK(which_stats_modified, STATS_INVENTORY);
 					
+					audio_item();
 				}
 			}
 			
@@ -1370,6 +1554,8 @@ void run_stage(
 						SET_MASK(global_destiny_status.inventory, INVENTORY_BOOK);  //< Set flag indicating the player now possess the book.
 						++global_destiny_status.blessing_count;
 						stage_event_state = STAGE_COMPLETED;  // auto-complete the stage (don't have to set modified-stats mask, screen will get redrawn)
+						
+						audio_item();
 					}
 				}				
 			}
@@ -1387,6 +1573,8 @@ void run_stage(
 			{				
 				SET_MASK(global_destiny_status.inventory, INVENTORY_ORB);  //< Set flag indicating the player now possess the bow.
 				SET_MASK(which_stats_modified, STATS_INVENTORY);
+				
+				audio_item();
 			}
 		}		
 		// *****************************************************************		
@@ -1508,11 +1696,11 @@ void run_stage(
 			POKE(				
 				locations_to_draw[num_locations_to_draw].offset,
 				locations_to_draw[num_locations_to_draw].symbol
-			);			
+			);
 #else
 			POKE(				
-				PEEKW(TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)  ),
-				PEEK (TAPE_BUFFER1_ADDR+(4*num_locations_to_draw)+2)
+				PEEKW(TAPE_BUFFER2_ADDR+(4*num_locations_to_draw)  ),
+				PEEK (TAPE_BUFFER2_ADDR+(4*num_locations_to_draw)+2)
 			);			
 #endif	
 		}
@@ -1640,8 +1828,23 @@ void run_stage(
 										// Mark the spot of the defeated challenge as "X" (bake it directly into the game map)
 										ptr_value = g_pvec_map[weapon_range_y];
 										ptr_value[weapon_range_x] = MAP_DEAD1;
+
+                    // Play audio for defeating a CHALLENGE										
+#ifdef TARGET_C64
+  // ABC TBD
+#else
+	                  AUDIO_TURN_ON;
+										AUDIO_SET_OCTAVE(15U);  //audio_octv[5]);       
+										AUDIO_SET_FREQUENCY(104U);  //audio_frq0[5]);     // D
 										
-										global_destiny_status.persistency_count += rand_mod(2)+1;
+										jiffy_delay(JIFFIES_THIRTIETH_SECOND);
+										
+										AUDIO_SET_FREQUENCY(88U);   //audio_frq0[8]);     // F
+										jiffy_delay(JIFFIES_THIRTIETH_SECOND);
+										//AUDIO_TURN_OFF;  //< Audio will turn off at end of main loop
+#endif
+										
+										global_destiny_status.persistency_count += rand_mod(2)+1;  //< Gift at least one PERSISTENCY for defeating the CHALLENGE
 										SET_MASK(which_stats_modified, STATS_PERSISTENCY);
 										
 										MARK_LOCATION_AS_DRAWN(weapon_range_x, weapon_range_y);  //< Ensure that our new "X" death location marker is drawn
@@ -1748,11 +1951,16 @@ void run_stage(
 			}
 			// ===================
 			else if (
-				IS_MASK_ON(g_padB, GPAD_BUTTON_START_MASK)
-				|| IS_MASK_ON(g_padB, GPAD_BUTTON_SELECT_MASK)
+				IS_MASK_ON(g_padB, GPAD_BUTTON_START_MASK)				
 			)
 			{
 				global_input_ch = PKEY_F;
+			}
+			else if (
+			  IS_MASK_ON(g_padB, GPAD_BUTTON_SELECT_MASK)
+			)
+			{
+				global_input_ch = PKEY_P;
 			}
 		}
 		
@@ -1879,12 +2087,14 @@ void run_stage(
 							SET_MASK(global_destiny_status.inventory, INVENTORY_FLIPSKILL);                           //       |  only need to enable
 							SET_MASK(which_stats_modified, STATS_INVENTORY);		                                      //       |  it once.
 							// ------------------------------------------------------------------------------------------------/  
-							check_for_flipskill_learned = FALSE;												
+							check_for_flipskill_learned = FALSE;  //< The skill has been learned forever, disable subsequent checks
 						}
 		//skip_target:					
 						
 						--global_destiny_status.arrows_current;  // Consume/account for the arrow					
-						SET_MASK(which_stats_modified, STATS_ARROWS);							
+						SET_MASK(which_stats_modified, STATS_ARROWS);
+
+            audio_hp();
 					
 						global_destiny_status.energy_current -= (rand_mod(300))+100;
 						if (global_destiny_status.energy_current < 0)
@@ -1945,8 +2155,16 @@ void run_stage(
 					SET_MASK(global_destiny_status.motion_this_cycle, MOTION_WEAPON);
 				}
 				else if (global_input_ch == PKEY_P)
-				{
-					flush_keyboard_and_wait_for_ENTER();
+				{					
+					flush_keyboard_buffer();
+					while (TRUE)
+					{
+						global_input_ch = GET_PKEY_VIEW;
+						if (global_input_ch != PKEY_NO_KEY)
+						{
+							break;
+						}
+					}
 				}
 #ifdef TARGET_C64
 				else if (global_input_ch == PKEY_K)
@@ -1965,6 +2183,7 @@ void run_stage(
 						++global_destiny_status.hp_current;				
 						SET_MASK(which_stats_modified, STATS_HP);	    			
 						
+						audio_hp();
 					}
 				}			
 				else if (global_input_ch == PKEY_B)  //< Execute a BLESSING that is appropriate for the current stage.
@@ -2384,12 +2603,17 @@ disallow_right:
 														// GAME OVER
 														//print_fancy(15,  1, str_game_over, JIFFIES_TWELTH_SECOND);
 														WRITE_STRING(15, 1, str_game_over, STR_GAME_OVER_LEN);
+														audio_game_over();
+														//AUDIO_GAME_OVER;
 														//print_fancy(10, 23, str_press_return_to_proceed, JIFFIES_TWELTH_SECOND);													
 												  }
+													
+													AUDIO_TURN_OFF;
+													
 													WRITE_STRING(10, 23, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
 													WRITE_CHAR(23, 24, 24);  // 'X' on the remaining HP to indicate death state
 
-#ifdef FINAL_BUILD													
+#ifdef FINAL_BUILD													                          
 													flush_keyboard_and_wait_for_ENTER();
 													stage_event_state = STAGE_DEATH;
 #else													
@@ -2398,6 +2622,8 @@ disallow_right:
 												}
 												
 												ENABLE_CHARACTER_SET_B;  //< Flash map content to indicate health deduction (will get reverted at top of the main loop, so the duration is the natural "rhythm" of the game)
+												
+												audio_hp();  // audio alert for reduction in health
 
 												SET_MASK(which_stats_modified, STATS_HP);
 											}
@@ -2590,7 +2816,7 @@ move_due_to_loiter:
 										//ptr_challenge->stuck_count = 0;
 										
 										if (
-										  (ptr_challenge->icon[CD_LEFT][0][0] == FIREBALL_SYMBOL)  // This is a fireball - it dies when it reaches its target
+										  (ptr_challenge->icon[CD_LEFT][0][0] == FIREBALL_SYMBOL)  // This is a fireball - it "dies" when it reaches its target
 											|| (ptr_challenge->icon[CD_LEFT][0][0] == FIREBALL_SYMBOL_REVERSE)
 									  )
 										{
@@ -2737,6 +2963,7 @@ move_due_to_loiter:
 		)
 		{
 			// Could play a sound... Break out of stage main-loop and proceed to next stage.
+			AUDIO_TURN_OFF;
 			ENABLE_CHARACTER_SET_A;
 			break;
 		}
@@ -2758,21 +2985,24 @@ move_due_to_loiter:
 			
 			// NOTE: The stamina/energy required to perform the step was already accounted for (as well as any necessary block detection)
 			++global_destiny_status.steps_performed;
+		  /*
 			if (global_destiny_status.steps_performed > 9999)
 			{
 				global_destiny_status.steps_performed = 0;
 			}
 			SET_MASK(which_stats_modified, STATS_STEPS);			
-			
+			*/
+
+      // If the player moved onto a map location that contains a DEAD1 symbol...			
 			if (g_pvec_map[global_destiny_status.location_y][global_destiny_status.location_x] == MAP_DEAD1)
 			{
-				global_destiny_status.arrows_current += rand_mod(10)+1;
+				global_destiny_status.arrows_current += rand_mod(10)+1;  // Collect the arrows at this cell, promote the location to a DEAD2 symbol
 				SET_MASK(which_stats_modified, STATS_ARROWS);
 				
 				g_pvec_map[global_destiny_status.location_y][global_destiny_status.location_x] = MAP_DEAD2;
 				// no need to mark as drawn, player is on top -- will get marked when player moves off
 			}
-			
+
 			CLEAR_MASK(global_destiny_status.motion_this_cycle, MOTION_PLAYER);			
 		}
 		
@@ -2783,6 +3013,8 @@ move_due_to_loiter:
 			CLEAR_MASK(global_destiny_status.motion_this_cycle, MOTION_WEAPON);
 		}
 		// ***********************************************************************		    
+		
+		AUDIO_TURN_OFF;
 	}
 	
 	// v This is very important, to clear out the challenges before the next stage.
@@ -2935,6 +3167,10 @@ start_over:
 	textcolor(C64_COLOR_WHITE);
 	bgcolor(C64_COLOR_BLACK);
 	bordercolor(C64_COLOR_BLACK);	
+	
+	POKE(AUDIO_C64_BASE_ADDR+24, 15);       // maximum volume	
+	POKE(AUDIO_C64_BASE_ADDR+ 5,  0x0A0A);  // ATTACK
+	POKE(AUDIO_C64_BASE_ADDR+ 6,  0x0A0A);  // ATTACK
 #else	
 	ENABLE_GRAPHIC_MODE;	
 	
@@ -3045,7 +3281,7 @@ quick_game:
 	decode_stage_to_map(rle_stage7_values, sizeof(rle_stage7_values));	
 	run_stage(7, &animate_stage7); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
-	
+
 	g_pvec_map[0][1] = 3;  //< The fireballs are challenges that can't be defeated, so if drops to 3, we know all the other challenges were defeated
 	ptr_blockers = blockers_stage8_values;
 	initialize_stage8_challenges();	
@@ -3069,7 +3305,7 @@ quick_game:
   WRITE_STRING(10, 1, g_ptr_persona_status->name, persona_name_len);
 	
   WRITE_STRING(10, 3, str_steps, STR_STEPS_LEN);
-	WRITE_PU_DIGIT(20, 3, global_destiny_status.steps_performed, 4);
+	WRITE_PU_DIGIT(19, 3, global_destiny_status.steps_performed, 5);
 	
 	WRITE_STRING(10, 4, str_fired, STR_FIRED_LEN);
 	WRITE_PU_DIGIT(20, 4, global_destiny_status.arrows_fired, 4); 
@@ -3082,10 +3318,18 @@ quick_game:
 	// *******************************************************************
 	
 	WRITE_STRING(0, 7, str_thank_you, STR_THANK_YOU_LEN);
-	WRITE_STRING(0, 8, str_email, STR_EMAIL_LEN);
+	WRITE_STRING(0, 9, str_address_reverse, STR_ADDRESS_REVERSE_LEN);
+	WRITE_STRING(0,11, str_email, STR_EMAIL_LEN);
 	
-	WRITE_STRING(0,10, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
+	WRITE_STRING(0,13, str_haiku1, STR_HAIKU1_LEN);  // OPTIONAL
+	WRITE_STRING(2,14, str_haiku2, STR_HAIKU2_LEN);
+	WRITE_STRING(0,15, str_haiku3, STR_HAIKU3_LEN);	
 	
-  g_i = flush_keyboard_and_wait_for_ENTER();
+	audio_end_game();
+	
+	WRITE_STRING(0,17, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);		
+	
+  flush_keyboard_and_wait_for_ENTER();
+	
   goto start_over;	
 }

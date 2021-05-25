@@ -47,7 +47,7 @@ unsigned char flush_keyboard_and_wait_for_ENTER()
 	
 #ifdef TARGET_C64
   /*
-  while (TRUE)
+  while (TRUE)  // flush joystick....
 	{
     g_joy = PEEK(C64_JOYSTICK_ADDRESS_2);
 		if (g_joy == C64_JOYSTICK_NONE)
@@ -233,6 +233,7 @@ void text_banner_center(unsigned char y, const char* text_to_say, unsigned char 
 	);
 }
 
+/*
 void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigned char delay)
 {		
 	unsigned char i;
@@ -290,4 +291,21 @@ void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigne
 		WRITE_CHAR(x+i, y, temp_str[i]);
 	}
 }
+*/
 
+void jiffy_delay(unsigned char jiffies)
+{
+	Time_counter audio_timer;
+	INIT_TIMER(audio_timer);
+	
+	STORE_TIME_NO_CORRECTOR(audio_timer);
+	while (TRUE)
+	{
+		STORE_TIME_NO_CORRECTOR(global_timer);
+		UPDATE_DELTA_JIFFY_ONLY(global_timer, audio_timer);
+		if (delta_time > jiffies)
+		{
+			break;
+		}
+	}
+}
