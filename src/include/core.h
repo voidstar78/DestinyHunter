@@ -37,8 +37,8 @@ DECIMAL  DESCRIPTION
 
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
 #define FINAL_BUILD
-#define TARGET_C64
-//#define TARGET_PET
+//#define TARGET_C64
+#define TARGET_PET
 
 // The following are optimizations intended for the cc65 compiler environment
 //#pragma inline-stdfuncs (on)
@@ -195,10 +195,11 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 #define B_PKEY_8           0x32
 
 #ifdef TARGET_C64
-  #define GET_PKEY_VIEW PEEK(197)  
+  #define GET_PKEY_VIEW PEEK(203)  
+  //#define GET_PKEY_VIEW PEEK(197)  
 #else
-  #define GET_PKEY_VIEW PEEK(166)  // works 4016
-  //#define GET_PKEY_VIEW PEEK(151)  // seems to be identical; maybe there is some slight speed/buffer difference?
+  //#define GET_PKEY_VIEW PEEK(166)  // works 4016, seems to be identical to 151
+  #define GET_PKEY_VIEW PEEK(151)  // seems to be identical to 166; maybe there is some slight speed/buffer difference?
 #endif
 // ================================================================= END ===
 
@@ -262,16 +263,16 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 // ************* TIME RELATED FEATURES
 // -------------------------------------------------------------------------
 
-#define JIFFIES_FULL_SECOND       60       // 60/1   aka Jiffies per Second
-#define JIFFIES_HALF_SECOND       30       // 60/2 
-#define JIFFIES_THIRD_SECOND      20       // 60/3
-#define JIFFIES_QUARTER_SECOND    15       // 60/4
-#define JIFFIES_EIGTH_SECOND       7       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
-#define JIFFIES_TWELTH_SECOND      5       // 60/12  
-#define JIFFIES_FIFTEENTH_SECOND   4       // 60/15
-#define JIFFIES_SIXTEENTH_SECOND   3       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
-#define JIFFIES_THIRTIETH_SECOND   2       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
-#define JIFFIES_SIXTIETH           1       // 60/60
+#define JIFFIES_FULL_SECOND       60U       // 60/1   aka Jiffies per Second
+#define JIFFIES_HALF_SECOND       30U       // 60/2 
+#define JIFFIES_THIRD_SECOND      20U       // 60/3
+#define JIFFIES_QUARTER_SECOND    15U       // 60/4
+#define JIFFIES_EIGTH_SECOND       7U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
+#define JIFFIES_TWELTH_SECOND      5U       // 60/12  
+#define JIFFIES_FIFTEENTH_SECOND   4U       // 60/15
+#define JIFFIES_SIXTEENTH_SECOND   3U       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
+#define JIFFIES_THIRTIETH_SECOND   2U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
+#define JIFFIES_SIXTIETH           1U       // 60/60
 
 typedef struct
 {
@@ -325,7 +326,7 @@ extern unsigned long delta_time_ms;   //< Instead of wasting that information wh
 // WARNING: STORE_TIME_NO_CORRECTOR does not initialize target_timer.data.d to 0.
 #ifdef TARGET_C64
 	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
-	    __asm__("sei");  \
+    __asm__("sei");  \
 		POKE(&target_timer.data.c, PEEK(160));  \
 		POKE(&target_timer.data.b, PEEK(161));  \
 		POKE(&target_timer.data.a, PEEK(162));  \
@@ -461,18 +462,52 @@ void WRITE_STRING(unsigned char x, unsigned char y, const char* str, unsigned ch
 // ************* AUDIO FEATURES	
 // -------------------------------------------------------------------------
 
-// Per Basic 4.0 Programming for the Commodore PET  shift register and control register should be set to 15 and 16 respectively
-#define AUDIO_TURN_ON \
-  POKEW(59467U,16);
+#define AUDIO_C64_BASE_ADDR  0xD418   // 54296
 
+// Per Basic 4.0 Programming for the Commodore PET shift register and control register should be set to 15 and 16 respectively
+/*
+http://www.zimmers.net/cbmpics/cbm/PETx/petfaq.html
+    Instead of 59467, 59466, and 59464 for the PET use these:
+      on the VIC-20:     37147, 37146, and 37144
+      on the 64 or 128:  56587, 56586, and 56584
+			
+			PET
+			59467  56587
+			59466  56586
+			59464  56584
+*/
+
+#ifdef TARGET_C64
+#define AUDIO_TURN_ON \
+  POKE(56587U,16);
+#else
+#define AUDIO_TURN_ON \
+  POKE(59467U,16);
+#endif
+
+#ifdef TARGET_C64
 #define AUDIO_TURN_OFF \
-  POKEW(59467U,0);
-	
+  POKE(56587U,0);
+#else
+#define AUDIO_TURN_OFF \
+  POKE(59467U,0);
+#endif
+
+#ifdef TARGET_C64
 #define AUDIO_SET_OCTAVE(octave) \
-  POKEW(59466U,octave);
-	
+  POKE(56586U,octave);
+#else
+#define AUDIO_SET_OCTAVE(octave) \
+  POKE(59466U,octave);
+#endif
+
+#ifdef TARGET_C64
 #define AUDIO_SET_FREQUENCY(freq) \
-  POKEW(59464U,freq);
+  POKE(56584U,freq);
+#else	
+#define AUDIO_SET_FREQUENCY(freq) \
+  POKE(59464U,freq);
+#endif
 	
 // COMMAND TO MAKE THE PET SPEAKER BEEP.
 // May find a more efficient way in the future.  "\a" means audible alert.
@@ -480,7 +515,8 @@ void WRITE_STRING(unsigned char x, unsigned char y, const char* str, unsigned ch
 // at the Windows command prompt, press CTRL-G (you will see "^G") and press ENTER.  It's an 
 // invalid command, but the console will interpret it as an audible alert and issue the
 // standard alert-audio of the system.
-#define DO_BEEP printf("\a")
+//#define DO_BEEP printf("\a")   presently not used
 // ================================================================= END ===
 
 #endif
+

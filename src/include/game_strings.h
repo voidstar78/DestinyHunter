@@ -142,10 +142,22 @@ extern char str_fired[];
 #define STR_TIME_LEN 4
 extern char str_time[];
 
-#define STR_THANK_YOU_LEN 39
+#define STR_THANK_YOU_LEN 22
 extern char str_thank_you[];
+
+#define STR_ADDRESS_REVERSE_LEN 21
+extern char str_address_reverse[];
 
 #define STR_EMAIL_LEN 27
 extern char str_email[];
+
+#define STR_HAIKU1_LEN 17
+extern char str_haiku1[];
+
+#define STR_HAIKU2_LEN 26
+extern char str_haiku2[];
+
+#define STR_HAIKU3_LEN 21
+extern char str_haiku3[];
 
 #endif

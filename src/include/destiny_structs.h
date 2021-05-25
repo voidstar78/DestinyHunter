@@ -240,4 +240,9 @@ typedef struct
 extern Challenge challenges[MAX_CHALLENGES_PER_STAGE];
 extern unsigned char challenges_count;
 
+#define NUM_AUDIO_NOTES 26
+
+//extern unsigned char audio_octv[];
+extern unsigned char audio_frq0[];
+
 #endif

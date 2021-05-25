@@ -83,6 +83,9 @@ void text_banner_center(unsigned char y, const char* text_to_say, unsigned char 
 // actual delay is RNG up to that number of delay, in jiffies.
 //
 // The user can press space to "speed read" through the text.
-void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigned char delay);
+//void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigned char delay);
+
+// Used in playing audio, delay the sound for the given number of jiffies (60 is 1 second, see the core.h JIFFIES_xxx constants)
+void jiffy_delay(unsigned char jiffies);
 
 #endif
