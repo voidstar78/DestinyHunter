@@ -1,0 +1,283 @@
+1234567890123456789012345678901234567890
+40 COLUMNS     40 COLUMNS     40 COLUMNS 
+
+       _   _  __ ___ ___           
+      | \ |_ (_   |   |  |\ | \_/  
+      |_/ |_ __)  |  _|_ | \|  |   
+                     ___ _  _  
+         |_| | | |\ | | |_ |_) 
+         | | |_| | \| | |_ | \ 
+   
+            2021 by voidstar
+
+   for most current details, refer to:
+
+         www.destinyhunter.org
+      contact.steve.usa@gmail.com
+
+
+Destiny Hunter is an adventure story
+game that was designed to be self-
+contained (needing no external files
+loaded from disk), thus limited to 32K.
+
+- DHUNTERPET.PRG can be loaded and ran
+  by VICE or similar emulator, or drag
+  and drop into PET 2001 emulator at
+  https://www.masswerk.at/pet/
+
+- DHUNTERPET.PRG can also be ran on 
+  physical Commodore PET; using SD
+  adapter or obtain a disk or TAPE copy,
+  then use "LOAD" or "DLOAD" commands.
+
+- DHUNTERC64.PRG is the Commodore 64
+  build, which by intent is equivalent
+  to the PET version except for the
+  addition of COLOR!
+
+
+When you start the game...
+
+- Press SPACEBAR (or any key) a few
+  times to prepare your character.
+  During this time, you may receive
+  BLESSING or PERSISTENCY that can
+  help you from the beginning.
+
+  BLESSINGS slow the CHALLENGES,
+  PERSISTENCY recovers your HEALTH.
+
+  Keep pressing a key until prompted
+  to press RETURN.
+
+  NOTE: This process is initializing
+  the seed for the RNG.
+
+- Press RETURN to pass the CHIMES
+  creation section.  This RETURN
+  is important, since internally
+  the program uses the keycode
+  observed to decide 20XX/30XX vs
+  40XX PET keycodes to use.
+
+- Next, select a PERSONA by pressing
+  1, 2, 3, 4, 5, 6.   I suggest new 
+  players use SIDON or RUDRA.  The 
+  "normal" difficulty is ALCYONE.
+  CYRENE is probably the hardest, for
+  more experienced players wanting
+  a higher difficulty.
+
+ON C64 version: You can use W/S to
+  cycle UP/DOWN thru PERSONAS.
+
+- Press ENTER to proceed with the
+  selected PERSONA.
+
+- Next is a brief orientation, about
+  controls and map terrain symbols.
+
+- Once you begin, the game is like the
+  TOP-DOWN style of original ZELDA.
+
+- You start "empty handed" on an island.
+  Your first objective is to obtain
+  the BOW (")") and ARROW (up-pointing
+  arrow) that randomly placed on the
+  BEACH (so they will be slightly 
+  different location each time).
+
+- Once you have the BOW and ARROW, the
+  adventure begins:  CHALLENGES will
+  appear that must be defeated by use
+  of the BOW and ARROW.
+
+- You can't just shoot in any direction!
+  You must AIM your BOW, using the 
+  AIM LEFT and AIM RIGHT buttons.  And
+  it can take time to AIM and MOVE,
+  so you really must "hunt" the 
+  CHALLENGES and try to anticipate their
+  movements!
+
+- As soon as you pick up the BOW and
+  ARROW, two CHALLENGES will appear. 
+  They are rats and are fairly easy
+  to defeat, this is to help introduce 
+  the gameplay.   AIM and HIT them a few 
+  times to defeat them both with ARROWS.
+
+- If you run out of ARROWS, more will
+  spawn (look for the UP ARROW).
+  If you defeat a CHALLENGE, move
+  to where it was defeated to 
+  collect back some ARROWS.
+
+- When you move and shoot, there is an
+  energy cost called STAMINA.  So
+  be patient about your movement, and
+  avoid WATER as it will cost more 
+  energy to move while in WATER.
+
+- The remaining HEALTH of the CHALLENGE
+  that you last hit is at the top right
+  near the STAGE name, so you can use 
+  this to know how close you are to
+  defeating a CHALLENGE.
+
+- Once all the CHALLENGES of a STAGE 
+  have been defeated, a notice will 
+  appear that you can press "F" to
+  FINISH the STAGE (and proceed to the
+  next one).  Before doing so, you can
+  collect any arrows or explore for
+  hidden things!
+
+
+COMBAT SYSTEM
+=============
+
+- CHALLENGES have no range attack,
+  and can only attack when you are
+  next to them (on any side).  However,
+  CHALLENGES will "chase" you based
+  on your STEALTH.  So you may need
+  to run away, and work a balance
+  between STAMINA and FIRING RANGE.
+
+- While CHALLENGES can chase you,
+  they can also "give up" on the chase
+  and go back to their patrol or
+  loitering condition.
+
+- The CHALLENGE ability to HIT when
+  next to you is based on your DEFENSE
+  (agility to dodge, etc).
+
+- If you do get HIT, the screen will
+  "flicker" and you lose 1 HP.  Use
+  PERSISTENCY to recover.
+
+- Your BOW and ARROW is the only means
+  to defeat CHALLENGES.  Your precision
+  to hit is based on ATTACK, so it is
+  possible to MISS.  
+
+- If you do HIT a CHALLENGE, a number
+  at the top right next to the STAGE
+  name will show how much HEALTH that
+  CHALLENGE has remaining.
+
+
+SCREEN LAYOUT
+=============
+The STAGE has an OVERLAY with some
+useful information at the top and bottom:
+
+- TOP LEFT: Items and Skills acquired.
+  e.g. BOW (, ORB, FLIP, GEM, BOOK.
+
+- TOP RIGHT: CHALLENGE health and 
+  STAGE name
+
+- TOP CENTER: Chosen PERSONA name.
+
+
+- BOTTOM LEFT: BLESSING count (B)
+
+- BOTTOM RIGHT: PERSISTENCY (0 or K)
+
+- BOTTOM CENTER: Your ARROWS and HEALTH 
+  remaining.
+
+
+
+KEY CONTROLS
+============
+
+PET VERSION:
+
+  WASD   movement UP/LEFT/DOWN/RIGHT
+         can only move when have
+         STAMINA and not in REST mode.
+
+  4/6    AIM bow LEFT/RIGHT
+         only once you have the BOW
+
+  8      Becomes the FLIP SKILL once
+         you have enough experience
+         to perform the FLIP (afer 
+         about 200 steps).  Use this
+         to quickly rotate the BOW 
+         by 180 degrees! (a FLIP!)
+
+  O      Activate the Orb!  But finding
+         the orb is part of the 
+         adventure.  It remains active
+         for one STAGE only! And is a
+         mystery on what the ORB does!
+
+  B      Use a BLESSING (slows down
+         CHALLENGES)
+
+  0      On the NUMBER PAD, intent is
+         using your thumb to invoke
+         PERSISTENCY (cost 1 PERSISTENCY  
+         to increase your HP by 1).
+         Defeating CHALLENGES also
+         increases your PERSISTENCY.
+  
+  F      FINISH stage and go to next 
+         one (once all CHALLENGES are
+         defeated).
+
+  SPACE  Fire an arrow in the direction
+         you are AIMED at.  Only one
+         arrow at a time (as it takes
+         time to reload an arrow).
+
+
+C64 VERSION:
+
+  Since C64 has no NUMBER PAD, a 
+  slightly different set of controls
+  is necessary...
+
+  WASD    movement  (same)
+
+  J/L     AIM left/right
+
+  I       FLIP SKILL
+  K       Use PERSISTENCY
+
+  O       Activate ORB
+  B       Use a BLESSING
+
+  F       FINISH stage
+
+  SPACE   Fire arrow in current
+          aim direction
+
+
+SNES GAMEPAD CONTROLS
+=====================
+Destiny Hunter supports the SNES GAMEPAD
+adapter that is available here:
+
+https://texelec.com/product/snes-adapter-commodore/
+
+  D-PAD        movement
+
+  TOP LEFT     aim left
+  TOP RIGHT    aim right
+
+  START        FINISH map
+  SELECT       FINISH map
+
+  A            FIRE 
+  B            Activate ORB
+  X            FLIP SKILL
+  Y            Use PERSISTENCY
+
+1234567890123456789012345678901234567890
