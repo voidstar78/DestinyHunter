@@ -445,7 +445,7 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 #define READ_CHAR(x,y) \
   PEEK(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x)
 
-// "val" must always be <10 (i.e. 0..9, single digit only)
+// "val" must always be <10 (i.e. 0..9, single digit only); 48 == '0', assumes remaining digits go in sequence
 #define WRITE_1U_DIGIT(x,y,val) \
   WRITE_CHAR(x,y, 48 + val);
 
