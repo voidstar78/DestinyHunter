@@ -182,8 +182,8 @@ void draw_stage_overlay(char* stage_name)
 
 	for (g_i = 0; g_i < 39; ++g_i)  // WIDTH_OF_SCREEN-1
 	{
-		WRITE_CHAR(g_i, 1, 64);  // bar
-		WRITE_CHAR(g_i,23, 64);  // bar
+		WRITE_CHAR(g_i, 1, 64);  // bar @ TOP
+		WRITE_CHAR(g_i,23, 64);  // bar @ BOTTOM
 	}
 			
 	WRITE_CHAR(30, 0, vertical_barR[global_destiny_status.direction]);
@@ -372,34 +372,34 @@ void update_stats(unsigned char which_ones)
 }
 
 void draw_stage_map()
-{
-	char* ptr_value;
-	//unsigned char ch;
-	register unsigned char y;
-	register unsigned char x;	
-#ifdef TARGET_C64
-	bordercolor(C64_COLOR_BLACK);
-#endif	
+{	
+	unsigned char* ptr = (unsigned char*)(&g_pvec_map[2][0]);		
+	unsigned int x = BASE_SCREEN_ADDRESS+(2*WIDTH_OF_SCREEN);
 	
-	// ROW 0 and ROW 1 of the map not used, as those portions are reserved as part of screen-overlay
-	for (y = 2; y < 23; ++y)  // HEIGHT_OF_SCREEN-2
-	{
-		ptr_value = g_pvec_map[y];
-		
-		for (x = 0; x < 39; ++x)  // WIDTH_OF_SCREEN-1
-		{			
-			//ch = ptr_value[x];
 #ifdef TARGET_C64
-			POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*y)+x, g_pvec_map_color[y][x]);
-			WRITE_CHAR(x, y, ptr_value[x]);			
-#else						
-		  WRITE_CHAR(x, y, ptr_value[x]);			
+  unsigned char* ptr_color = (unsigned char*)(&g_pvec_map_color[2][0]);		
+  unsigned int y = BASE_COLOR_ADDRESS+(2*WIDTH_OF_SCREEN);
+	
+	bordercolor(C64_COLOR_BLACK);
+#endif
+
+	while (x < BASE_SCREEN_ADDRESS+(23*WIDTH_OF_SCREEN))
+	{
+#ifdef TARGET_C64
+    POKE(y, *ptr_color);
+#endif
+		POKE(x, *ptr); 
+		
+		++x;
+		++ptr;
+#ifdef TARGET_C64
+    ++y;
+		++ptr_color;
 #endif		
-		}
 	}
 	
 #ifdef TARGET_C64
-	textcolor(C64_COLOR_WHITE);
+	//textcolor(C64_COLOR_WHITE);
 #endif		
 }      
 
@@ -687,22 +687,18 @@ void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon
 }
 
 void initialize_challengeI(Challenge* ptr_challenge, signed char x, signed char y, unsigned char hpmax, unsigned long mspeed, unsigned char athres, unsigned char aspeed)
-//void initialize_challengeI(Challenge* ptr_challenge, unsigned char num, ...)
-{
-	//va_list valist;
-	//va_start(valist, num);		
+{	
+	ptr_challenge->x = x; 
+	ptr_challenge->y = y;
 	
-	ptr_challenge->x = x; //va_arg(valist, signed char);
-	ptr_challenge->y = y;  //va_arg(valist, signed char);
-	
-	ptr_challenge->hp_max = hpmax;  //va_arg(valist, unsigned char);
+	ptr_challenge->hp_max = hpmax;
 	ptr_challenge->hp_remaining = ptr_challenge->hp_max;
 	
-	ptr_challenge->move_speed = mspeed;  //va_arg(valist, unsigned long);
+	ptr_challenge->move_speed = mspeed;
 	
-	ptr_challenge->aggressiveness_threshold = athres;  //va_arg(valist, unsigned char);
+	ptr_challenge->aggressiveness_threshold = athres;
 	
-	ptr_challenge->attack_speed = aspeed; //va_arg(valist, unsigned char);
+	ptr_challenge->attack_speed = aspeed;
 	
 	INIT_TIMER(ptr_challenge->last_move_timer);	
 	INIT_TIMER(ptr_challenge->last_attack_time);	
@@ -716,8 +712,6 @@ void initialize_challengeI(Challenge* ptr_challenge, signed char x, signed char 
 	ptr_challenge->longest_icon_height = 1;
 	
 	++challenges_count;
-
-  //va_end(valist);	
 }
                               
 void initialize_challengeT(Challenge* ptr_challenge, unsigned char index, signed char x, signed char y, unsigned char loiter_max)
@@ -1065,6 +1059,7 @@ void initialize_stage8_challenges()
 
 	set_icon_char(&challenges[0], 0, CD_LEFT, 3,  233, 128,  75);
 	set_icon_char(&challenges[0], 1, CD_LEFT, 3,    0,  95, 211);
+	
 /*
   // head2  DIAMOND	
                                   //                   HP   mov        atk
@@ -1170,8 +1165,7 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 		while (temp_rle.length > 0)
 		{		  
 			if (virtual_x == 39)
-			{
- 			  //g_pvec_map[virtual_y][virtual_x] = '\0';
+			{ 			  
 			  virtual_x = 0;
         ++virtual_y;				
 			}
@@ -1233,6 +1227,7 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 			}
 			
 			g_pvec_map[virtual_y][virtual_x] = display_symbol;	  
+			g_pvec_map[virtual_y][39] = 32;  //< This is a little inefficient, side-effect of not using 40th column... Need to ensure every row has 40th column blanked
 #ifdef TARGET_C64
 			g_pvec_map_color[virtual_y][virtual_x] = display_color;	  
 #endif			
@@ -1301,6 +1296,15 @@ void run_stage(
 	
 	unsigned char g_padA;
 	unsigned char g_padB;
+	
+	unsigned char* ptr_map;	
+	unsigned char* ptr_cell;	
+	unsigned int x_addr;
+#ifdef TARGET_C64
+	unsigned char* ptr_color;
+	unsigned int y_addr;
+#endif
+	
 	// ---------------------------------------------		
 		
 #ifdef USE_TEST_MEM	
@@ -1579,25 +1583,28 @@ void run_stage(
 		}		
 		// *****************************************************************		
 		
-		ENABLE_CHARACTER_SET_A;
+		ENABLE_CHARACTER_SET_A;  //< If was HIT last cycle, we'll be on SET_B; so always restore to SET_A
 		
-		// ** RESTORE STAGE MAP PORTIONS THAT ARE NO LONGER COVERED ******** worked first try! 4/18/2021 SL
+		// ** RESTORE STAGE MAP PORTIONS THAT ARE NO LONGER COVERED ******** worked first try! 4/18/2021 SL		   (SL: revised 5/27/2021 to use just pointer increments)
 		{			
-			for (temp_y = 2; temp_y < MAX_MAP_ROWS; ++temp_y)
+			ptr_map = (unsigned char*)(&g_pvec_map[2][0]);
+			ptr_cell = (unsigned char*)(&cell_state[2][0]);
+			x_addr = BASE_SCREEN_ADDRESS+(2*WIDTH_OF_SCREEN);		
+#ifdef TARGET_C64
+      ptr_color = (unsigned char*)(&g_pvec_map_color[2][0]);
+			y_addr = BASE_COLOR_ADDRESS+(2*WIDTH_OF_SCREEN);
+#endif
+			
+		  while (x_addr <= BASE_SCREEN_ADDRESS+(23*WIDTH_OF_SCREEN))
 			{
-				//if (ptr_pvec_value0[temp_y] == TRUE)  // something was drawn on this row during the stage...
-				{
-					ptr_value = g_pvec_map[temp_y];  
-					
-					for (temp_x = 0; temp_x < 10; ++temp_x)  //< 10 corresponds to the width of the cell_state array
-					{											
+				  //if (ptr_pvec_value0[temp_y] == TRUE)  // something was drawn on this row during the stage...
+					{
 						// 0x11 (3) was drawn this last animation frame (already on the screen)
 						//      (2) could be used to let icons linger one extra frame (not used here)
 						// 0x01 (1) was previously drawn on -- animation may stay (increase it back to 2) or it will drop back 0 (background)
 						// 0x00 (0) no change
 						
-						i = cell_state[temp_y][temp_x];
-						//i = PEEK(((0x033D)+10*temp_y)+temp_x);
+						i = (*ptr_cell);
 						
 						// 1 2 3 4 5 6 7 8
 						// [1] [2] [3] [4]
@@ -1605,6 +1612,12 @@ void run_stage(
 						if (i == 0)
 						{
 							// nothing to do, no animation impacts
+							x_addr += 4;
+							ptr_map += 4;
+#ifdef TARGET_C64
+              y_addr += 4;
+							ptr_color += 4;
+#endif
 						}
 						else
 						{					
@@ -1616,14 +1629,18 @@ void run_stage(
 							else if ((i & 0xC0) == 0x40)
 							{
 								// draw map at cell_1 location
-								temp_char = (4*temp_x);  // + 0; implied
-								global_input_ch = ptr_value[ temp_char ];
 #ifdef TARGET_C64
-								POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*temp_y)+temp_char, g_pvec_map_color[temp_y][temp_char]);
+								POKE(y_addr, *ptr_color);
 #endif
-								WRITE_CHAR(temp_char, temp_y, global_input_ch);								
+                POKE(x_addr, *ptr_map);								
 								i &= 0x3F;  //< reduce cell_1_state from 1 to 0
 							}
+							++x_addr;
+							++ptr_map;
+#ifdef TARGET_C64
+              ++y_addr;
+							++ptr_color;
+#endif
 							
 							// 7 6 5 4 3 2 1 0
 							// 0 0 1 1 0 0 0 0 						30
@@ -1633,14 +1650,18 @@ void run_stage(
 							else if ((i & 0X30) == 0x10)
 							{
 								// draw map at cell_2 location
-								temp_char = (4*temp_x) + 1;
-								global_input_ch = ptr_value[ temp_char ];				
 #ifdef TARGET_C64
-								POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*temp_y)+temp_char, g_pvec_map_color[temp_y][temp_char]);
+								POKE(y_addr, *ptr_color);
 #endif								
-								WRITE_CHAR(temp_char, temp_y, global_input_ch);								
+								POKE(x_addr, *ptr_map);
 								i &= 0xCF;  //< reduce cell_1_state from 1 to 0
 							}
+							++x_addr;
+							++ptr_map;
+#ifdef TARGET_C64
+              ++y_addr;
+							++ptr_color;
+#endif							
 							
 							// 7 6 5 4 3 2 1 0
 							// 0 0 0 0 1 1 0 0 						0C
@@ -1650,14 +1671,18 @@ void run_stage(
 							else if ((i & 0X0C) == 0x04)
 							{
 								// draw map at cell_3 location, 
-								temp_char = (4*temp_x) + 2;
-								global_input_ch = ptr_value[ temp_char ];												
 #ifdef TARGET_C64
-								POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*temp_y)+temp_char, g_pvec_map_color[temp_y][temp_char]);
-#endif								
-								WRITE_CHAR(temp_char, temp_y, global_input_ch);								
+								POKE(y_addr, *ptr_color);
+#endif																
+								POKE(x_addr, *ptr_map);
 								i &= 0xF3;  //< reduce cell_3_state from 1 to 0
 							}
+							++x_addr;
+							++ptr_map;
+#ifdef TARGET_C64
+              ++y_addr;
+							++ptr_color;
+#endif							
 							
 							// 7 6 5 4 3 2 1 0
 							// 0 0 0 0 0 0 1 1 						03
@@ -1667,32 +1692,36 @@ void run_stage(
 							else if ((i & 0X03) == 0x01)
 							{
 								// draw map at cell_4 location
-								g_i = (4*temp_x) + 3;
-								global_input_ch = ptr_value[ g_i ];																				
 #ifdef TARGET_C64
-                //textcolor(g_pvec_map_color[temp_y][g_i]);
-								//cputcxy(g_i, temp_y, global_input_ch);
-								POKE(BASE_COLOR_ADDRESS+(WIDTH_OF_SCREEN*temp_y)+g_i, g_pvec_map_color[temp_y][g_i]);
+								POKE(y_addr, *ptr_color);
 #endif								
-								WRITE_CHAR(g_i, temp_y, global_input_ch);								
+								POKE(x_addr, *ptr_map);
 								i &= 0xFC;  //< reduce cell_4_state from 1 to 0
 							}
+							++x_addr;
+							++ptr_map;
+#ifdef TARGET_C64
+              ++y_addr;
+							++ptr_color;
+#endif
 							
-							cell_state[temp_y][temp_x] = i;							
-							//POKE((0x033D+10*temp_y)+temp_x, i);
+							(*ptr_cell) = i;
 						}
+						++ptr_cell;
 					}
-				}
+				
 			}
-		}
-		// ***************************************************************	
-			
+		}			
+					
     // ** DRAW ALL CELLS MARKED TO BE DRAWN **************************		
 		while (num_locations_to_draw > 0)
 		{
 			--num_locations_to_draw;
 #ifdef TARGET_C64
-			POKE(BASE_COLOR_ADDRESS+(locations_to_draw[num_locations_to_draw].offset - BASE_SCREEN_ADDRESS), locations_to_draw[num_locations_to_draw].color);
+			POKE(
+			  BASE_COLOR_ADDRESS+(locations_to_draw[num_locations_to_draw].offset - BASE_SCREEN_ADDRESS), 
+				locations_to_draw[num_locations_to_draw].color
+			);
 			POKE(				
 				locations_to_draw[num_locations_to_draw].offset,
 				locations_to_draw[num_locations_to_draw].symbol
@@ -1790,7 +1819,7 @@ void run_stage(
 										{
 											if (challenges_remaining == 2)
 											{
-                        initialize_stage5_challenges(challenges_count, -20, 14);
+                        initialize_stage5_challenges(challenges_count, -20, 14);  // JUSTIN returns!
 												++challenges_remaining;
 											} 
 										}
@@ -1901,13 +1930,13 @@ void run_stage(
 
     // ***** PRIORITY 1 KEYS - respond with no delay ************************************************
 		valid_key = TRUE;  //< Assume initially that some valid key was pressed (prevents having to explicitly set this for each valid key case)
-		
-		read_gamepad();
-		g_padA = PEEK(GPAD_RESULT_A);
-		g_padB = PEEK(GPAD_RESULT_B);
-		
+				
 		if (global_input_ch == PKEY_NO_KEY) 
 		{
+			read_gamepad();
+			g_padA = PEEK(GPAD_RESULT_A);
+			g_padB = PEEK(GPAD_RESULT_B);
+			
 			if (IS_MASK_ON(g_padB, GPAD_BUTTON_B_MASK))
 			{
 				global_input_ch = PKEY_0;  // PERSISTENCY				
@@ -2450,19 +2479,19 @@ disallow_right:
 				)
 				{
 					// spawn from TOP
-					initialize_stage5_challenges(challenges_count, 20, -8);  // JUSTIN
+					initialize_stage5_challenges(challenges_count, 20, -8);  // JUSTIN from TOP
 					++challenges_remaining;
 				}
 				else if (global_destiny_status.location_x > 30)
 				{
 					// spawn from RIGHT
-					initialize_stage5_challenges(challenges_count, 40, 12);  // JUSTIN
+					initialize_stage5_challenges(challenges_count, 40, 12);  // JUSTIN from RIGHT
 					++challenges_remaining;
 				}
 				else if (global_destiny_status.location_y > 20)
 				{
 					// spawn from BOTTOM
-					initialize_stage5_challenges(challenges_count, 20, 30);  // JUSTIN
+					initialize_stage5_challenges(challenges_count, 20, 30);  // JUSTIN from BOTTOM
 					++challenges_remaining;
 				}
 			}
@@ -2603,8 +2632,7 @@ disallow_right:
 														// GAME OVER
 														//print_fancy(15,  1, str_game_over, JIFFIES_TWELTH_SECOND);
 														WRITE_STRING(15, 1, str_game_over, STR_GAME_OVER_LEN);
-														audio_game_over();
-														//AUDIO_GAME_OVER;
+														audio_game_over();														
 														//print_fancy(10, 23, str_press_return_to_proceed, JIFFIES_TWELTH_SECOND);													
 												  }
 													
@@ -3154,6 +3182,9 @@ void main(void)
 	
 start_over:
 
+    POKE(GPAD_RESULT_A, 0x00);
+	POKE(GPAD_RESULT_B, 0x00);
+	
 	INIT_TIMER(global_timer);			
 	
 	//INIT_TIMER(started_timer);				
