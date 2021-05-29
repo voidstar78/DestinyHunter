@@ -9,18 +9,33 @@ unsigned char global_input_ch;
 unsigned char g_i;  //< Global loop integer, only use once at a time, not nested
 unsigned char g_enter_result;  //< To be used when calling wait_for_ENTER
 
-unsigned char banner_style[][] = {
-	{64,  64, 226},  // buffer_ch_T     TOP
-  {70,  64,  98},  // buffer_ch_B     BOTTOM
-  {85, 112, 236},  // buffer_ch_TL    TOP_LEFT
-  {73, 110, 251},  // buffer_ch_TR    TOP_RIGHT
-  {74, 109, 252},  // buffer_ch_BL    BOTTOM_LEFT
-	{75, 125, 254},  // buffer_ch_BR    BOTTOM_RIGHT
-  {66,  93,  97},  // buffer_ch_LEFT  LEFT
-	{72,  93, 225},  // buffer_ch_RIGHT RIGHT
-	{32,  32,  32}   // buffer_ch_FILLER
-// YO   LA  OTHR
-};
+#ifdef TARGET_A2
+	unsigned char banner_style[][] = {
+		{237, 237, 189},  // buffer_ch_T     TOP
+		{237, 237, 189},  // buffer_ch_B     BOTTOM
+		{168, 155, 234},  // buffer_ch_TL    TOP_LEFT
+		{169, 157, 234},  // buffer_ch_TR    TOP_RIGHT
+		{168, 155, 234},  // buffer_ch_BL    BOTTOM_LEFT
+		{169, 157, 234},  // buffer_ch_BR    BOTTOM_RIGHT
+		{168, 155, 234},  // buffer_ch_LEFT  LEFT
+		{169, 157, 234},  // buffer_ch_RIGHT RIGHT
+		{160, 160, 160}   // buffer_ch_FILLER
+	// YO   LA  OTHR
+	};
+#else
+	unsigned char banner_style[][] = {
+		{64,  64, 226},  // buffer_ch_T     TOP
+		{70,  64,  98},  // buffer_ch_B     BOTTOM
+		{85, 112, 236},  // buffer_ch_TL    TOP_LEFT
+		{73, 110, 251},  // buffer_ch_TR    TOP_RIGHT
+		{74, 109, 252},  // buffer_ch_BL    BOTTOM_LEFT
+		{75, 125, 254},  // buffer_ch_BR    BOTTOM_RIGHT
+		{66,  93,  97},  // buffer_ch_LEFT  LEFT
+		{72,  93, 225},  // buffer_ch_RIGHT RIGHT
+		{32,  32,  32}   // buffer_ch_FILLER
+	// YO   LA  OTHR
+	};
+#endif
 
 unsigned char rand_mod(unsigned char n)
 {	  
@@ -293,6 +308,7 @@ void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigne
 }
 */
 
+#ifndef TARGET_A2
 void jiffy_delay(unsigned char jiffies)
 {
 	Time_counter audio_timer;
@@ -309,3 +325,4 @@ void jiffy_delay(unsigned char jiffies)
 		}
 	}
 }
+#endif

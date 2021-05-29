@@ -14,7 +14,9 @@ void conduct_intro()
 {
 	CLRSCR;
 		
+#ifndef TARGET_A2
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
+#endif
 	
 	text_banner_center(3, str_destiny_hunter, g_ptr_persona_status->direction);			
 
@@ -84,7 +86,9 @@ void conduct_intro()
 	
 	text_banner_center(20, str_press_return_to_proceed, SOMETHING_ELSE);			
 
+#ifndef TARGET_A2	
 	INVERT_BANNER_STYLE(g_ptr_persona_status->direction);
+#endif
 
 	g_enter_result = flush_keyboard_and_wait_for_ENTER();    
 }

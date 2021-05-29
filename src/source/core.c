@@ -1,37 +1,88 @@
 #include <core.h>
 
-/*
-unsigned int screen_offset_per_row[] =
-{
-  0,  // 0
- 40,  // 1   * WIDTH_OF_SCREEN (40) 
- 80,  // 2
-120,  // 3
-160,  // 4
-200,  // 5
-240,  // 6
-280,  // 7
-320,  // 8
-360,  // 9
-400,  // 10
-440,  // 11
-480,  // 12
-520,  // 13
-560,  // 14
-600,  // 15
-640,  // 16
-680,  // 17
-720,  // 18
-760,  // 19
-800,  // 20
-840,  // 21 
-880,  // 22
-920,  // 23
-960   // 24
-};
-*/
+#ifdef TARGET_A2
 
-#ifdef TARGET_C64
+  //int time_temp_int;
+  //struct timespec time_temp;
+	unsigned char global_kb;
+	
+	unsigned int screen_row_offset[] =
+	{
+		1024U,  // 0x0400
+		1152U,
+		1280U,
+		1408U,
+		1536U,
+		1664U,
+		1792U,
+		1920U,
+		1064U,
+		1192U,
+		1320U,
+		1448U,
+		1576U,
+		1704U,
+		1832U,
+		1960U,
+		1104U,
+		1232U,
+		1360U,
+		1488U,
+		1616U,
+		1744U,
+		1872U,
+		2000U
+	};
+
+	unsigned char PKEY_RETURN      = 0x8D;  //  D
+	//unsigned char PKEY_BACKSPACE   = 0x14;   // decimal 20
+	unsigned char PKEY_SPACE       = 0xA0;  // 20
+	//unsigned char PKEY_UP          = 7;   //                SHIFT is $653 or $654
+	//unsigned char PKEY_LEFT        = 2;   // 
+	//unsigned char PKEY_RIGHT       = 2;   // 
+	//unsigned char PKEY_DOWN        = 7;   // 
+	
+	unsigned char PKEY_A           = 0xC1;  // 41
+	unsigned char PKEY_B           = 0xC2;  // 42
+	//unsigned char PKEY_C           = 20; 
+	unsigned char PKEY_D           = 0xC4;  // 44
+	//unsigned char PKEY_E           = 14;   
+	unsigned char PKEY_F           = 0xC6;  // 46
+	//unsigned char PKEY_G           = 26;
+	//unsigned char PKEY_H           = 29;
+	unsigned char PKEY_I           = 0xC9;  // 49
+	unsigned char PKEY_J           = 0xCA;  // 4A
+	unsigned char PKEY_K           = 0xCB;  // 4B
+	unsigned char PKEY_L           = 0xCC;  // 4C
+	// M 36
+	// 39
+	unsigned char PKEY_O           = 0xCF;  // 4F
+	unsigned char PKEY_P           = 0xD0;  // 50
+	//unsigned char PKEY_R           = 17;   // 'R'
+	unsigned char PKEY_S           = 0xD3;  // 53
+	// T 22
+	//unsigned char PKEY_U           = 30;
+	// V 31
+	unsigned char PKEY_W           = 0xD7;  // 57
+	unsigned char PKEY_X           = 0xD8;  // 58
+	//unsigned char PKEY_Z           = 12;   // 'Z'
+	unsigned char PKEY_0           = 0x00;
+
+  unsigned char PKEY_1           = 0xB1;
+	unsigned char PKEY_2           = 0xB2;
+	unsigned char PKEY_3           = 0xB3;
+	unsigned char PKEY_4           = 0xB4;
+	unsigned char PKEY_5           = 0xB5;
+	unsigned char PKEY_6           = 0xB6;
+	unsigned char PKEY_7           = 0xB7;
+	unsigned char PKEY_8           = 0xB8;
+	/*
+	unsigned char PKEY_9           = 32;
+	*/
+	
+	unsigned char PKEY_NO_KEY      = 0x7F;   // Placeholder to indicate that NO key has been pressed
+
+#elif TARGET_C64
   unsigned char g_joy = 0;
 
 	unsigned char PKEY_RETURN      = 1;   // same as '\n'
@@ -70,7 +121,7 @@ unsigned int screen_offset_per_row[] =
 	//unsigned char PKEY_R           = 17;   // 'R'
 	unsigned char PKEY_S           = 13;   // 'S'
 	// T 22
-	unsigned char PKEY_U           = 30;
+	//unsigned char PKEY_U           = 30;
 	// V 31
 	unsigned char PKEY_W           = 9;   // 'W'
 	unsigned char PKEY_X           = 23;   // 'X'                 3000: 0x18
@@ -90,7 +141,9 @@ unsigned int screen_offset_per_row[] =
 	*/
 	
 	unsigned char PKEY_NO_KEY      = 64;   // Placeholder to indicate that NO key has been pressed
+	
 #else
+	
 	// COMMODORE PET 4016 US KEYCODES (using GET_PKEY_VIEW, aka PEEK(166))
 	unsigned char PKEY_RETURN      = 0x0D;   // same as '\n'
 	//unsigned char PKEY_BACKSPACE   = 0x14;   // decimal 20
@@ -143,6 +196,11 @@ unsigned int screen_offset_per_row[] =
 	unsigned char PKEY_8           = 0x38;
 	
 	unsigned char PKEY_NO_KEY      = 0xFF;   // Placeholder to indicate that NO key has been pressed
+	
+#endif
+
+#ifdef TARGET_A2  
+unsigned long main_loop_counter;  // Because the Apple ][ doesn't have a clock!
 #endif
 
 // Going to assume that every program needs at least one timer.  This "global_timer" is intended to be used to store the "now time".
@@ -154,7 +212,11 @@ unsigned long delta_time;
 unsigned long delta_time_sec;  //< Use a long (4 bytes) since max delta seconds is 86400 (larger than 65535, so needs more than 16-bits)
 unsigned long delta_time_ms;   //< Used to stores millisecond precision XX.9999
 
-unsigned char g_pad_char = 48;  // 48 == '0'
+#ifdef TARGET_A2
+  unsigned char g_pad_char = 176; // 176 == '0' (normal;  48 is 0 inverse for Apple ][)
+#else
+  unsigned char g_pad_char = 48;  // 48 == '0'
+#endif
 
 void WRITE_PU_DIGIT(unsigned char x, unsigned char y, unsigned long val, unsigned char pad)  // PU = pad unsigned
 {	

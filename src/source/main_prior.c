@@ -29,11 +29,7 @@
 static unsigned char rest_mode = FALSE;
 static unsigned char (*ptr_blockers)[5];  // of the current map
 static unsigned char or_equal_modifier[] = {0xC0,0x30,0x0C,0x03};
-#ifdef TARGET_A2                              //NN   NE  EE  SE  SS  SW  WW  NW
-  static unsigned char weapon_fire_symbols[] = {161,175,237,220,161,175,237,156};
-#else
-  static unsigned char weapon_fire_symbols[] = { 66, 78, 67, 77, 66, 78, 67, 77};
-#endif
+static unsigned char weapon_fire_symbols[] = {66, 78, 67, 77, 66, 78, 67, 77};
 static unsigned char check_for_flipskill_learned;
 static unsigned char stage_event_state;		
 static unsigned char which_stats_modified;  //< Flag used to indicate which player-stats/states/status have been modified (only update/redraw those modified states)
@@ -77,48 +73,23 @@ static char g_pvec_map[MAX_MAP_ROWS][40];  // HEIGHT_OF_SCREEN-2 and WIDTH_OF_SC
 	g_pvec_map[1][0-4] = overlayed with a 4-byte Time_counter struct, that corresponds to what JIFFY (time) the stages were started (to keep track of the play-time duration at the end of the game)	
 */	
 
-#ifdef TARGET_A2                                //  NN  NE  EE  SE  SS  SW  WW  NW
-  static unsigned char weapon_carried_symbols[] = {161,175,237,220,161,175,237,220};
-#else
-  static unsigned char weapon_carried_symbols[] = {113, 73,107, 75,114, 74,115, 85};
-#endif
+static unsigned char weapon_carried_symbols[] = {113, 73, 107, 75, 114, 74, 115, 85};
 
-#ifdef TARGET_A2  // STAGE2/STAGE7
-  static unsigned char feet_symbolsLEFT[] = {220, 239};  //108, 123, 126, 124};
-#else
-  static unsigned char feet_symbolsLEFT[] = {74, 75};  //108, 123, 126, 124};
-  //static unsigned char feet_symbolsRIGHT[] = {85, 73, 75, 74};											
-#endif
+// STAGE4 custom icon animations
+static unsigned char wing_symbolsLEFT[] = {85, 45, 74, 45};
+static unsigned char wing_symbolsRIGHT[] = {73, 45, 75, 45};
 
-#ifdef TARGET_A2  // STAGE3
-  static unsigned char tail_symbolsLEFT[] = {28, 45, 47, 45};
-  static unsigned char tail_symbolsRIGHT[] = {47, 45, 28, 45};
-#else
-  static unsigned char tail_symbolsLEFT[] = {73, 45, 75, 45};
-  static unsigned char tail_symbolsRIGHT[] = {74, 45, 85, 45};
-#endif
+static unsigned char tail_symbolsLEFT[] = {73, 45, 75, 45};
+static unsigned char tail_symbolsRIGHT[] = {74, 45, 85, 45};
 
-#ifdef TARGET_A2  // STAGE4 custom icon animations
-  static unsigned char wing_symbolsLEFT[] = {175, 173, 156, 173};
-  static unsigned char wing_symbolsRIGHT[] = {156, 173, 175, 173};
-#else
-  static unsigned char wing_symbolsLEFT[] = {85, 45, 74, 45};
-  static unsigned char wing_symbolsRIGHT[] = {73, 45, 75, 45};
-#endif
+static unsigned char feet_symbolsLEFT[] = {74, 75};  //108, 123, 126, 124};
+//static unsigned char feet_symbolsRIGHT[] = {85, 73, 75, 74};											
 
-#ifdef TARGET_A2
-  static unsigned char scorp_symbolsTOP[2]     = {157, 254};
-  static unsigned char scorp_symbolsBOTTOM[2]  = {157, 254};
-	
-  static unsigned char scorpR_symbolsTOP[2]    = {155, 188};
-  static unsigned char scorpR_symbolsBOTTOM[2] = {155, 188};
-#else
-  static unsigned char scorp_symbolsTOP[2]     = { 95, 105};
-  static unsigned char scorp_symbolsBOTTOM[2]  = {233, 223};
-	
-  static unsigned char scorpR_symbolsTOP[2]    = {105,  95};
-  static unsigned char scorpR_symbolsBOTTOM[2] = {223, 233};
-#endif
+static unsigned char scorp_symbolsTOP[2]     = { 95, 105};
+static unsigned char scorp_symbolsBOTTOM[2]  = {233, 223};
+
+static unsigned char scorpR_symbolsTOP[2]    = {105,  95};
+static unsigned char scorpR_symbolsBOTTOM[2] = {223, 233};
 
 // These constants are used to initialize the starting position of the player per each stage.
 // MIN_X/Y is the minium x/y offset distance, MOD_X/Y is a 0 to N-1 random offset.
@@ -168,7 +139,7 @@ static unsigned char arrow_locations_y_ofs[] = { 0, 10, 3,11, 9, 4, 5, 5, 5};
 //static char vertical_barL[] = {  72, 93  };
 //static char curve_upLEFT[]  = {  75, 113 };  //< Used to be for NAME corner on the TOP LEFT
 
-#ifndef TARGET_A2  // This row got removed in Apple][ build
+#ifndef TARGET_A2
   static char vertical_barR[] = {  66, 93  };
   static char curve_upRIGHT[] = {  74, 113 };
 #endif
@@ -181,7 +152,9 @@ static unsigned char x_threshold;
 static unsigned char y_threshold;
 static unsigned char persona_name_len;
 
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#ifdef TARGET_A2
+  static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
+#elif TARGET_C64
   static Location_to_draw locations_to_draw[MAX_LOCATIONS_TO_DRAW];
 #else
   #define TAPE_BUFFER1_ADDR 0x027A  // Not available on C64
@@ -205,18 +178,10 @@ void draw_stage_overlay(char* stage_name)
 
   // TOP
   WRITE_STRING(31, 0, stage_name, STR_STAGENAME_LEN);	  
-		
-	// "BOTTOM" (in Apple][ version this becomes ROW2; actual bottom row 24 will hold things like FINISH/END GAME)	
-	
 	WRITE_STRING(0,  1, str_stage_instruction, STR_STAGE_INSTRUCTION_LEN);
 	
-	WRITE_CHAR(14, 1, 222);  // UP-ARROW
-	WRITE_CHAR(17, 1, 175);  // SLASH
-	WRITE_PU_DIGIT(18, 1, g_ptr_persona_status->arrows_max, 2);
-	
-	WRITE_CHAR(22, 1, 8);  // HEART inv
-	WRITE_CHAR(24, 1, 175);  // SLASH
-	WRITE_1U_DIGIT(25, 1, g_ptr_persona_status->hp_max);	
+	// BOTTOM
+	// (bottom will hold F or END_GAME instructions, etc)
 	
 #else
 	// TOP
@@ -386,17 +351,10 @@ void update_stats(unsigned char which_ones)
 	{
 		if (rest_mode == TRUE)
 		{
-#ifdef TARGET_A2
-			WRITE_CHAR( 9, ROW_FOR_STATS,  18);  // R
-			WRITE_CHAR(10, ROW_FOR_STATS,   5);  // E
-			WRITE_CHAR(11, ROW_FOR_STATS,  19);  // S
-			WRITE_CHAR(12, ROW_FOR_STATS,  20);  // T
-#else
 			WRITE_CHAR( 9, ROW_FOR_STATS, 146);  // R
 			WRITE_CHAR(10, ROW_FOR_STATS, 133);  // E
 			WRITE_CHAR(11, ROW_FOR_STATS, 147);  // S
 			WRITE_CHAR(12, ROW_FOR_STATS, 148);  // T
-#endif
 			
 			if (global_destiny_status.energy_current > MINIMUM_STAMINA_TO_ACTION)
 			{
@@ -405,33 +363,6 @@ void update_stats(unsigned char which_ones)
 		}
 		else
 		{
-#ifdef TARGET_A2
-			if (global_destiny_status.energy_current > 750)
-			{
-				WRITE_CHAR(12, ROW_FOR_STATS, 169);  // high				
-			}
-			else
-			{
-				WRITE_CHAR(12, ROW_FOR_STATS, 160);  // clear				
-			}
-			if (global_destiny_status.energy_current > 500)
-			{
-				WRITE_CHAR(11, ROW_FOR_STATS, 169);  // medium				
-			}
-			else
-			{
-				WRITE_CHAR(11, ROW_FOR_STATS, 160);  // clear				
-			}
-			if (global_destiny_status.energy_current > 250)
-			{
-				WRITE_CHAR(10, ROW_FOR_STATS, 169);  // low				
-			}
-			else
-			{
-				WRITE_CHAR(10, ROW_FOR_STATS, 160);  // clear
-			}
-			WRITE_CHAR(9, ROW_FOR_STATS, 169);  // very low	(must do this incase overwritten by REST)
-#else
 			if (global_destiny_status.energy_current > 750)
 			{
 				WRITE_CHAR(12, ROW_FOR_STATS, 247);  // high				
@@ -456,8 +387,7 @@ void update_stats(unsigned char which_ones)
 			{
 				WRITE_CHAR(10, ROW_FOR_STATS, 32);  // clear
 			}
-			WRITE_CHAR(9, ROW_FOR_STATS, 121);  // very low	(must do this incase overwritten by REST)
-#endif
+			WRITE_CHAR(9, ROW_FOR_STATS, 121);  // very low			
 		}	
   }
 }
@@ -493,7 +423,7 @@ void draw_stage_map()
 			{
 				screen_x = 0;
 				++screen_y;
-				if (screen_y == 23) break;
+				if (screen_y == 24) break;
 				screen_y_addr = screen_row_offset[screen_y];
 			}
 #else
@@ -571,10 +501,8 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 	case DIR_WW: global_destiny_status.weapon_y = global_destiny_status.location_y;     global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 93 221 */ 
 	case DIR_NW: global_destiny_status.weapon_y = global_destiny_status.location_y - 1; global_destiny_status.weapon_x = global_destiny_status.location_x - 1; break; /* 85 213 */ 
 	} 
-
-#ifdef TARGET_A2				
-  // NO NEED
-#elif TARGET_C64
+				
+#ifdef TARGET_C64
 	// This ends up looking wrong color on the C64, so looking worse.
 #else
 	// OPTIONAL: Invert the weapon when it is on BEACH tiles, just makes it look nicer...
@@ -612,7 +540,7 @@ void audio_rest()
 {
 #ifdef TARGET_A2
   // TBD
-#else
+#else	
 	AUDIO_TURN_ON;
 	
 	AUDIO_SET_OCTAVE(15U);  // audio_octv[0]);
@@ -777,11 +705,10 @@ void audio_end_game()
 #endif
 }
 
-void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon_index, unsigned char num, unsigned char a_a, unsigned char a_b, unsigned char a_c, unsigned char a_d, unsigned char a_e)
-//void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon_index, int num, ...)
+void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon_index, int num, ...)
 {
-	//va_list valist;
-	//va_start(valist, num);		
+	va_list valist;
+	va_start(valist, num);		
 	
 	challenge->longest_icon_height = index+1;
 	
@@ -790,20 +717,12 @@ void set_icon_char(Challenge* challenge, unsigned char index, unsigned char icon
 		challenge->longest_icon_width = num;
 	}
 	
-	challenge->icon[icon_index][index][0] = a_a;
-	challenge->icon[icon_index][index][1] = a_b;
-	challenge->icon[icon_index][index][2] = a_c;
-	challenge->icon[icon_index][index][3] = a_d;
-	challenge->icon[icon_index][index][4] = a_e;
-	
-	/*
 	for (g_i = 0; g_i < num; ++g_i)  // can't use while(num > 0) here, since va_args read in order (can't skip)
 	{
 		challenge->icon[icon_index][index][g_i] = va_arg(valist, unsigned char);		
 	}
-	*/
 	
-	//va_end(valist);			
+	va_end(valist);			
 }
 
 void initialize_challengeI(Challenge* ptr_challenge, signed char x, signed char y, unsigned char hpmax, unsigned long mspeed, unsigned char athres, unsigned char aspeed)
@@ -854,11 +773,7 @@ void initialize_stage1_challenges()
 	challenges[0].max_direction_state = 1;
 	challenges[0].hit_box_x = 0;
 	challenges[0].hit_box_y = 0;
-#ifdef TARGET_A2
-  challenges[0].icon[0][0][0] = 251;  // ; for RAT
-#else
 	challenges[0].icon[0][0][0] = 94;  // PI_SYMBOL for RAT
-#endif
 	
 	memcpy(&challenges[1], &challenges[0], sizeof(Challenge));
 
@@ -904,25 +819,12 @@ void initialize_stage2_challenges()
 	initialize_challengeT(&challenges[0],     2, 15, 20, 5);		
 	initialize_challengeT(&challenges[0],     3, 37, 12, 7);
 	
-/*
-    <==--
-		 ,,
+	set_icon_char(&challenges[0], 0, CD_LEFT, 5,  233,  172, 227, 98, 121);	
+	set_icon_char(&challenges[0], 1, CD_LEFT, 3,    0,  108, 108 );
 
-*/	
-#ifdef TARGET_A2
-	set_icon_char(&challenges[0], 0, CD_LEFT, 5,  188,         253, 253, 237,          237);	
-	set_icon_char(&challenges[0], 1, CD_LEFT, 3,  ICON_EMPTY,  175, 175, ICON_EMPTY, ICON_EMPTY );
-
-	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,  237,        237,         253,  253,  190);	
-	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,  ICON_EMPTY, ICON_EMPTY,  220,  220, ICON_EMPTY);	
-
-#else	
-	set_icon_char(&challenges[0], 0, CD_LEFT, 5,  233,         172, 227, 98,                121);	
-	set_icon_char(&challenges[0], 1, CD_LEFT, 3,  ICON_EMPTY,  108, 108, ICON_EMPTY, ICON_EMPTY);
-
-	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,  121,        98,          227,  172,        223);	
-	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,  ICON_EMPTY, ICON_EMPTY,  123,  123, ICON_EMPTY);	
-#endif	
+	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,  121, 98,  227,  172,  223);	
+	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,    0,  0,  123,  123);	
+	
 }
 
 void initialize_stage3_challenges(unsigned char start, unsigned char count)
@@ -960,15 +862,9 @@ void initialize_stage3_challenges(unsigned char start, unsigned char count)
 		challenges[start].hit_box_x = 2;
 		challenges[start].hit_box_y = 0;			
 		
-#ifdef TARGET_A2
-		set_icon_char(&challenges[start], 0, CD_LEFT,   3,  60, 61, 45, ICON_EMPTY, ICON_EMPTY);	
+		set_icon_char(&challenges[start], 0, CD_LEFT,   3,  60, 61, 75);
 		
-		set_icon_char(&challenges[start], 0, CD_RIGHT,  3,  45, 61, 62, ICON_EMPTY, ICON_EMPTY);
-#else
-		set_icon_char(&challenges[start], 0, CD_LEFT,   3,  60, 61, 75, ICON_EMPTY, ICON_EMPTY);
-	
-		set_icon_char(&challenges[start], 0, CD_RIGHT,  3,  74, 61, 62, ICON_EMPTY, ICON_EMPTY);
-#endif
+		set_icon_char(&challenges[start], 0, CD_RIGHT,  3,  74, 61, 62);
 						
 		++start;
 		--count;
@@ -1025,12 +921,7 @@ void initialize_stage4_challenges(unsigned char start, unsigned char count)
 		challenges[start].hit_box_x = 2;
 		challenges[start].hit_box_y = 0;	
 		
-#ifdef TARGET_A2
-    set_icon_char(&challenges[start], 0, CD_LEFT, 3,   220,  SYMBOL_SPADE,  239, ICON_EMPTY, ICON_EMPTY);  // 85/73 flap down,   74/75 flap up
-#else
-	  set_icon_char(&challenges[start], 0, CD_LEFT, 3,   85,   SYMBOL_SPADE,   73, ICON_EMPTY, ICON_EMPTY);  // 85/73 flap down,   74/75 flap up
-#endif
-		
+	  set_icon_char(&challenges[start], 0, CD_LEFT, 3,   85,   SYMBOL_SPADE,  73);  // 85/73 flap down,   74/75 flap up
 		if (orig_start != 0)
 		{
 			SET_MASK(challenges[start].icon[0][CD_LEFT][1], MASK_HIGH_BIT);  // REVERSE/INVERSE the bird icon for the new spawns
@@ -1062,39 +953,15 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
 	
 	if (initial_x < 1)  // JUSTIN
 	{
-#ifdef TARGET_A2
-/*
-    ?>/[
-		**=
-		 >\[
-*/
-
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER, 254, 239, 155,         ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,       32,         32, 253, ICON_EMPTY,  ICON_EMPTY );
-  	set_icon_char(&challenges[index], 2, CD_LEFT, 3,    ICON_EMPTY,   254, 220, 155,         ICON_EMPTY );
-#else
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER,   73,  85, 105,        ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,   74,             160, 189, ICON_EMPTY, ICON_EMPTY );
-  	set_icon_char(&challenges[index], 2, CD_LEFT, 4,   ICON_EMPTY,      75,  74, 223,        ICON_EMPTY );
-#endif
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   88,   73,  85, 105);
+	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,   74,  160, 189,   0);
+  	set_icon_char(&challenges[index], 2, CD_LEFT, 3,    0,   75,  74, 223);
 	}
 	else
 	{
-#ifdef TARGET_A2
-/*
-    ]\<?
-		 =**
-		]/<
-
-*/
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 3,  157,         220, 252,  SYMBOL_CLOVER, ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,  253,  32,  32,            ICON_EMPTY );
-  	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  157,         239, 252,  ICON_EMPTY,    ICON_EMPTY );
-#else		
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,          73,  85,  SYMBOL_CLOVER, ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,  189, 160,  75,            ICON_EMPTY );
-  	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  233,          75,  74,  ICON_EMPTY,    ICON_EMPTY );
-#endif
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,   73,  85,  SYMBOL_CLOVER);
+	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,    0,  189, 160,  75 );
+  	set_icon_char(&challenges[index], 2, CD_LEFT, 3,  233,   75,  74 );
 	}
 }
 
@@ -1146,11 +1013,7 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 		challenges[start].hit_box_y = 0;	
 		
 		//set_icon_char(&challenges[start], 0, CD_LEFT, 1,    121);
-#ifdef TARGET_A2
-    set_icon_char(&challenges[start], 0, CD_LEFT, 1,    34, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-#else
-		set_icon_char(&challenges[start], 0, CD_LEFT, 1,    162, ICON_EMPTy, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-#endif
+		set_icon_char(&challenges[start], 0, CD_LEFT, 1,    162);
 		
 		//set_icon_char(&challenges[start], 0, CD_RIGHT, 1,   121);
 		//set_icon_char(&challenges[start], 0, CD_RIGHT, 1,   162);
@@ -1181,24 +1044,13 @@ void initialize_stage7_challenges()
 	initialize_challengeT(&challenges[0],     2, 12,  6,  1);		
 	initialize_challengeT(&challenges[0],     3, 37, 12,  4);
 		
-#ifdef TARGET_A2
-	set_icon_char(&challenges[0], 0, CD_LEFT, 2,   60,          41,         ICON_EMPTY, ICON_EMPTY, ICON_EMPTY );
-	set_icon_char(&challenges[0], 1, CD_LEFT, 5,   ICON_EMPTY,  40,                 32,         32, 28);
-	set_icon_char(&challenges[0], 2, CD_LEFT, 4,   ICON_EMPTY,  ICON_EMPTY,         47,         47, ICON_EMPTY );
+	set_icon_char(&challenges[0], 0, CD_LEFT, 2,  233,   73);
+	set_icon_char(&challenges[0], 1, CD_LEFT, 5,    0,   74,  160, 160, 73);
+	set_icon_char(&challenges[0], 2, CD_LEFT, 4,    0,    0,  108, 108 );
 
-	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,   ICON_EMPTY,   ICON_EMPTY,   ICON_EMPTY,  40,       62);
-	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,   47,           32,           32,          41,       ICON_EMPTY);
-	set_icon_char(&challenges[0], 2, CD_RIGHT,  3,   ICON_EMPTY,   28,           28,        ICON_EMPTY, ICON_EMPTY);
-
-#else
-	set_icon_char(&challenges[0], 0, CD_LEFT, 2,  233,                73, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[0], 1, CD_LEFT, 5,  ICON_EMPTY,         74,        160,        160, 73);
-	set_icon_char(&challenges[0], 2, CD_LEFT, 4,  ICON_EMPTY, ICON_EMPTY,        108,        108, ICON_EMPTY );
-
-	set_icon_char(&challenges[0], 0, CD_RIGHT,  5, ICON_EMPTY,   ICON_EMPTY,   ICON_EMPTY,         85, 223);
-	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,   85,                160,          160,         75, ICON_EMPTY);
-	set_icon_char(&challenges[0], 2, CD_RIGHT,  3,    0,                123,          123, ICON_EMPTY, ICON_EMPTY);
-#endif
+	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,    0,    0,    0,  85, 223);
+	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,   85,  160,  160,  75);
+	set_icon_char(&challenges[0], 2, CD_RIGHT,  3,    0,  123,  123);
 	
   // JIMMY the crazy-fast drake		
                                   //                   HP   mov        atk
@@ -1211,33 +1063,13 @@ void initialize_stage7_challenges()
 	initialize_challengeT(&challenges[1],     2, 15, 20, 0);		
 	initialize_challengeT(&challenges[1],     3, 30, 16, 0);	
 	
-#ifdef TARGET_A2
-/*
-   <)
-    (  \
-		 //|
-		 
-		 
-		    (>
-		 /__)
-		 '\\
-*/
-	set_icon_char(&challenges[1], 0, CD_LEFT, 2,   60,                  41,  ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[1], 1, CD_LEFT, 5,   ICON_EMPTY,          40,          32,         32,         28);
-	set_icon_char(&challenges[1], 2, CD_LEFT, 5,   ICON_EMPTY,  ICON_EMPTY,          47,         47,         39);
+	set_icon_char(&challenges[1], 0, CD_LEFT, 2,  233,   73);
+	set_icon_char(&challenges[1], 1, CD_LEFT, 5,    0,   74,  160, 160, 73);
+	set_icon_char(&challenges[1], 2, CD_LEFT, 5,    0,    0,  108, 108, 74 );
 
-	set_icon_char(&challenges[1], 0, CD_RIGHT,  5,   ICON_EMPTY, ICON_EMPTY,  ICON_EMPTY,  40,                62);
-	set_icon_char(&challenges[1], 1, CD_RIGHT,  4,   47,                 32,          32,  41,        ICON_EMPTY);
-	set_icon_char(&challenges[1], 2, CD_RIGHT,  3,   39,                 28,          28, ICON_EMPTY, ICON_EMPTY);
-#else	
-	set_icon_char(&challenges[1], 0, CD_LEFT, 2,  233,                 73, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[1], 1, CD_LEFT, 5,  ICON_EMPTY,          74,        160,        160,         73);
-	set_icon_char(&challenges[1], 2, CD_LEFT, 5,  ICON_EMPTY,  ICON_EMPTY,        108,        108,         74);
-
-	set_icon_char(&challenges[1], 0, CD_RIGHT,  5,  ICON_EMPTY,  ICON_EMPTY,  ICON_EMPTY,         85,        223);
-	set_icon_char(&challenges[1], 1, CD_RIGHT,  4,          85,         160,         160,         75, ICON_EMPTY);
-	set_icon_char(&challenges[1], 2, CD_RIGHT,  3,          75,         123,         123, ICON_EMPTY, ICON_EMPTY);
-#endif
+	set_icon_char(&challenges[1], 0, CD_RIGHT,  5,    0,    0,    0,  85, 223);
+	set_icon_char(&challenges[1], 1, CD_RIGHT,  4,   85,  160,  160,  75);
+	set_icon_char(&challenges[1], 2, CD_RIGHT,  3,   75,  123,  123);
 }
 
 void initialize_stage8_challenges()
@@ -1264,19 +1096,8 @@ void initialize_stage8_challenges()
 	initialize_challengeT(&challenges[0],     1, 18, 20, 3);
 	initialize_challengeT(&challenges[0],     2, 19,  3, 4);
 
-/*
-
-  <@'
-	 \%
-
-*/
-#ifdef TARGET_A2
-	set_icon_char(&challenges[0], 0, CD_LEFT, 3,   60,          0,  39, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[0], 1, CD_LEFT, 3,  ICON_EMPTY,  28,  37, ICON_EMPTY, ICON_EMPTY);  // 37 == % inv
-#else
-	set_icon_char(&challenges[0], 0, CD_LEFT, 3,  233,        128,  75, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[0], 1, CD_LEFT, 3,  ICON_EMPTY,  95, 211, ICON_EMPTY, ICON_EMPTY);  // 211 == HEART inv
-#endif
+	set_icon_char(&challenges[0], 0, CD_LEFT, 3,  233, 128,  75);
+	set_icon_char(&challenges[0], 1, CD_LEFT, 3,    0,  95, 211);
 	
 /*
   // head2  DIAMOND	
@@ -1303,13 +1124,8 @@ void initialize_stage8_challenges()
 	initialize_challengeT(&challenges[1],     1, 22, 18, 1);
 	initialize_challengeT(&challenges[1],     2, 25,  8, 3);
 			
-#ifdef TARGET_A2
-	set_icon_char(&challenges[1], 0, CD_LEFT, 3,   60,          0,  39, ICON_EMPTY, ICON_EMPTY); 
-	set_icon_char(&challenges[1], 1, CD_LEFT, 3,  ICON_EMPTY,  28,  36, ICON_EMPTY, ICON_EMPTY);  // 36 == $ inv
-#else			
-	set_icon_char(&challenges[1], 0, CD_LEFT, 3,  233,        128,  75, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[1], 1, CD_LEFT, 3,  ICON_EMPTY,  95, 216, ICON_EMPTY, ICON_EMPTY);  // 216 == CLUB inv
-#endif
+	set_icon_char(&challenges[1], 0, CD_LEFT, 3,  233, 128,  75);
+	set_icon_char(&challenges[1], 1, CD_LEFT, 3,    0,  95, 216);
 
 	// head4  SPADE
 	
@@ -1321,13 +1137,8 @@ void initialize_stage8_challenges()
 	initialize_challengeT(&challenges[2],     2, 18,  8, 3);
 	initialize_challengeT(&challenges[2],     3, 26, 18, 6);
 			
-#ifdef TARGET_A2
-	set_icon_char(&challenges[2], 0, CD_LEFT, 3,   60,          0,  39, ICON_EMPTY, ICON_EMPTY); 
-	set_icon_char(&challenges[2], 1, CD_LEFT, 3,  ICON_EMPTY,  28,  63, ICON_EMPTY, ICON_EMPTY);  // 63 == ? inv
-#else						
-	set_icon_char(&challenges[2], 0, CD_LEFT, 3,  233,        128,  75, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[2], 1, CD_LEFT, 3,  ICON_EMPTY,  95, 193, ICON_EMPTY, ICON_EMPTY);
-#endif
+	set_icon_char(&challenges[2], 0, CD_LEFT, 3,  233, 128,  75);
+	set_icon_char(&challenges[2], 1, CD_LEFT, 3,    0,  95, 193);
 
   // FIREBALLs
                                   //                   HP   mov        atk
@@ -1341,7 +1152,7 @@ void initialize_stage8_challenges()
 	challenges[3].hit_box_x = 0;
 	challenges[3].hit_box_y = 0;		
 	
-	set_icon_char(&challenges[3], 0, CD_LEFT, 1,  FIREBALL_SYMBOL, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);	 // 42 == '*'	
+	set_icon_char(&challenges[3], 0, CD_LEFT, 1,  FIREBALL_SYMBOL);	 // 42 == '*'	
 
   // Clone three more FIREBALLS
 	memcpy(&challenges[4], &challenges[3], sizeof(Challenge));
@@ -1421,13 +1232,9 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 
 			case 0: 
 				display_symbol = rand_mod(2)+MAP_WATER;				
-				if (display_symbol == (MAP_WATER+1))  //< Optimization should combine this to a constant.
+				if (display_symbol == 103) 
 				{ 
-#ifdef TARGET_A2
-          display_symbol = 0; 
-#else
-			    display_symbol = 230;
-#endif
+			    display_symbol = 230; 
 #ifdef TARGET_C64
           display_color = C64_COLOR_LBLUE;
 #endif								
@@ -1440,32 +1247,18 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 #endif													
 				break;  
 			
-			case 3:  // MAP_ROCK	
-#ifdef TARGET_A2
-        display_symbol = rand_mod(3)+40;  // ( or ) or *
-				if (display_symbol == 42)  // *...
-				{
-					display_symbol = rand_mod(3) + 60;  // < = or >
-					if (display_symbol == 61)  // =...
-					{
-						display_symbol = 47;   // "/"
-					}
-				}
-#else
-				display_symbol = rand_mod(4)+201;    // 201 202 203 (204->213)
+			case 3: 
+				//display_symbol = MAP_ROCK; 
+				display_symbol = rand_mod(4)+201;    // 201 202 203 (204)
 				if (display_symbol == 204) { display_symbol = 213; }
-#endif
 #ifdef TARGET_C64
         display_color = C64_COLOR_DGREY;
 #endif												
 				break;
 							
-			case 5:  // MAP_SPECIAL				
-#ifdef TARGET_A2
-        display_symbol = rand_mod(4)+27;  // [ or \ or ] or ^
-#else
+			case 5:   
+				//display_symbol = MAP_SPECIAL; 
 				display_symbol = rand_mod(22)+233; 		
-#endif
 #ifdef TARGET_C64
         display_color = C64_COLOR_LGREY;
 #endif																
@@ -2201,9 +1994,7 @@ void run_stage(
 		
 		if (weapon_state == WS_FIRING)  //< if still firing...
 		{
-#ifdef TARGET_A2				
-      // NO NEED
-#elif TARGET_C64
+#ifdef TARGET_C64
       // Background ends up WHITE, not applying this in C64 version
 #else
 	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
@@ -2455,7 +2246,7 @@ void run_stage(
 					}
 					// ELSE remain in the weapon IDLE state
 				}   
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#ifdef TARGET_C64				
 				else if (global_input_ch == PKEY_J)
 #else
 	      else if (global_input_ch == PKEY_4)
@@ -2472,7 +2263,7 @@ void run_stage(
 					
 					SET_MASK(global_destiny_status.motion_this_cycle, MOTION_WEAPON);
 				}
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#ifdef TARGET_C64
 				else if (global_input_ch == PKEY_L)
 #else
 	      else if (global_input_ch == PKEY_6)
@@ -2498,7 +2289,7 @@ void run_stage(
 						}
 					}
 				}
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#ifdef TARGET_C64
 				else if (global_input_ch == PKEY_K)
 #else
 	      else if (global_input_ch == PKEY_0)
@@ -2683,7 +2474,7 @@ disallow_right:
 								;  				  
 							}
 						}		  
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#ifdef TARGET_C64
 						else if (global_input_ch == PKEY_I)
 #else
 						else if (global_input_ch == PKEY_8)
@@ -3239,7 +3030,7 @@ move_due_to_loiter:
 							{										
 								temp_char = ptr_challenge->icon[ptr_challenge->direction_state][icon_y][icon_x];
 								if (
-									(temp_char == ICON_EMPTY)													
+									(temp_char == 0)													
 								)
 								{
 									// nothing to draw - icon has a transparent "hole" portion
@@ -3374,11 +3165,6 @@ void animate_stage3(Challenge* ptr_challenge)
 	{
 		// This is actually a BIRD with only a CD_LEFT icon - update the left wing portion
 		ptr_challenge->icon[CD_LEFT][0][0] = wing_symbolsLEFT[g_i];
-#ifdef TARGET_A2
-    ptr_challenge->icon[CD_LEFT][0][2] = wing_symbolsRIGHT[g_i];												
-#else 
-	  // For the other targets, the CROC TAIL symbol already matches on the RIGHT WING
-#endif
 	}
 	else
 	{
@@ -3419,12 +3205,7 @@ void animate_stage7(Challenge* ptr_challenge)
 	}	
 }
 
-#ifdef TARGET_A2
-  #define FIRING_SYMBOL 167
-#else
-  #define FIRING_SYMBOL 75
-#endif
-
+#define FIRING_SYMBOL 75
 void animate_stage8(Challenge* ptr_challenge)
 {
 	Challenge* p_corresponding_fireball;
@@ -3504,11 +3285,8 @@ start_over:
 	
 	//INIT_TIMER(started_timer);				
 	INIT_TIMER((*(Time_counter*)(g_pvec_map[1])));  // using g_pvec_map[1][0] seems to conflict in the C64 build for some reason
-#ifdef TARGET_A2
-  g_pad_char = 176;  //< Back to 0 padded, necessary for 2nd runs of the game
-#else
+	
 	g_pad_char = 48;  //< Back to 0 padded, necessary for 2nd runs of the game
-#endif
 	check_for_flipskill_learned = TRUE;
 	
 #ifdef TARGET_A2  

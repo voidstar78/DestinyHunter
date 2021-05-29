@@ -8,19 +8,35 @@
 #include <game_strings.h>
 #include <destiny_structs.h>
 
-static char str_graph[][] =
-	{
-//		{ 97, 32, 32, 32},  // 0   (not used)
-//		{ 97, 32, 32, 32},  // 1   (not used)
-		{ 97, 32, 32, 32},  // 2   I               (minimum stat value)
-		{160, 32, 32, 32},  // 3   II
-		{160, 97, 32, 32},  // 4   II I
-		{160,160, 32, 32},  // 5   II II
-		{160,160, 97, 32},  // 6   II II I
-		{160,160,160, 32},  // 7   II II II
-		{160,160,160, 97},  // 8   II II II I
-		{160,160,160,160}   // 9   II II II II
-	};
+#ifdef TARGET_A2
+	static char str_graph[][] =
+		{
+	//		{ 97, 32, 32, 32},  // 0   (not used)
+	//		{ 97, 32, 32, 32},  // 1   (not used)
+			{167,160,160,160},  // 2   I               (minimum stat value)
+			{162,160,160,160},  // 3   II
+			{162,167,160,160},  // 4   II I
+			{162,162,160,160},  // 5   II II
+			{162,162,167,160},  // 6   II II I
+			{162,162,162,160},  // 7   II II II
+			{162,162,162,167},  // 8   II II II I
+			{162,162,162,162}   // 9   II II II II
+		};
+#else
+	static char str_graph[][] =
+		{
+	//		{ 97, 32, 32, 32},  // 0   (not used)
+	//		{ 97, 32, 32, 32},  // 1   (not used)
+			{ 97, 32, 32, 32},  // 2   I               (minimum stat value)
+			{160, 32, 32, 32},  // 3   II
+			{160, 97, 32, 32},  // 4   II I
+			{160,160, 32, 32},  // 5   II II
+			{160,160, 97, 32},  // 6   II II I
+			{160,160,160, 32},  // 7   II II II
+			{160,160,160, 97},  // 8   II II II I
+			{160,160,160,160}   // 9   II II II II
+		};
+#endif
 
 /*
 // Initialize some default values of a PERSONA and add it to the persona vector
@@ -196,7 +212,11 @@ show_initial_section:
 				else
 				{
 					// clear the marker of the now-previous selection
+#ifdef TARGET_A2
+          WRITE_CHAR(12, 5+g_i, 160);
+#else					
 					WRITE_CHAR(12, 5+g_i, ' ');
+#endif
 					
 					// move to the next index
 					g_i = temp_index;

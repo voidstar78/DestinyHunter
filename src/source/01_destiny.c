@@ -36,6 +36,12 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 	                                      // 0    1   2   3   4    5   6   7  8   9 
   static const char symbols_spiral[] =   {100, 70, 64, 67, 68, 69, 68, 67, 64, 70};
 	
+#ifdef TARGET_A2
+  #define BLANK_SPACE_CHAR  160
+#else
+	#define BLANK_SPACE_CHAR  32
+#endif
+	
 #ifdef TARGET_C64   
   Time_counter joy_timer;
 	INIT_TIMER(joy_timer);
@@ -45,6 +51,10 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 	global_destiny_status.blessing_count = 0;
 	global_destiny_status.persistency_count = 0;
 	
+#ifdef TARGET_A2
+	WRITE_CHAR(0 ,1,155);
+	WRITE_CHAR(23,1,157);
+#else	
 	WRITE_CHAR(0,1,97 | MASK_HIGH_BIT);
 	
 	/*
@@ -53,6 +63,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 	  ^                  ^    limits  (20 count, gives 10 range)
 	*/	
 	WRITE_CHAR(23,1,97);
+#endif
 	
 	WRITE_STRING(25,1, str_press_a_key_reverse, STR_PRESS_A_KEY_REVERSE_LEN);
 		
@@ -106,7 +117,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
     // ELSE - no key was pressed...		
 		
 		// GRAPHICS: CLEAR CURRENT SEED_MOD VALUE (since we're about to draw it in a new position, erase old one to make it "animated")
-		WRITE_CHAR(seed_mod, 1, ' ');
+		WRITE_CHAR(seed_mod, 1, BLANK_SPACE_CHAR);
 		// ---------------------------------------------------------------------------------------
 		
 		seed_mod += seed_dir_delta;		
@@ -146,8 +157,14 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 		// ]                      [
 		
 		temp_y = g_i+1;
+		
+#ifdef TARGET_A2
+		WRITE_CHAR(0, temp_y, 155);
+		WRITE_CHAR(23,temp_y, 157);
+#else		
 		WRITE_CHAR(0,temp_y, 97 | MASK_HIGH_BIT);
 		WRITE_CHAR(23,temp_y, 97);
+#endif
 
 		//WRITE_STRING(25,temp_y, str_CHIME_reverse, STR_CHIME_REVERSE_LEN);
 		WRITE_STRING(25,temp_y, str_press_a_key_reverse, STR_PRESS_A_KEY_REVERSE_LEN);
@@ -172,7 +189,7 @@ void determine_destiny()  // Destiny_stats* ptr_destiny_stats)
 try_again:			        	
       if (block_progress < BLOCK_PROGRESS_RANGE)
 			{				
-		    WRITE_CHAR(block_progress+1, temp_y, ' ');
+		    WRITE_CHAR(block_progress+1, temp_y, BLANK_SPACE_CHAR);
 			}
 
 			seed_delta += (seed_mod * 100);
@@ -227,7 +244,7 @@ try_again:
 				else
 				{
 					++attempts;		
-					
+
 					// APPLY the "seed_delta" in the appropriate direction...
 					if (global_destiny_status.direction == FORWARD_YONI_BLACK)
 					{
@@ -241,9 +258,9 @@ try_again:
 					// EXAMINE if this resulting intermediate/temporary seed_value is "BLESSED" (with possibility of a retry)
 					if ((temp_seed_value % seed_mod) == 0)
 					{
-#ifdef TARGET_C64
-
-#else
+#ifdef TARGET_A2
+            // TBD
+#elif TARGET_C64
 	          AUDIO_TURN_ON;
 					
 						AUDIO_SET_OCTAVE(51U); //audio_octv[symbol_index*2]);
@@ -254,10 +271,10 @@ try_again:
 #endif
 						
 						if (attempts > seed_mod)
-						{							
-#ifdef TARGET_C64					
-
-#else
+						{			
+#ifdef TARGET_A2
+              // TBD
+#elif TARGET_C64					
 	            // BLESSING!
 						  AUDIO_TURN_ON;
 							
@@ -289,7 +306,7 @@ try_again:
 						{									
               ++global_destiny_status.persistency_count;						
 												
-							WRITE_1U_DIGIT(36,temp_y, attempts);
+							WRITE_1U_DIGIT(36, temp_y, attempts);
 							flush_keyboard_buffer();
 							goto try_again;
 						}
@@ -298,7 +315,7 @@ try_again:
 					{
             WRITE_STRING(25, temp_y, str_chime, STR_CHIME_LEN);
 					}						
-						
+
 					WRITE_CHAR(block_progress+1, temp_y, choice_symbol);
 								        
 					break;
