@@ -3,39 +3,65 @@
 
 #include <core.h>
 
-#ifdef TARGET_C64
+#ifdef TARGET_A2
+  #define SYMBOL_YONI  207  // O
+#elif TARGET_C64
   #define SYMBOL_YONI  81
 #else
-	#define SYMBOL_YONI  87
+	#define SYMBOL_YONI  87  // This just looks to fat on the C64
 #endif
-#define SYMBOL_LANGI 81
 
-#ifdef TARGET_C64
+#ifdef TARGET_A2
+  #define SYMBOL_LANGI 15
+#else
+  #define SYMBOL_LANGI 81
+#endif
+
+#ifdef TARGET_A2
+  #define SYMBOL_GEM 42   // * inv
+#elif TARGET_C64
   #define SYMBOL_GEM 90
 #else
   #define SYMBOL_GEM 218
 #endif
 
-#define SYMBOL_BOOK      221
-#define SYMBOL_INV_BOW   169
-#define SYMBOL_INV_GEM    90
-#define SYMBOL_INV_BOOK  221
-
-#ifdef TARGET_C64
+#if defined(TARGET_C64) || defined(TARGET_A2)
   #define SYMBOL_INV_FLIP    9 
 #else
 	#define SYMBOL_INV_FLIP  184
 #endif
 
-#define SYMBOL_INV_ORB1  209
-#define SYMBOL_INV_ORB2  215
-#define SYMBOL_SPADE      65
-#define SYMBOL_SPADE_INV 193   // C1h, 65 with HIGH-BIT set to 1
-#define SYMBOL_DIAMOND    90
-#define SYMBOL_CLOVER     88
-#define SYMBOL_UP_ARROW   30
-#define SYMBOL_BOW        41
-#define SYMBOL_ORB       215
+#ifdef TARGET_A2
+	#define SYMBOL_BOOK       91  // [ inv flashing
+	#define SYMBOL_INV_BOW    41  // ) inv
+	#define SYMBOL_INV_GEM    42  // * inv
+	#define SYMBOL_INV_BOOK   27  // [ inv
+	
+	#define SYMBOL_INV_ORB1  207  // O
+	#define SYMBOL_INV_ORB2   15  // O inv
+	#define SYMBOL_SPADE     164  // $
+	#define SYMBOL_SPADE_INV  36  // $ inv
+	#define SYMBOL_DIAMOND    30  // ^ inv
+	#define SYMBOL_CLOVER    191  // ?
+	#define SYMBOL_UP_ARROW  222  // ^
+	#define SYMBOL_BOW        41  // ) inv
+	#define SYMBOL_ORB        48  // 0 inv
+#else
+	#define SYMBOL_BOOK      221
+	#define SYMBOL_INV_BOW   169
+	#define SYMBOL_INV_GEM    90
+	#define SYMBOL_INV_BOOK  221
+	
+	#define SYMBOL_INV_ORB1  209
+	#define SYMBOL_INV_ORB2  215
+	#define SYMBOL_SPADE      65
+	#define SYMBOL_SPADE_INV 193   // C1h, 65 with HIGH-BIT set to 1
+	#define SYMBOL_DIAMOND    90
+	#define SYMBOL_CLOVER     88
+	#define SYMBOL_UP_ARROW   30
+	#define SYMBOL_BOW        41
+	#define SYMBOL_ORB       215
+#endif
 
 #define MAX_BLESSING_COUNT 9       //< limit max number of blessings to 1 character
 #define MAX_PERSISTENCY_COUNT 99	 //< limit max number of persistencies to 2 characters
@@ -53,14 +79,25 @@
 #define DIR_WW 6
 #define DIR_NW 7
 
-#define MAP_WATER   102    // was 'W'  // concept was to be animated
-#define MAP_BEACH   160    // was 'B'
-#define MAP_ROCK    203    // was 'R'
-#define MAP_SPECIAL 223    // 'Z'  // similiar to rock, just different style
-#define MAP_LAND    86     // GRASS  was 'G'  was 214
-#define MAP_SPACE   32  // EMPTY  was 'S'  was ' '
-#define MAP_DEAD1   31  // used to represent defeated challenges, can still pick up arrows
-#define MAP_DEAD2   24  // used to represent defeated challenges, no arrows to pick up
+#ifdef TARGET_A2
+	#define MAP_WATER   192    // @
+	#define MAP_BEACH   174    // .  172 == ,
+	#define MAP_ROCK    188    // <  190 == >
+	#define MAP_SPECIAL 219    // [  221 == ]
+	#define MAP_LAND    163    // #
+	#define MAP_SPACE   160    //' ' SPACE/32
+	#define MAP_DEAD1   254    // ^
+	#define MAP_DEAD2   216    // X
+#else
+	#define MAP_WATER   102    // was 'W'  // concept was to be animated
+	#define MAP_BEACH   160    // was 'B'
+	#define MAP_ROCK    203    // was 'R'
+	#define MAP_SPECIAL 223    // 'Z'  // similiar to rock, just different style
+	#define MAP_LAND    86     // GRASS  was 'G'  was 214
+	#define MAP_SPACE   32  // EMPTY  was 'S'  was ' '
+	#define MAP_DEAD1   31  // used to represent defeated challenges, can still pick up arrows
+	#define MAP_DEAD2   24  // used to represent defeated challenges, no arrows to pick up
+#endif
 
 // NAME LENGTHS WILL BE THIS VALUE-1 (last position for null character)
 #define MAX_NAME_LENGTH 8
@@ -161,13 +198,19 @@ extern Persona_status g_pvec_personas[MAX_PERSONAS_TO_SELECT];
 extern unsigned char g_pvec_personas_count;
 extern Persona_status* g_ptr_persona_status;	
 
-#ifdef TARGET_C64
-typedef struct 
-{
-	unsigned int offset;  // address
-	unsigned char symbol;
-	unsigned char color;
-} Location_to_draw;
+#ifdef TARGET_A2
+	typedef struct 
+	{
+		unsigned int offset;  // address
+		unsigned char symbol;		
+	} Location_to_draw;
+#elif TARGET_C64
+	typedef struct 
+	{
+		unsigned int offset;  // address
+		unsigned char symbol;
+		unsigned char color;
+	} Location_to_draw;
 #endif
 
 typedef struct 
@@ -195,6 +238,11 @@ typedef struct
 //#define CD_UP    2
 //#define CD_DOWN  3
 #define MAX_MOVE_TARGETS_PER_CHALLENGE 5
+#ifdef TARGET_A2
+  #define ICON_EMPTY 255  // Use 191 if really need to draw a regular question mark (?)
+#else
+  #define ICON_EMPTY 0
+#endif
 typedef struct 
 {
 	signed char x;  // signed so they can be "off screen" to the left side initially (negative)

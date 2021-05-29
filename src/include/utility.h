@@ -85,7 +85,9 @@ void text_banner_center(unsigned char y, const char* text_to_say, unsigned char 
 // The user can press space to "speed read" through the text.
 //void print_fancy(unsigned char x, unsigned char y, const char* temp_str, unsigned char delay);
 
+#ifndef TARGET_A2
 // Used in playing audio, delay the sound for the given number of jiffies (60 is 1 second, see the core.h JIFFIES_xxx constants)
 void jiffy_delay(unsigned char jiffies);
+#endif
 
 #endif

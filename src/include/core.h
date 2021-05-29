@@ -37,8 +37,11 @@ DECIMAL  DESCRIPTION
 
 //#define QUICK_GAME           //< Used to pre-initialize main character and start on a particular stage
 #define FINAL_BUILD
-//#define TARGET_C64
-#define TARGET_PET
+
+// Should only choose ONE of the following at a time...
+//#define TARGET_C64   // Commodore 64
+//#define TARGET_PET   // Commodore PET 20XX/30XX/40XX
+#define TARGET_A2    // Apple ][
 
 // The following are optimizations intended for the cc65 compiler environment
 //#pragma inline-stdfuncs (on)
@@ -48,6 +51,9 @@ DECIMAL  DESCRIPTION
 #define NDEBUG                  //< NO DEBUG - do a release/fast build (this should also disable any asserts)
 
 #include <peekpoke.h>  //< Make standard PEEK and POKE macros available, doesn't consume any resources if not used
+#ifdef TARGET_A2
+  //#include <time.h>
+#endif
 // ================================================================= END ===
 
 // ================================================================ BEGIN ==
@@ -194,7 +200,10 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 #define B_PKEY_7           0x3A
 #define B_PKEY_8           0x32
 
-#ifdef TARGET_C64
+#ifdef TARGET_A2
+  extern unsigned char global_kb;
+  #define GET_PKEY_VIEW ((global_kb = PEEK(0xC000)) > 128) ? (POKE(0xC010,0), global_kb) : PKEY_NO_KEY
+#elif TARGET_C64
   #define GET_PKEY_VIEW PEEK(203)  
   //#define GET_PKEY_VIEW PEEK(197)  
 #else
@@ -263,16 +272,33 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 // ************* TIME RELATED FEATURES
 // -------------------------------------------------------------------------
 
-#define JIFFIES_FULL_SECOND       60U       // 60/1   aka Jiffies per Second
-#define JIFFIES_HALF_SECOND       30U       // 60/2 
-#define JIFFIES_THIRD_SECOND      20U       // 60/3
-#define JIFFIES_QUARTER_SECOND    15U       // 60/4
-#define JIFFIES_EIGTH_SECOND       7U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
-#define JIFFIES_TWELTH_SECOND      5U       // 60/12  
-#define JIFFIES_FIFTEENTH_SECOND   4U       // 60/15
-#define JIFFIES_SIXTEENTH_SECOND   3U       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
-#define JIFFIES_THIRTIETH_SECOND   2U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
-#define JIFFIES_SIXTIETH           1U       // 60/60
+#ifdef TARGET_A2
+	#define JIFFIES_FULL_SECOND       100U       // 60/1   aka Jiffies per Second
+	#define JIFFIES_HALF_SECOND        50U       // 60/2 
+	#define JIFFIES_THIRD_SECOND       25U       // 60/3
+	#define JIFFIES_QUARTER_SECOND     12U       // 60/4
+	#define JIFFIES_EIGTH_SECOND        6U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
+	#define JIFFIES_TWELTH_SECOND       4U       // 60/12  
+	#define JIFFIES_FIFTEENTH_SECOND    4U       // 60/15
+	#define JIFFIES_SIXTEENTH_SECOND    3U       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
+	#define JIFFIES_THIRTIETH_SECOND    1U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
+	#define JIFFIES_SIXTIETH            1U       // 60/60
+#else
+	#define JIFFIES_FULL_SECOND       60U       // 60/1   aka Jiffies per Second
+	#define JIFFIES_HALF_SECOND       30U       // 60/2 
+	#define JIFFIES_THIRD_SECOND      20U       // 60/3
+	#define JIFFIES_QUARTER_SECOND    15U       // 60/4
+	#define JIFFIES_EIGTH_SECOND       7U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
+	#define JIFFIES_TWELTH_SECOND      5U       // 60/12  
+	#define JIFFIES_FIFTEENTH_SECOND   4U       // 60/15
+	#define JIFFIES_SIXTEENTH_SECOND   3U       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
+	#define JIFFIES_THIRTIETH_SECOND   2U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
+	#define JIFFIES_SIXTIETH           1U       // 60/60
+#endif
+
+#ifdef TARGET_A2  
+extern unsigned long main_loop_counter;  // Because the Apple ][ doesn't have a clock!
+#endif
 
 typedef struct
 {
@@ -324,15 +350,21 @@ extern unsigned long delta_time_ms;   //< Instead of wasting that information wh
 */
 
 // WARNING: STORE_TIME_NO_CORRECTOR does not initialize target_timer.data.d to 0.
-#ifdef TARGET_C64
-	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
+#ifdef TARGET_A2
+// https://en.wikipedia.org/wiki/Apple_II_system_clocks
+  #define STORE_TIME_NO_CORRECTOR(target_timer) \
+	  target_timer.totl = main_loop_counter;
+
+#elif TARGET_C64
+	#define STORE_TIME_NO_CORRECTOR(target_timer) \
     __asm__("sei");  \
 		POKE(&target_timer.data.c, PEEK(160));  \
 		POKE(&target_timer.data.b, PEEK(161));  \
 		POKE(&target_timer.data.a, PEEK(162));  \
 		__asm__("cli");
+		
 #else
-	#define STORE_TIME_NO_CORRECTOR(target_timer)  \
+	#define STORE_TIME_NO_CORRECTOR(target_timer) \
         __asm__("sei");  \
 		POKE(&target_timer.data.c, PEEK(141));  \
 		POKE(&target_timer.data.b, PEEK(142));  \
@@ -356,12 +388,16 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 #define UPDATE_DELTA_JIFFY_ONLY(now_time, start_time) \
 	delta_time = (now_time.totl - start_time.totl);
 
-#define UPDATE_DELTA_TIME_FULL(now_time, start_time) \
-	delta_time = (now_time.totl - start_time.totl);  \
-	delta_time_sec = delta_time / 60; \
-	delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) );	  // 3-digit precision
+#ifdef TARGET_A2
+  // TBD - no clock on Apple ][
+#else
+  #define UPDATE_DELTA_TIME_FULL(now_time, start_time) \
+	  delta_time = (now_time.totl - start_time.totl);  \
+	  delta_time_sec = delta_time / 60; \
+	  delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) );	  // 3-digit precision
 	//delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) / 10UL);   // 2-digit precision
 	//delta_time_ms  = ((((delta_time - (delta_time_sec * 60UL)) * 1000UL) / 60UL) / 100UL);  // 1-digit precision
+#endif	
 // ================================================================= END ===	
 
 // ================================================================ BEGIN ==
@@ -396,16 +432,20 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 // on the fly to 40 vs 80 column machines.  But for the moment, it is a build-specific
 // macro definition.
 #define WIDTH_OF_SCREEN 40
-#define HEIGHT_OF_SCREEN 25
+#define HEIGHT_OF_SCREEN 25  // APPLE ][ we will adjust in other ways...
 
-#ifdef TARGET_C64
+#ifdef TARGET_A2
+  #define BASE_SCREEN_ADDRESS 0x0400
+#elif TARGET_C64
   #define BASE_SCREEN_ADDRESS 0x0400
 	#define BASE_COLOR_ADDRESS  0xD800
 #else
 	#define BASE_SCREEN_ADDRESS 0x8000
 #endif
 
-#ifdef TARGET_C64
+#ifdef TARGETR_A2
+  // NO DYNAMIC CHARACTER SETS...
+#elif TARGET_C64
   #define ADDR_CHARSET 53272U
 	#define ENABLE_CHARACTER_SET_A \
 		POKE(ADDR_CHARSET,21);
@@ -419,17 +459,28 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 		POKEW(ADDR_CHARSET,14);
 #endif
 
-// VIDEO MODE CHANGES
+// VIDEO MODE CHANGES (used in PET-only builds)
 #define ENABLE_GRAPHIC_MODE  \
   __asm__("lda #$8E");  \
 	__asm__("jsr $ffd2");
 #define ENABLE_TEXT_MODE  \
   __asm__("lda #$0E");  \
 	__asm__("jsr $ffd2");
+
+#ifdef TARGET_A2
+
+  #define CLRSCR \
+		__asm__("bit     $C082");  \
+		__asm__("jsr     $FC58");
+		//__asm__("bit     $C080");
+		
+#else
 	
-#define CLRSCR \
-	__asm__("lda #$93"); \
-	__asm__("jsr $ffd2");
+  #define CLRSCR \
+	  __asm__("lda #$93"); \
+	  __asm__("jsr $ffd2");
+		
+#endif
 	
 // Obsolete - kept for reference only (alternate to the above __asm__)
 //#define ENABLE_GRAPHIC_MODE printf("\x8E")  // CHR(142)  aka UPPER case, font is closer together to connect symbols
@@ -439,15 +490,33 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 //#define ENABLE_REVERSE_MODE printf("\x12")  // seems to enable the high bit (REVERSE) of any subsequent character output
 //#define ENABLE_REGULAR_MODE printf("\x92")  // disables REVERSE and clears the high bit of any subsequent character output
 
-#define WRITE_CHAR(x,y,ch) \
-  POKE(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x, ch)
+#ifdef TARGET_A2
+  extern unsigned int screen_row_offset[];
+  #define WRITE_CHAR(x,y,ch) \
+    POKE(screen_row_offset[y]+x, ch)
+		
+#else
+	#define WRITE_CHAR(x,y,ch) \
+    POKE(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x, ch)
+#endif
 	
-#define READ_CHAR(x,y) \
-  PEEK(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x)
+#ifdef TARGET A2
+  #define READ_CHAR(x,y) \
+    PEEK(screen_row_offset[y]+x)
+#else
+  #define READ_CHAR(x,y) \
+    PEEK(BASE_SCREEN_ADDRESS+(WIDTH_OF_SCREEN*(y))+x)
+#endif
 
 // "val" must always be <10 (i.e. 0..9, single digit only); 48 == '0', assumes remaining digits go in sequence
-#define WRITE_1U_DIGIT(x,y,val) \
-  WRITE_CHAR(x,y, 48 + val);
+#ifdef TARGET_A2
+  // For Apple][, bit being set for display is REGULAR
+	#define WRITE_1U_DIGIT(x,y,val) \
+    WRITE_CHAR(x,y, 176 + val);
+#else
+	#define WRITE_1U_DIGIT(x,y,val) \
+    WRITE_CHAR(x,y, 48 + val);
+#endif
 
 extern unsigned char g_pad_char;  //<  Set to '\0' or 0 for NO padding, otherwise set to what you want to use as the LEFT-SIDE padding (typically 48 == '0')
 // Write the binary encoded value "val" at x,y converted to decimal.  If g_pad_char is NO-ZERO,
@@ -477,36 +546,48 @@ http://www.zimmers.net/cbmpics/cbm/PETx/petfaq.html
 			59464  56584
 */
 
-#ifdef TARGET_C64
-#define AUDIO_TURN_ON \
-  POKE(56587U,16);
+#ifdef TARGET_A2
+  #define AUDIO_TURN_ON
+	
+#elif TARGET_C64
+  #define AUDIO_TURN_ON \
+    POKE(56587U,16);
 #else
-#define AUDIO_TURN_ON \
-  POKE(59467U,16);
+  #define AUDIO_TURN_ON \
+    POKE(59467U,16);
 #endif
 
-#ifdef TARGET_C64
-#define AUDIO_TURN_OFF \
-  POKE(56587U,0);
+#ifdef TARGET_A2
+  #define AUDIO_TURN_OFF	 
+	
+#elif TARGET_C64
+  #define AUDIO_TURN_OFF \
+    POKE(56587U,0);
 #else
-#define AUDIO_TURN_OFF \
-  POKE(59467U,0);
+  #define AUDIO_TURN_OFF \
+    POKE(59467U,0);
 #endif
 
-#ifdef TARGET_C64
-#define AUDIO_SET_OCTAVE(octave) \
-  POKE(56586U,octave);
+#ifdef TARGET_A2
+  #define AUDIO_SET_OCTAVE(octave)
+	
+#elif TARGET_C64
+  #define AUDIO_SET_OCTAVE(octave) \
+    POKE(56586U,octave);
 #else
-#define AUDIO_SET_OCTAVE(octave) \
-  POKE(59466U,octave);
+  #define AUDIO_SET_OCTAVE(octave) \
+    POKE(59466U,octave);
 #endif
 
-#ifdef TARGET_C64
-#define AUDIO_SET_FREQUENCY(freq) \
-  POKE(56584U,freq);
+#ifdef TARGET_A2
+  #define AUDIO_SET_FREQUENCY(freq)
+	
+#elif TARGET_C64
+  #define AUDIO_SET_FREQUENCY(freq) \
+    POKE(56584U,freq);
 #else	
-#define AUDIO_SET_FREQUENCY(freq) \
-  POKE(59464U,freq);
+  #define AUDIO_SET_FREQUENCY(freq) \
+    POKE(59464U,freq);
 #endif
 	
 // COMMAND TO MAKE THE PET SPEAKER BEEP.
@@ -519,4 +600,3 @@ http://www.zimmers.net/cbmpics/cbm/PETx/petfaq.html
 // ================================================================= END ===
 
 #endif
-
