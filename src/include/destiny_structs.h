@@ -80,9 +80,10 @@
 #define DIR_NW 7
 
 #ifdef TARGET_A2
-	#define MAP_WATER   192    // @
-	#define MAP_BEACH   174    // .  172 == ,
-	#define MAP_ROCK    188    // <  190 == >
+	#define MAP_WATER   186    // 192    // @
+	#define MAP_WATER2  174    // :   
+	#define MAP_BEACH   32     // ' '   SPACE inverted   (alternative: .)  172 == ,
+	#define MAP_ROCK    60     // <  190 == >
 	#define MAP_SPECIAL 219    // [  221 == ]
 	#define MAP_LAND    163    // #
 	#define MAP_SPACE   160    //' ' SPACE/32
@@ -90,6 +91,7 @@
 	#define MAP_DEAD2   216    // X
 #else
 	#define MAP_WATER   102    // was 'W'  // concept was to be animated
+  #define MAP_WATER2  230    // (water inverse)
 	#define MAP_BEACH   160    // was 'B'
 	#define MAP_ROCK    203    // was 'R'
 	#define MAP_SPECIAL 223    // 'Z'  // similiar to rock, just different style
@@ -291,6 +293,6 @@ extern unsigned char challenges_count;
 #define NUM_AUDIO_NOTES 26
 
 //extern unsigned char audio_octv[];
-extern unsigned char audio_frq0[];
+extern unsigned char audio_frq[];
 
 #endif

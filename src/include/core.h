@@ -50,7 +50,12 @@ DECIMAL  DESCRIPTION
 // --------------------------------------------------------------------------
 #define NDEBUG                  //< NO DEBUG - do a release/fast build (this should also disable any asserts)
 
-#include <peekpoke.h>  //< Make standard PEEK and POKE macros available, doesn't consume any resources if not used
+// peekpoke.h
+#define POKE(addr,val)     (*(unsigned char*) (addr) = (val))
+#define POKEW(addr,val)    (*(unsigned*) (addr) = (val))
+#define PEEK(addr)         (*(unsigned char*) (addr))
+#define PEEKW(addr)        (*(unsigned*) (addr))
+//#include <peekpoke.h>  //< Make standard PEEK and POKE macros available, doesn't consume any resources if not used
 #ifdef TARGET_A2
   //#include <time.h>
 #endif
@@ -273,15 +278,15 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
 // -------------------------------------------------------------------------
 
 #ifdef TARGET_A2
-	#define JIFFIES_FULL_SECOND       100U       // 60/1   aka Jiffies per Second
-	#define JIFFIES_HALF_SECOND        50U       // 60/2 
-	#define JIFFIES_THIRD_SECOND       25U       // 60/3
-	#define JIFFIES_QUARTER_SECOND     12U       // 60/4
-	#define JIFFIES_EIGTH_SECOND        6U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
-	#define JIFFIES_TWELTH_SECOND       4U       // 60/12  
+	#define JIFFIES_FULL_SECOND        64U       // 60/1   aka Jiffies per Second
+	#define JIFFIES_HALF_SECOND        32U       // 60/2 
+	#define JIFFIES_THIRD_SECOND       20U       // 60/3
+	#define JIFFIES_QUARTER_SECOND     16U       // 60/4
+	#define JIFFIES_EIGTH_SECOND        8U       // 60/8   should be 7.5, we'll TRUNC instead of ROUND
+	#define JIFFIES_TWELTH_SECOND       6U       // 60/12  
 	#define JIFFIES_FIFTEENTH_SECOND    4U       // 60/15
 	#define JIFFIES_SIXTEENTH_SECOND    3U       // 60/16  should be 3.75, we'll TRUNC instead of ROUND
-	#define JIFFIES_THIRTIETH_SECOND    1U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
+	#define JIFFIES_THIRTIETH_SECOND    2U       // 60/32  should be 1.875, ROUNDING this time just to distinguish from SIXTIETH
 	#define JIFFIES_SIXTIETH            1U       // 60/60
 #else
 	#define JIFFIES_FULL_SECOND       60U       // 60/1   aka Jiffies per Second
@@ -589,6 +594,18 @@ http://www.zimmers.net/cbmpics/cbm/PETx/petfaq.html
   #define AUDIO_SET_FREQUENCY(freq) \
     POKE(59464U,freq);
 #endif
+
+// THESE ARE FOR APPLE ][ ONLY (requires init_audio assembler at 0x300)
+#define PLAY_FULL(duration, pitch) \
+  POKE(0x301, duration);           \
+	POKE(0x303, pitch);              \
+	__asm__("jsr $0300");
+
+#define PLAY_CURR(pitch)           \
+	POKE(0x303, pitch);              \
+	__asm__("jsr $0300");		
+
+
 	
 // COMMAND TO MAKE THE PET SPEAKER BEEP.
 // May find a more efficient way in the future.  "\a" means audible alert.

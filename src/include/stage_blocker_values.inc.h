@@ -16,7 +16,7 @@ blockers_stage1_values
 
 */
 
-static unsigned char blockers_stage1_values[][] = {  // 23x5
+static unsigned char blockers_stage1_values[21][] = {  // 23x5
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {0,0,3,0,0},
@@ -42,7 +42,7 @@ static unsigned char blockers_stage1_values[][] = {  // 23x5
 {0,0,0,0,0}
 };
 	
-static unsigned char blockers_stage2_values[][] = {	
+static unsigned char blockers_stage2_values[21][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {0,0,0,12,0},
@@ -68,7 +68,7 @@ static unsigned char blockers_stage2_values[][] = {
 {128,35,0,0,12}
 };
 
-static unsigned char blockers_stage3_values[][] = {	
+static unsigned char blockers_stage3_values[21][] = {	
 //[0,0,0,0,0],
 //[0,0,0,0,0],
 {0,0,0,0,112},
@@ -95,7 +95,7 @@ static unsigned char blockers_stage3_values[][] = {
 };
 
 /*
-static unsigned char blockers_stage4_values[][] = {	
+static unsigned char blockers_stage4_values[21][] = {	
 {0,0,0,0,0},
 {0,0,0,0,0},
 {0,0,0,0,0},
@@ -122,7 +122,7 @@ static unsigned char blockers_stage4_values[][] = {
 };
 */
 
-static unsigned char blockers_stage5_values[][] = {	
+static unsigned char blockers_stage5_values[21][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {0,15,0,96,0},
@@ -148,7 +148,7 @@ static unsigned char blockers_stage5_values[][] = {
 {0,0,0,112,0}
 };
 
-static unsigned char blockers_stage6_values[][] = {	
+static unsigned char blockers_stage6_values[21][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {0,2,0,24,0},
@@ -174,7 +174,7 @@ static unsigned char blockers_stage6_values[][] = {
 {0,8,0,32,0}
 };
 
-static unsigned char blockers_stage7_values[][] = {	
+static unsigned char blockers_stage7_values[21][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {8,0,0,0,0},
@@ -200,7 +200,7 @@ static unsigned char blockers_stage7_values[][] = {
 {8,124,0,0,0}
 };
 
-static unsigned char blockers_stage8_values[][] = {	
+static unsigned char blockers_stage8_values[21][] = {	
 //{0,0,0,0,0},
 //{0,0,0,0,0},
 {0,0,30,1,0},
@@ -225,3 +225,4 @@ static unsigned char blockers_stage8_values[][] = {
 {0,0,28,1,0},
 {0,0,22,1,0}
 };
+
