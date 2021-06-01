@@ -313,7 +313,9 @@ char str_instructions[] =
 
 char str_instruction_aim[] =
 {
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#if defined(TARGET_A2)
+   1,  9, 13, 32, 32, 32, 32, 32, 32, 32, 32, 32, 138,  32,  47,  32, 140,  32,  32,  32, 23,  1, 20,  5, 18,160, MAP_WATER     // WATER
+#elif defined(TARGET_C64)
 	 1,  9, 13, 32, 32, 32, 32, 32, 32, 32, 32, 32, 138,  32,  47,  32, 140,  32,  32,  32, 23,  1, 20,  5, 18, 32, MAP_WATER     // WATER
 #else
 	 1,  9, 13, 32, 32, 32, 32, 32, 32, 32, 32, 32, 180,  32,  47,  32, 182,  32,  32,  32, 23,  1, 20,  5, 18, 32, 102     // WATER
@@ -322,22 +324,36 @@ char str_instruction_aim[] =
 
 char str_instruction_move[] =
 {
+#if defined(TARGET_A2)
+	13, 15, 22,  5, 32, 32, 32, 32, 32, 32, 32, 32, 151,  44, 129,  44, 147,  44, 132,  32,  2,  5,  1,  3,  8,160, MAP_BEACH     // BEACH
+#else
 	13, 15, 22,  5, 32, 32, 32, 32, 32, 32, 32, 32, 151,  44, 129,  44, 147,  44, 132,  32,  2,  5,  1,  3,  8, 32, MAP_BEACH     // BEACH
+#endif
 };
 
 char str_instruction_fire[] =
 {
+#if defined(TARGET_A2)
+	 6,  9, 18,  5, 32, 32, 32, 32, 32, 32, 32, 32, 147, 144, 129, 131, 133,  32,  32,  32,  7, 18,  1, 19, 19,160,  MAP_LAND     // GRASS
+#else
 	 6,  9, 18,  5, 32, 32, 32, 32, 32, 32, 32, 32, 147, 144, 129, 131, 133,  32,  32,  32,  7, 18,  1, 19, 19, 32,  MAP_LAND     // GRASS
+#endif
 };
 
 char str_instruction_blessing[] =
 {
+#if defined(TARGET_A2)
+	 2, 12,  5, 19, 19,  9, 14,  7, 32, 32, 32, 32, 130,  32,  32,  32,  32,  32,  32,  32, 12,  1, 14,  4,160, 27,  MAP_SPACE, 29  // LAND
+#else
 	 2, 12,  5, 19, 19,  9, 14,  7, 32, 32, 32, 32, 130,  32,  32,  32,  32,  32,  32,  32, 12,  1, 14,  4, 32, 27,  MAP_SPACE, 29  // LAND
+#endif
 };
 
 char str_instruction_persistency[] =
 {
-#if defined(TARGET_C64) || defined(TARGET_A2)
+#if defined(TARGET_A2)
+	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 139,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19,160, MAP_ROCK     // ROCKS
+#elif defined(TARGET_C64)
 	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 139,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19, 32, MAP_ROCK     // ROCKS
 #else	
 	16,  5, 18, 19,  9, 19, 20,  5, 14,  3, 25, 32, 176,  32,  32,  32,  32,  32,  32,  32, 18, 15,  3, 11, 19, 32, MAP_ROCK     // ROCKS

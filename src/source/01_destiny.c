@@ -258,8 +258,8 @@ try_again:
 					// EXAMINE if this resulting intermediate/temporary seed_value is "BLESSED" (with possibility of a retry)
 					if ((temp_seed_value % seed_mod) == 0)
 					{
-#ifdef TARGET_A2
-            // TBD
+#ifdef TARGET_A2            
+						PLAY_FULL(30, audio_frq[symbol_index+3]);
 #elif TARGET_C64
 	          AUDIO_TURN_ON;
 					
@@ -273,7 +273,8 @@ try_again:
 						if (attempts > seed_mod)
 						{			
 #ifdef TARGET_A2
-              // TBD
+              PLAY_FULL(50, 207);  // A
+							PLAY_FULL(50, 195);  // A#
 #elif TARGET_C64					
 	            // BLESSING!
 						  AUDIO_TURN_ON;

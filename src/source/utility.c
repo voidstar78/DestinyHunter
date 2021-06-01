@@ -325,4 +325,5 @@ void jiffy_delay(unsigned char jiffies)
 		}
 	}
 }
+
 #endif

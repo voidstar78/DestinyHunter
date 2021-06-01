@@ -24,13 +24,30 @@
 	unsigned char j_fire_prepare = FALSE;
 #endif
 
-#include <snes_gamepad.h>
+#if defined(TARGET_A2)
+  unsigned char joyX;
+	unsigned char joyY;
+	unsigned char joyMask;         /* global variables for joyread to fill in */
+
+  // JP == joystick paddle	
+	#define JP_UP          1                      /* Up       bit 0                          */
+	#define JP_RIGHT       2                      /* Right    bit 1                          */
+	#define JP_DOWN        4                      /* Down     bit 2                          */
+	#define JP_LEFT        8                      /* Left     bit 3                          */
+	#define JP_BUTTON0     16                     /* Button 0 bit 4                          */
+	#define JP_BUTTON1     32                     /* Button 1 bit 5                          */
+	
+  extern void joyread(); 
+#else
+	// Both PET and C64 build support SNES GAMEPAD
+  #include <snes_gamepad.h>
+#endif
 
 static unsigned char rest_mode = FALSE;
 static unsigned char (*ptr_blockers)[5];  // of the current map
 static unsigned char or_equal_modifier[] = {0xC0,0x30,0x0C,0x03};
 #ifdef TARGET_A2                              //NN   NE  EE  SE  SS  SW  WW  NW
-  static unsigned char weapon_fire_symbols[] = {161,175,237,220,161,175,237,156};
+  static unsigned char weapon_fire_symbols[] = {161,175,173,156,161,175,173,156};
 #else
   static unsigned char weapon_fire_symbols[] = { 66, 78, 67, 77, 66, 78, 67, 77};
 #endif
@@ -78,7 +95,7 @@ static char g_pvec_map[MAX_MAP_ROWS][40];  // HEIGHT_OF_SCREEN-2 and WIDTH_OF_SC
 */	
 
 #ifdef TARGET_A2                                //  NN  NE  EE  SE  SS  SW  WW  NW
-  static unsigned char weapon_carried_symbols[] = {161,175,237,220,161,175,237,220};
+  static unsigned char weapon_carried_symbols[] = {161,175,173,156,161,175,173,156};
 #else
   static unsigned char weapon_carried_symbols[] = {113, 73,107, 75,114, 74,115, 85};
 #endif
@@ -107,11 +124,11 @@ static char g_pvec_map[MAX_MAP_ROWS][40];  // HEIGHT_OF_SCREEN-2 and WIDTH_OF_SC
 #endif
 
 #ifdef TARGET_A2
-  static unsigned char scorp_symbolsTOP[2]     = {157, 254};
-  static unsigned char scorp_symbolsBOTTOM[2]  = {157, 254};
+  static unsigned char scorp_symbolsTOP[2]     = {157, 189};
+  static unsigned char scorp_symbolsBOTTOM[2]  = {157, 189};
 	
-  static unsigned char scorpR_symbolsTOP[2]    = {155, 188};
-  static unsigned char scorpR_symbolsBOTTOM[2] = {155, 188};
+  static unsigned char scorpR_symbolsTOP[2]    = {155, 189};
+  static unsigned char scorpR_symbolsBOTTOM[2] = {155, 189};
 #else
   static unsigned char scorp_symbolsTOP[2]     = { 95, 105};
   static unsigned char scorp_symbolsBOTTOM[2]  = {233, 223};
@@ -192,6 +209,58 @@ static unsigned char num_locations_to_draw = 0;
 
 typedef void (*ptr_animate_icon_func_type)(Challenge *);
 
+#ifdef TARGET_A2
+/*
+https://www.kreativekorp.com/miscpages/a2info/memorymap.shtml
+address 0x0300 to 03CF is "free space"
+
+https://www.kreativekorp.com/miscpages/a2info/zeropage.shtml
+ZEROPAGE $FA - $FE = also free space
+
+The assembly code from below is taken from ....
+https://gist.github.com/thelbane/9291cc81ed0d8e0266c8	
+  This code below uses $FA zeropage to store a copy of the Frequency (used as a counter)
+*/
+
+void init_audio()
+{
+	POKE(0x0300, 160);  // A0 64       LDY   #$FF          ; LOAD DURATION        ($FF is a placeholder value, to be updated via POKE later)
+	POKE(0x0301, 100);  
+	POKE(0x0302, 169);  // A9 01       LDA   #$FF          ; LOAD FREQUENCY       ($FF is a placeholder value, to be updated via POKE later)
+	POKE(0x0303, 1);    
+	POKE(0x0304, 133);  // 85 FA       STA   $FA           ; VALUE AT $FA WILL SLIDE DOWN, CREATING THE VIOLIN EFFECT
+	POKE(0x0305, 250);
+	POKE(0x0306, 174);  // AE 03 03    LDX   $0303         ; INITIALIZE TONE COUNTER WITH FREQUENCY
+	POKE(0x0307, 3);    
+	POKE(0x0308, 3);
+	POKE(0x0309, 228);  // E4 FA       CPX   $FA           ; COMPARE WITH SLIDING VALUE
+	POKE(0x030A, 250);
+	POKE(0x030B, 208);  // D0 03       BNE   $0310         ; SKIP SPEAKER CLICK IF NOT EQUAL
+	POKE(0x030C, 3);
+	POKE(0x030D, 173);  // AD 30 C0    LDA   $C030         ; CLICK SPEAKER
+	POKE(0x030E, 48);
+	POKE(0x030F, 192);  
+	POKE(0x0310, 202);  // CA          DEX                 ; DECREMENT TONE COUNTER
+	POKE(0x0311, 208);  // D0 F6       BNE   $0309         ; LOOP UNTIL TONE COUNTER IS ZERO
+	POKE(0x0312, 246);
+	POKE(0x0313, 173);  // AD 30 C0    LDA   $C030         ; CLICK SPEAKER AGAIN
+	POKE(0x0314, 48);
+	POKE(0x0315, 192);
+	POKE(0x0316, 136);  // 88          DEY                 ; DECREASE DURATION COUNTER 
+	POKE(0x0317, 240);  // F0 07       BEQ   $0320         ; BRANCH TO END IF DURATION COUNTER REACHES ZERO
+	POKE(0x0318, 7);
+	POKE(0x0319, 198);  // C6 FA       DEC   $FA           ; ELSE DECREMENT THE SLIDING VALUE
+	POKE(0x031A, 250);
+	POKE(0x031B, 208);  // D0 E9       BNE   $0306         ; LOOP UNTIL THE SLIDING VALUE IS ZERO
+	POKE(0x031C, 233);
+	POKE(0x031D, 76);   // 4C 02 03    JMP   $0302         ; RESET SLIDING VALUE IF IT'S EQUAL TO ZERO
+	POKE(0x031E, 2);
+	POKE(0x031F, 3);
+	POKE(0x0320, 96);   // 60          RTS      
+}
+
+#endif
+
 unsigned char IS_BLOCKED(unsigned char check_x, unsigned char check_y)  
 {  
   if (ptr_blockers == 0)
@@ -199,12 +268,69 @@ unsigned char IS_BLOCKED(unsigned char check_x, unsigned char check_y)
 	return (IS_BIT_ON(ptr_blockers[check_y-2][div8_table[check_x]], mod8_table[check_x]) == TRUE);
 }
 
+#if defined(TARGET_A2)
+void hit_flash()
+{
+	#define HIT_FLASH_AMOUNT 20
+	unsigned char i;
+	unsigned char x;
+	unsigned char y;	
+	static Location_to_draw n[HIT_FLASH_AMOUNT];
+	
+	//for (i = 0; i < 23; ++i)
+	//{
+	//	POKE(screen_row_offset[i]+39, 32);
+	//}
+
+	for (i = 0; i < HIT_FLASH_AMOUNT; ++i)
+	{		
+		x = rand_mod(38);
+		y = rand_mod(23);
+		
+		n[i].offset = screen_row_offset[y] + x;
+    n[i].symbol = PEEK(n[i].offset);
+		
+		POKE(n[i].offset, 32+rand_mod(2));		
+	}
+	
+	for (i = 0; i < HIT_FLASH_AMOUNT; ++i)
+	{
+		POKE(n[i].offset, n[i].symbol);
+	}
+		
+	//	POKE(screen_row_offset[y]+39, 160);
+		
+		//POKE(screen_row_offset[y]+x, ch);		
+
+	
+//	for (i = 0; i < 23; ++i)
+	//{
+//		POKE(screen_row_offset[i]+39, 160);
+//	}	
+}
+#endif
+
+
 void draw_stage_overlay(char* stage_name)
 {	
 #ifdef TARGET_A2
 
   // TOP
   WRITE_STRING(31, 0, stage_name, STR_STAGENAME_LEN);	  
+	
+	persona_name_len = strlen(g_ptr_persona_status->name);
+	/* string is already INVERSE in Apple][ version
+	for (g_i = 0; g_i < persona_name_len; ++g_i)
+	{
+		CLEAR_MASK(g_ptr_persona_status->name[g_i], MASK_HIGH_BIT);
+	}
+	*/
+	x_delta = ((39 - persona_name_len) / 2)-1;   // CENTER the name
+	WRITE_CHAR(x_delta, 0, 32);  // flank the name with an extra space
+	++x_delta;
+	WRITE_STRING(x_delta, 0, g_ptr_persona_status->name, persona_name_len);
+	x_delta += persona_name_len;
+	WRITE_CHAR(x_delta, 0, 32);	
 		
 	// "BOTTOM" (in Apple][ version this becomes ROW2; actual bottom row 24 will hold things like FINISH/END GAME)	
 	
@@ -525,13 +651,6 @@ void draw_stage_map()
 #define STAGE_COMPLETED   3
 #define STAGE_DEATH       4
 
-#if 0
-static unsigned int addr;
-#define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
-		addr = 0x033D + (10*data_y)+div4_table[data_x];  \
-		POKE(addr, PEEK(addr) | or_equal_modifier[mod4_table[data_x]]);
-#endif
-
 #define MARK_LOCATION_AS_DRAWN(data_x,data_y) \
 		/*ptr_pvec_value0[data_y] = TRUE;*/ \
 		cell_state[ data_y ][ div4_table[data_x] ] |= or_equal_modifier[mod4_table[data_x]];
@@ -542,7 +661,7 @@ void BUFFER_LOCATION_TO_DRAW(unsigned char data_x, unsigned char data_y, unsigne
 #endif
 )
 {
-	MARK_LOCATION_AS_DRAWN(data_x,data_y);
+	MARK_LOCATION_AS_DRAWN(data_x, data_y);
 #ifdef TARGET_A2
   locations_to_draw[num_locations_to_draw].offset = screen_row_offset[data_y]+data_x;  
 	locations_to_draw[num_locations_to_draw].symbol = target_symbol;  	
@@ -573,7 +692,11 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 	} 
 
 #ifdef TARGET_A2				
-  // NO NEED
+	// OPTIONAL: Invert the weapon when it is on BEACH tiles, just makes it look nicer...
+	if (g_pvec_map[global_destiny_status.weapon_y][global_destiny_status.weapon_x] == MAP_BEACH) 
+		CLEAR_MASK(global_destiny_status.symbol_weapon, MASK_HIGH_BIT); 
+	else 
+		SET_MASK(global_destiny_status.symbol_weapon, MASK_HIGH_BIT); 	
 #elif TARGET_C64
 	// This ends up looking wrong color on the C64, so looking worse.
 #else
@@ -596,7 +719,7 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 
 #define EVAL_MOVE_COST(data_x,data_y,allow_target) \
 				  map_piece = g_pvec_map[data_y][data_x]; \
-				  if ((map_piece == MAP_WATER) || (map_piece == (MAP_WATER | MASK_HIGH_BIT)))  /* mask high bit is the "reverse" version of the water tile */ \
+				  if ((map_piece == MAP_WATER) || (map_piece == (MAP_WATER2))) \
 					{     \
 						global_destiny_status.energy_current -= (90 * g_ptr_persona_status->water_movement);  \
 					}  \
@@ -611,7 +734,7 @@ void ORIENT_AND_QUEUE_DRAW_WEAPON()
 void audio_rest()
 {
 #ifdef TARGET_A2
-  // TBD
+  PLAY_FULL(40, 207);   // A
 #else
 	AUDIO_TURN_ON;
 	
@@ -626,12 +749,12 @@ void audio_rest()
 void audio_hp()
 {
 #ifdef TARGET_A2
-  // TBD
+  PLAY_FULL(30, audio_frq[global_destiny_status.hp_current]);
 #else
 	AUDIO_TURN_ON;
 	
 	AUDIO_SET_OCTAVE(15U);  //audio_octv[global_destiny_status.hp_current]);
-	AUDIO_SET_FREQUENCY(audio_frq0[global_destiny_status.hp_current]);
+	AUDIO_SET_FREQUENCY(audio_frq[global_destiny_status.hp_current]);
 	
 	//jiffy_delay(JIFFIES_THIRTIETH_SECOND);
 	//AUDIO_TURN_OFF;  //< Sound will go off at end of main-loop
@@ -641,7 +764,8 @@ void audio_hp()
 void audio_item()
 {	
 #ifdef TARGET_A2 
-  // TBD
+  PLAY_FULL(30, 137);  // E
+	PLAY_CURR(    102);  // A
 #else
 	AUDIO_TURN_ON;
 	
@@ -664,7 +788,12 @@ void audio_item()
 void audio_game_over()
 {
 #ifdef TARGET_A2
-  // TBD
+  PLAY_FULL(100, 155);  // D
+	PLAY_CURR(     184);  // B
+	PLAY_CURR(     233);  // G
+	PLAY_CURR(     164);  // C#
+	PLAY_CURR(     195);  // A#
+	PLAY_CURR(     247);  // F#
 #else
 	AUDIO_TURN_ON;                         
 	
@@ -712,7 +841,25 @@ void audio_game_over()
 void audio_end_game()
 {
 #ifdef TARGET_A2
-  // TBD
+  PLAY_FULL(250,207);  // A 
+  PLAY_CURR(    155);  // D
+  PLAY_CURR(    130);  // F 
+  PLAY_CURR(    137);  // E
+  PLAY_CURR(    155);  // D
+	PLAY_FULL(250,102);  // A
+  PLAY_CURR(    102);  // A  
+	
+  PLAY_FULL(220,174);  // C
+  PLAY_CURR(    137);  // E
+  PLAY_FULL(250,130);  // F
+  PLAY_CURR(    137);  // E
+  PLAY_CURR(    155);  // D
+  PLAY_CURR(    174);  // C 
+  PLAY_FULL(220,137);  // E 
+  PLAY_CURR(    207);  // A 
+  PLAY_FULL(200,130);  // F
+  PLAY_FULL(250,155);  // D 
+  PLAY_CURR(    155);  // D
 #else
 	g_i = 2;
 	while (g_i > 0)
@@ -1065,15 +1212,15 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
 #ifdef TARGET_A2
 /*
     ?>/[
-		**=
+		**:
 		 >\[
 */
 
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER, 254, 239, 155,         ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,       32,         32, 253, ICON_EMPTY,  ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER-128, 254, 239, 155,         ICON_EMPTY );
+	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,       32,         32,  58, ICON_EMPTY,  ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 3,    ICON_EMPTY,   254, 220, 155,         ICON_EMPTY );
 #else
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER,   73,  85, 105,        ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER-128,   73,  85, 105,        ICON_EMPTY );
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,   74,             160, 189, ICON_EMPTY, ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,   ICON_EMPTY,      75,  74, 223,        ICON_EMPTY );
 #endif
@@ -1083,15 +1230,15 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
 #ifdef TARGET_A2
 /*
     ]\<?
-		 =**
+		 :**
 		]/<
 
 */
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 3,  157,         220, 252,  SYMBOL_CLOVER, ICON_EMPTY );
-	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,  253,  32,  32,            ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 3,  157,         220, 252,  SYMBOL_CLOVER-128, ICON_EMPTY );
+	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,   58,  32,  32,            ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  157,         239, 252,  ICON_EMPTY,    ICON_EMPTY );
 #else		
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,          73,  85,  SYMBOL_CLOVER, ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,          73,  85,  SYMBOL_CLOVER-128, ICON_EMPTY );
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,  189, 160,  75,            ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  233,          75,  74,  ICON_EMPTY,    ICON_EMPTY );
 #endif
@@ -1103,7 +1250,7 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 	unsigned char rand_x;
 	unsigned char rand_y;
 	unsigned char ofs_x;
-	unsigned long rand_mov;	
+	unsigned char rand_mov;	
 				
 	if (start != 0)
 	{
@@ -1149,7 +1296,7 @@ void initialize_stage6_challenges(unsigned char start, unsigned char count)
 #ifdef TARGET_A2
     set_icon_char(&challenges[start], 0, CD_LEFT, 1,    34, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
 #else
-		set_icon_char(&challenges[start], 0, CD_LEFT, 1,    162, ICON_EMPTy, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
+		set_icon_char(&challenges[start], 0, CD_LEFT, 1,    162, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
 #endif
 		
 		//set_icon_char(&challenges[start], 0, CD_RIGHT, 1,   121);
@@ -1182,12 +1329,12 @@ void initialize_stage7_challenges()
 	initialize_challengeT(&challenges[0],     3, 37, 12,  4);
 		
 #ifdef TARGET_A2
-	set_icon_char(&challenges[0], 0, CD_LEFT, 2,   60,          41,         ICON_EMPTY, ICON_EMPTY, ICON_EMPTY );
-	set_icon_char(&challenges[0], 1, CD_LEFT, 5,   ICON_EMPTY,  40,                 32,         32, 28);
+	set_icon_char(&challenges[0], 0, CD_LEFT, 2,   60,          39,         ICON_EMPTY, ICON_EMPTY, ICON_EMPTY );
+	set_icon_char(&challenges[0], 1, CD_LEFT, 5,   ICON_EMPTY,  27,                 32,         32, 28);
 	set_icon_char(&challenges[0], 2, CD_LEFT, 4,   ICON_EMPTY,  ICON_EMPTY,         47,         47, ICON_EMPTY );
 
-	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,   ICON_EMPTY,   ICON_EMPTY,   ICON_EMPTY,  40,       62);
-	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,   47,           32,           32,          41,       ICON_EMPTY);
+	set_icon_char(&challenges[0], 0, CD_RIGHT,  5,   ICON_EMPTY,   ICON_EMPTY,   ICON_EMPTY,  39,       62);
+	set_icon_char(&challenges[0], 1, CD_RIGHT,  4,   47,           32,           32,          29,       ICON_EMPTY);
 	set_icon_char(&challenges[0], 2, CD_RIGHT,  3,   ICON_EMPTY,   28,           28,        ICON_EMPTY, ICON_EMPTY);
 
 #else
@@ -1213,21 +1360,21 @@ void initialize_stage7_challenges()
 	
 #ifdef TARGET_A2
 /*
-   <)
-    (  \
+   <'
+    [  \
 		 //|
 		 
 		 
-		    (>
-		 /__)
+		    '>
+		 /__]
 		 '\\
 */
-	set_icon_char(&challenges[1], 0, CD_LEFT, 2,   60,                  41,  ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
-	set_icon_char(&challenges[1], 1, CD_LEFT, 5,   ICON_EMPTY,          40,          32,         32,         28);
+	set_icon_char(&challenges[1], 0, CD_LEFT, 2,   60,                  39,  ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
+	set_icon_char(&challenges[1], 1, CD_LEFT, 5,   ICON_EMPTY,          27,          32,         32,         28);
 	set_icon_char(&challenges[1], 2, CD_LEFT, 5,   ICON_EMPTY,  ICON_EMPTY,          47,         47,         39);
 
-	set_icon_char(&challenges[1], 0, CD_RIGHT,  5,   ICON_EMPTY, ICON_EMPTY,  ICON_EMPTY,  40,                62);
-	set_icon_char(&challenges[1], 1, CD_RIGHT,  4,   47,                 32,          32,  41,        ICON_EMPTY);
+	set_icon_char(&challenges[1], 0, CD_RIGHT,  5,   ICON_EMPTY, ICON_EMPTY,  ICON_EMPTY,  39,                62);
+	set_icon_char(&challenges[1], 1, CD_RIGHT,  4,   47,                 32,          32,  29,        ICON_EMPTY);
 	set_icon_char(&challenges[1], 2, CD_RIGHT,  3,   39,                 28,          28, ICON_EMPTY, ICON_EMPTY);
 #else	
 	set_icon_char(&challenges[1], 0, CD_LEFT, 2,  233,                 73, ICON_EMPTY, ICON_EMPTY, ICON_EMPTY);
@@ -1318,8 +1465,8 @@ void initialize_stage8_challenges()
 	initialize_challengeI(&challenges[2],        30, 16,  8,  0UL,  100,  JIFFIES_FULL_SECOND);	
 	                                //   num  N   x   y ofs loiter
 	initialize_challengeT(&challenges[2],     0, 20, 15, 7);
-	initialize_challengeT(&challenges[2],     2, 18,  8, 3);
-	initialize_challengeT(&challenges[2],     3, 26, 18, 6);
+	initialize_challengeT(&challenges[2],     1, 18,  8, 3);
+	initialize_challengeT(&challenges[2],     2, 26, 18, 6);
 			
 #ifdef TARGET_A2
 	set_icon_char(&challenges[2], 0, CD_LEFT, 3,   60,          0,  39, ICON_EMPTY, ICON_EMPTY); 
@@ -1330,6 +1477,7 @@ void initialize_stage8_challenges()
 #endif
 
   // FIREBALLs
+
                                   //                   HP   mov        atk
                                   //   num      X   Y max   spd   agg  spd
 	initialize_challengeI(&challenges[3],        40, 40, 99,  0UL, 100, JIFFIES_EIGTH_SECOND);
@@ -1423,11 +1571,14 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 				display_symbol = rand_mod(2)+MAP_WATER;				
 				if (display_symbol == (MAP_WATER+1))  //< Optimization should combine this to a constant.
 				{ 
+				  display_symbol = MAP_WATER2;
+					/*
 #ifdef TARGET_A2
           display_symbol = 0; 
 #else
 			    display_symbol = 230;
 #endif
+*/
 #ifdef TARGET_C64
           display_color = C64_COLOR_LBLUE;
 #endif								
@@ -1473,7 +1624,12 @@ void decode_stage_to_map(unsigned char* ptr_rle_stage_values, unsigned char stag
 			}
 			
 			g_pvec_map[virtual_y][virtual_x] = display_symbol;	  
+#if defined(TARGET_A2)
+      g_pvec_map[virtual_y][39] = 160;  //< This is a little inefficient, side-effect of not using 40th column... Need to ensure every row has 40th column blanked
+#else
 			g_pvec_map[virtual_y][39] = 32;  //< This is a little inefficient, side-effect of not using 40th column... Need to ensure every row has 40th column blanked
+#endif
+
 #ifdef TARGET_C64
 			g_pvec_map_color[virtual_y][virtual_x] = display_color;	  
 #endif			
@@ -1493,10 +1649,10 @@ void run_stage(
   Target* ptr_target;
 	
 #ifdef TARGET_A2
-  // TBD
+  // No equivalent necessary
 #elif TARGET_C64	
 	unsigned char joy_down_press_count = 0;
-	Time_counter finish_timer;
+	Time_counter finish_timer;  //< Timer used to add slight delay to FINISH to avoid jittery button on C64 causing going to next STAGE too early
 #endif
 	
 	unsigned char map_piece;  //< Used when evaluating the movement cost, Water will cost more	
@@ -1542,15 +1698,19 @@ void run_stage(
 	unsigned char item_orb_x = 35;
 	unsigned char item_orb_y = 3;
 	
+#if defined(TARGET_A2)
+  // Apple2 gamepad code defines it own stoage.
+#else
 	unsigned char g_padA;
 	unsigned char g_padB;
+#endif
 	
 	unsigned char* ptr_map;	
 	unsigned char* ptr_cell;	
 	unsigned int x_addr;
 	
 #ifdef TARGET_A2	
-  // TBD
+  // No color for Apple2 text-mode
 #elif TARGET_C64
 	unsigned char* ptr_color;
 	unsigned int y_addr;
@@ -1581,8 +1741,7 @@ void run_stage(
 	// ---------------------------------------------------	
 		
 	// -- reset animation bits to 0; this is done in-between each stage ---
-	memset(cell_state, 0, sizeof(cell_state));
-	//memset((unsigned int *)0x033D, 0, 230);
+	memset(cell_state, 0, sizeof(cell_state));	
 	// --------------------------------------------------------------------
 	
 	// Assume all the challenges for this stage were already initialized before calling the run_stage function
@@ -1631,25 +1790,19 @@ void run_stage(
 	draw_stage_overlay( stage_names[stage_index] );
 	draw_stage_map();
 
-	if (stage_index == 4)
+  if (stage_index == 4)
 	{				
 		WRITE_STRING(22, 23, str_flashback, 11);
 	}
 	
 	update_stats(which_stats_modified);		
-	
-#ifdef USE_TEST_MEM	
-	mem_test = available_blocks(1024);
-	WRITE_PU_DIGIT(14, 0, mem_test, 5);	
-#endif	
-  
+	  
 	while (TRUE)
 	{	
 #ifdef TARGET_A2  
-	  ++main_loop_counter;  // Because the Apple ][ doesn't have a clock!
-		//WRITE_PU_DIGIT(0,0, count, 5);
+	  ++main_loop_counter;  // Because the Apple ][ doesn't have a clock!		
 #endif		
-		
+
     STORE_TIME_NO_CORRECTOR(global_timer);  //< global_timer will be used as a "NOW" time
 
 		// ** INIT STAGE UNIQUE ITEMS **********************************
@@ -1688,7 +1841,7 @@ void run_stage(
 #ifdef TARGET_C64
           , C64_COLOR_PURPLE
 #endif							
-				);  // inverted DIAMONG
+				);  // inverted DIAMOND
 			}
 			else if (challenges_remaining == 0)  // draw the book!
 			{
@@ -1728,8 +1881,12 @@ void run_stage(
 				global_destiny_status.energy_current += 300;  //< Restore 1D200 stamina points
 			}
 			else
-			{						
+			{
+#if defined(TARGET_A2)
+				global_destiny_status.energy_current += (rand_mod(200)+100);  //< Restore 1D200+100 stamina points
+#else
 				global_destiny_status.energy_current += (rand_mod(200));  //< Restore 1D200 stamina points
+#endif
 			}
 			if (global_destiny_status.energy_current > 1000)         //< But cannot exceed max of 1000
 			{
@@ -1838,9 +1995,13 @@ void run_stage(
 			}
 		}		
 		// *****************************************************************		
-		
+
+#if defined(TARGET_A2)
+    // No equivalent necessary.
+#else
 		ENABLE_CHARACTER_SET_A;  //< If was HIT last cycle, we'll be on SET_B; so always restore to SET_A
-		
+#endif
+
 		// ** RESTORE STAGE MAP PORTIONS THAT ARE NO LONGER COVERED ******** worked first try! 4/18/2021 SL		   (SL: revised 5/27/2021 to use just pointer increments)
 		{			
 			ptr_map = (unsigned char*)(&g_pvec_map[2][0]);
@@ -1857,156 +2018,159 @@ void run_stage(
 #else
 	    x_addr = BASE_SCREEN_ADDRESS+(2*WIDTH_OF_SCREEN);		
 #endif
-			
+					
 #ifdef TARGET_A2
       while (TRUE)
 #else
 		  while (x_addr <= BASE_SCREEN_ADDRESS+(23*WIDTH_OF_SCREEN))
 #endif
 			{
-				  //if (ptr_pvec_value0[temp_y] == TRUE)  // something was drawn on this row during the stage...
-					{
-						// 0x11 (3) was drawn this last animation frame (already on the screen)
-						//      (2) could be used to let icons linger one extra frame (not used here)
-						// 0x01 (1) was previously drawn on -- animation may stay (increase it back to 2) or it will drop back 0 (background)
-						// 0x00 (0) no change
-						
-						i = (*ptr_cell);
-						
-						// 1 2 3 4 5 6 7 8
-						// [1] [2] [3] [4]
-						
+				//if (ptr_pvec_value0[temp_y] == TRUE)  // something was drawn on this row during the stage...
+				{
+					
 #ifdef TARGET_A2
-						if (temp_x > 39)
-						{
-							temp_x = 0;
-							++temp_y;
-							if (temp_y == 24) break;
-							x_addr = screen_row_offset[temp_y];
-						}
-#endif						
-						
-						if (i == 0)
-						{
-							// nothing to do, no animation impacts
-							x_addr += 4;
-							ptr_map += 4;
-#ifdef TARGET_C64
-              y_addr += 4;
-							ptr_color += 4;
-#endif
-
-#ifdef TARGET_A2
-							temp_x += 4;
-#endif
-						}
-						else
-						{					
-							// 7 6 5 4 3 2 1 0
-							// 1 1 0 0 0 0 0 0 						C0
-							// 0 0 1 1 1 1 1 1            3F
-							// 0 1 0 0 0 0 0 0            40
-							if ((i & 0xC0) == 0xC0) { i &= 0x3F; i |= 0x40; }  // reduce cell_1_state from 2 to 1
-							else if ((i & 0xC0) == 0x40)
-							{
-								// draw map at cell_1 location
-#ifdef TARGET_C64
-								POKE(y_addr, *ptr_color);
-#endif
-                POKE(x_addr, *ptr_map);								
-
-								i &= 0x3F;  //< reduce cell_1_state from 1 to 0
-							}
-							++x_addr;
-							++ptr_map;
-#ifdef TARGET_A2
-              ++temp_x;
-#endif
-#ifdef TARGET_C64
-              ++y_addr;
-							++ptr_color;
-#endif
-							
-							// 7 6 5 4 3 2 1 0
-							// 0 0 1 1 0 0 0 0 						30
-							// 1 1 0 0 1 1 1 1            CF
-							// 0 0 0 1 0 0 0 0            10						
-							if ((i & 0x30) == 0x30) { i &= 0xCF; i |= 0x10; }  // reduce cell_2_state from 2 to 1
-							else if ((i & 0X30) == 0x10)
-							{
-								// draw map at cell_2 location
-#ifdef TARGET_C64
-								POKE(y_addr, *ptr_color);
-#endif								
-								POKE(x_addr, *ptr_map);
-								i &= 0xCF;  //< reduce cell_1_state from 1 to 0
-							}
-							++x_addr;
-							++ptr_map;
-#ifdef TARGET_A2
-              ++temp_x;
-#endif							
-#ifdef TARGET_C64
-              ++y_addr;
-							++ptr_color;
-#endif							
-							
-							// 7 6 5 4 3 2 1 0
-							// 0 0 0 0 1 1 0 0 						0C
-							// 1 1 1 1 0 0 1 1            F3
-							// 0 0 0 0 0 1 0 0            04
-							if ((i & 0x0C) == 0x0C) { i &= 0xF3; i |= 0x04; }  // reduce cell_2_state from 2 to 1
-							else if ((i & 0X0C) == 0x04)
-							{
-								// draw map at cell_3 location, 
-#ifdef TARGET_C64
-								POKE(y_addr, *ptr_color);
-#endif																
-								POKE(x_addr, *ptr_map);
-								i &= 0xF3;  //< reduce cell_3_state from 1 to 0
-							}
-							++x_addr;
-							++ptr_map;
-#ifdef TARGET_A2
-              ++temp_x;
-#endif							
-#ifdef TARGET_C64
-              ++y_addr;
-							++ptr_color;
-#endif							
-
-							// 7 6 5 4 3 2 1 0
-							// 0 0 0 0 0 0 1 1 						03
-							// 1 1 1 1 1 1 0 0            FC
-							// 0 0 0 0 0 0 0 1            01						
-							if ((i & 0x03) == 0x03) { i &= 0xFC; i |= 0x01; }  // reduce cell_2_state from 2 to 1
-							else if ((i & 0X03) == 0x01)
-							{
-								// draw map at cell_4 location
-#ifdef TARGET_C64
-								POKE(y_addr, *ptr_color);
-#endif								
-								POKE(x_addr, *ptr_map);
-								i &= 0xFC;  //< reduce cell_4_state from 1 to 0
-							}
-							++x_addr;
-							++ptr_map;
-#ifdef TARGET_A2
-              ++temp_x;
-#endif							
-#ifdef TARGET_C64
-              ++y_addr;
-							++ptr_color;
-#endif
-
-							(*ptr_cell) = i;
-						}
-						++ptr_cell;
+					if (temp_x > 39)
+					{						
+						++temp_y;
+						if (temp_y == 23) break;						
+						x_addr = screen_row_offset[temp_y];
+						temp_x = 0;
 					}
+#endif						
+					
+					// 0x11 (3) was drawn this last animation frame (already on the screen)
+					//      (2) could be used to let icons linger one extra frame (not used here)
+					// 0x01 (1) was previously drawn on -- animation may stay (increase it back to 2) or it will drop back 0 (background)
+					// 0x00 (0) no change
+					
+					i = (*ptr_cell);
+					
+					// 1 2 3 4 5 6 7 8
+					// [1] [2] [3] [4]
+										
+					if (i == 0)
+					{
+						// nothing to do, no animation impacts
+						x_addr += 4;
+						ptr_map += 4;
+#ifdef TARGET_C64
+						y_addr += 4;
+						ptr_color += 4;
+#endif
+
+#ifdef TARGET_A2
+						temp_x += 4;
+#endif
+					}
+					else
+					{					
+						// 7 6 5 4 3 2 1 0
+						// 1 1 0 0 0 0 0 0 						C0
+						// 0 0 1 1 1 1 1 1            3F
+						// 0 1 0 0 0 0 0 0            40
+						if ((i & 0xC0) == 0xC0) { i &= 0x3F; i |= 0x40; }  // reduce cell_1_state from 2 to 1
+						else if ((i & 0xC0) == 0x40)
+						{
+							// draw map at cell_1 location
+#ifdef TARGET_C64
+							POKE(y_addr, *ptr_color);
+#endif
+							POKE(x_addr, *ptr_map);								
+
+							i &= 0x3F;  //< reduce cell_1_state from 1 to 0
+						}
+						++x_addr;
+						++ptr_map;
+#ifdef TARGET_A2
+						++temp_x;
+#endif
+#ifdef TARGET_C64
+						++y_addr;
+						++ptr_color;
+#endif
+						
+						// 7 6 5 4 3 2 1 0
+						// 0 0 1 1 0 0 0 0 						30
+						// 1 1 0 0 1 1 1 1            CF
+						// 0 0 0 1 0 0 0 0            10						
+						if ((i & 0x30) == 0x30) { i &= 0xCF; i |= 0x10; }  // reduce cell_2_state from 2 to 1
+						else if ((i & 0x30) == 0x10)
+						{
+							// draw map at cell_2 location
+#ifdef TARGET_C64
+							POKE(y_addr, *ptr_color);
+#endif								
+							POKE(x_addr, *ptr_map);
+							i &= 0xCF;  //< reduce cell_1_state from 1 to 0
+						}
+						++x_addr;
+						++ptr_map;
+#ifdef TARGET_A2
+						++temp_x;
+#endif							
+#ifdef TARGET_C64
+						++y_addr;
+						++ptr_color;
+#endif							
+						
+						// 7 6 5 4 3 2 1 0
+						// 0 0 0 0 1 1 0 0 						0C
+						// 1 1 1 1 0 0 1 1            F3
+						// 0 0 0 0 0 1 0 0            04
+						if ((i & 0x0C) == 0x0C) { i &= 0xF3; i |= 0x04; }  // reduce cell_2_state from 2 to 1
+						else if ((i & 0x0C) == 0x04)
+						{
+							// draw map at cell_3 location, 
+#ifdef TARGET_C64
+							POKE(y_addr, *ptr_color);
+#endif																
+							POKE(x_addr, *ptr_map);
+							i &= 0xF3;  //< reduce cell_3_state from 1 to 0
+						}
+						++x_addr;
+						++ptr_map;
+#ifdef TARGET_A2
+						++temp_x;
+#endif							
+#ifdef TARGET_C64
+						++y_addr;
+						++ptr_color;
+#endif							
+
+						// 7 6 5 4 3 2 1 0
+						// 0 0 0 0 0 0 1 1 						03
+						// 1 1 1 1 1 1 0 0            FC
+						// 0 0 0 0 0 0 0 1            01						
+						if ((i & 0x03) == 0x03) { i &= 0xFC; i |= 0x01; }  // reduce cell_2_state from 2 to 1
+						else if ((i & 0x03) == 0x01)
+						{
+							// draw map at cell_4 location
+#ifdef TARGET_C64
+							POKE(y_addr, *ptr_color);
+#endif								
+							POKE(x_addr, *ptr_map);
+							i &= 0xFC;  //< reduce cell_4_state from 1 to 0
+						}
+						++x_addr;
+						++ptr_map;
+#ifdef TARGET_A2
+						++temp_x;
+#endif							
+#ifdef TARGET_C64
+						++y_addr;
+						++ptr_color;
+#endif
+
+						(*ptr_cell) = i;
+					}
+					
+					++ptr_cell;
+				}
 				
 			}
-		}			
-					
+		}	
+		// ******************************************
+
     // ** DRAW ALL CELLS MARKED TO BE DRAWN **************************		
 		while (num_locations_to_draw > 0)
 		{
@@ -2162,6 +2326,8 @@ void run_stage(
                     // Play audio for defeating a CHALLENGE										
 #ifdef TARGET_A2
                     // ABC TBD
+										PLAY_FULL(40, 155);  // D
+										PLAY_CURR(    130);  // F
 #else
 	                  AUDIO_TURN_ON;
 										AUDIO_SET_OCTAVE(15U);  //audio_octv[5]);       
@@ -2202,7 +2368,12 @@ void run_stage(
 		if (weapon_state == WS_FIRING)  //< if still firing...
 		{
 #ifdef TARGET_A2				
-      // NO NEED
+	    // ** OPTIONAL -- make the arrow inverted when firing over a beach
+		  if (g_pvec_map[weapon_range_y][weapon_range_x] == MAP_BEACH) 
+	  	  CLEAR_MASK(weapon_fire_symbol, MASK_HIGH_BIT); 
+	    else 
+		    SET_MASK(weapon_fire_symbol, MASK_HIGH_BIT);
+			// **********************************************************
 #elif TARGET_C64
       // Background ends up WHITE, not applying this in C64 version
 #else
@@ -2214,7 +2385,7 @@ void run_stage(
 			// **********************************************************
 #endif
 
-			BUFFER_LOCATION_TO_DRAW(weapon_range_x,weapon_range_y,weapon_fire_symbol
+			BUFFER_LOCATION_TO_DRAW(weapon_range_x, weapon_range_y, weapon_fire_symbol
 #ifdef TARGET_C64
           , C64_COLOR_WHITE
 #endif															
@@ -2234,6 +2405,81 @@ void run_stage(
     // ***** PRIORITY 1 KEYS - respond with no delay ************************************************
 		valid_key = TRUE;  //< Assume initially that some valid key was pressed (prevents having to explicitly set this for each valid key case)
 		
+#if defined(TARGET_A2)
+		if (global_input_ch == PKEY_NO_KEY) 
+		{
+			joyread();
+						
+			if (  // BOTH buttons...
+			  IS_MASK_ON(joyMask, JP_BUTTON1)
+				&& IS_MASK_ON(joyMask, JP_BUTTON0)
+		  )
+			{
+				if (
+					IS_MASK_ON(joyMask, JP_UP)				
+				)
+				{
+					global_input_ch = PKEY_F;  // FINISH
+				}
+				else if (
+					IS_MASK_ON(joyMask, JP_DOWN)
+				)
+				{
+					global_input_ch = PKEY_P;  // PAUSE
+				}			
+				else if (
+					IS_MASK_ON(joyMask, JP_RIGHT)
+				)
+				{
+					global_input_ch = PKEY_O;  // ORB
+				}			
+			}			
+			else if (IS_MASK_ON(joyMask, JP_BUTTON0))
+			{
+				// MODE 2 options				
+				if (IS_MASK_ON(joyMask, JP_UP))
+				{
+					global_input_ch = PKEY_I;  // FLIP_SKILL
+				}
+				else if (IS_MASK_ON(joyMask, JP_DOWN))
+				{					
+					global_input_ch = PKEY_K;  // PERSISTENCY				
+				}
+				else if (IS_MASK_ON(joyMask, JP_LEFT))
+				{
+					global_input_ch = PKEY_J;  // AIM LEFT
+				}
+				else if (IS_MASK_ON(joyMask, JP_RIGHT))
+				{
+					global_input_ch = PKEY_L;  // AIM RIGHT
+				}
+			}
+			else  // No button (or button 1-only)
+			{
+				// ========= PRIORITY 2's
+				if (IS_MASK_ON(joyMask, JP_UP))
+				{
+					global_input_ch = PKEY_W;
+				}
+				else if (IS_MASK_ON(joyMask, JP_LEFT))
+				{
+					global_input_ch = PKEY_A;
+				}
+				else if (IS_MASK_ON(joyMask, JP_DOWN))
+				{
+					global_input_ch = PKEY_S;
+				}
+				else if (IS_MASK_ON(joyMask, JP_RIGHT))
+				{
+					global_input_ch = PKEY_D;
+				}	
+				else if (IS_MASK_ON(joyMask, JP_BUTTON1))
+				{
+					global_input_ch = PKEY_SPACE;   // FIRE
+				}				
+			}				
+		}
+#else
 		if (global_input_ch == PKEY_NO_KEY) 
 		{
 			read_gamepad();
@@ -2295,6 +2541,7 @@ void run_stage(
 				global_input_ch = PKEY_P;
 			}			
 		}
+#endif
 		
 #ifdef TARGET_C64
     if (global_input_ch == PKEY_NO_KEY)  //< If STILL no key-press after polling user-port gamepad... Try native joystick
@@ -2577,7 +2824,11 @@ void run_stage(
 				{
 					// **** PRIORITY 2 KEYS - respond with a minimum threshold delay ************************************************							
 					UPDATE_DELTA_JIFFY_ONLY(global_timer, global_destiny_status.last_priority2_timer);  // NOW-LastMovementTimer
+#if defined(TARGET_A2)
+          if (delta_time < JIFFIES_SIXTEENTH_SECOND)
+#else
 					if (delta_time < JIFFIES_FIFTEENTH_SECOND)
+#endif
 					{
 						//global_input_ch = PKEY_NO_KEY;  //< Force that no movement or action is yet permitted (not enough time has elapsed)
 						//valid_key = FALSE;  // must already be FALSE...
@@ -2934,7 +3185,11 @@ disallow_right:
 													{
 														// GAME OVER
 														//print_fancy(15,  1, str_game_over, JIFFIES_TWELTH_SECOND);
+#if defined(TARGET_A2)
+														WRITE_STRING(15, 2, str_game_over, STR_GAME_OVER_LEN);
+#else														
 														WRITE_STRING(15, 1, str_game_over, STR_GAME_OVER_LEN);
+#endif
 														audio_game_over();														
 														//print_fancy(10, 23, str_press_return_to_proceed, JIFFIES_TWELTH_SECOND);													
 												  }
@@ -2942,7 +3197,11 @@ disallow_right:
 													AUDIO_TURN_OFF;
 													
 													WRITE_STRING(10, 23, str_press_return_to_proceed, STR_PRESS_RETURN_TO_PROCEED_LEN);
+#if defined(TARGET_A2)
+													WRITE_CHAR(23, 1, 24);  // 'X' on the remaining HP to indicate death state
+#else
 													WRITE_CHAR(23, 24, 24);  // 'X' on the remaining HP to indicate death state
+#endif
 
 #ifdef FINAL_BUILD													                          
 													flush_keyboard_and_wait_for_ENTER();
@@ -2952,7 +3211,11 @@ disallow_right:
 #endif
 												}
 												
+#if defined(TARGET_A2)
+                        hit_flash();  // flicker screen to indicate hit
+#else
 												ENABLE_CHARACTER_SET_B;  //< Flash map content to indicate health deduction (will get reverted at top of the main loop, so the duration is the natural "rhythm" of the game)
+#endif
 												
 												audio_hp();  // audio alert for reduction in health
 
@@ -2999,7 +3262,7 @@ disallow_right:
 											{
 												// YES... (follow the player while trying to randomly anticipate where the player is going)
 												ptr_challenge->targets[ MAX_MOVE_TARGETS_PER_CHALLENGE-1 ].target_x = global_destiny_status.location_x - 1 + rand_mod(3);  // 0 veers -1 (left), 1 veers 0 (current), 2 veers +1 (right)
-												ptr_challenge->targets[ MAX_MOVE_TARGETS_PER_CHALLENGE-1 ].target_y = global_destiny_status.location_y -1 + rand_mod(3);
+												ptr_challenge->targets[ MAX_MOVE_TARGETS_PER_CHALLENGE-1 ].target_y = global_destiny_status.location_y - 1 + rand_mod(3);
 												ptr_challenge->target_current = MAX_MOVE_TARGETS_PER_CHALLENGE-1;										
 											}
 											else
@@ -3125,13 +3388,14 @@ move_due_to_loiter:
 											
 											if (ptr_animate_icon != 0)
 											{
+												// Invoke the animation function pointer specified for this STAGE.
 												(*ptr_animate_icon)(ptr_challenge);
 											}
 											
-											if (IS_MASK_ON(challenge_move_adjustment_mask,ADJ_LEFT)) --x_delta;   // delta would be positive, decrease it
-											if (IS_MASK_ON(challenge_move_adjustment_mask,ADJ_RIGHT)) ++x_delta;  // delta would be negative, increase it
-											if (IS_MASK_ON(challenge_move_adjustment_mask,ADJ_UP)) --y_delta;     // delta would be positive, decrease it
-											if (IS_MASK_ON(challenge_move_adjustment_mask,ADJ_DOWN)) ++y_delta;   // delta would be negative, increase it
+											if (IS_MASK_ON(challenge_move_adjustment_mask, ADJ_LEFT)) --x_delta;   // delta would be positive, decrease it
+											if (IS_MASK_ON(challenge_move_adjustment_mask, ADJ_RIGHT)) ++x_delta;  // delta would be negative, increase it
+											if (IS_MASK_ON(challenge_move_adjustment_mask, ADJ_UP)) --y_delta;     // delta would be positive, decrease it
+											if (IS_MASK_ON(challenge_move_adjustment_mask, ADJ_DOWN)) ++y_delta;   // delta would be negative, increase it
 										}
 									}
 									
@@ -3154,7 +3418,7 @@ move_due_to_loiter:
 											ptr_challenge->behavior = BEHAVIOR_DEAD;
 											
 											// revert the "owning" HYDRA back to non-firing mode
-											(*(Challenge*)(ptr_challenge->associated_with)).icon[CD_LEFT][1][0] = 0;																						
+											(*(Challenge*)(ptr_challenge->associated_with)).icon[CD_LEFT][1][0] = ICON_EMPTY;
 										}
 										else
 										{											
@@ -3286,6 +3550,7 @@ move_due_to_loiter:
 					// ************ END PHASE 2 *****************************************
 				}
 			}			
+
 		}
 		
 		else if (
@@ -3294,17 +3559,22 @@ move_due_to_loiter:
 		)
 		{
 			// Could play a sound... Break out of stage main-loop and proceed to next stage.
+#if defined(TARGET_A2)
+      // No equivalent
+#else
 			AUDIO_TURN_OFF;
 			ENABLE_CHARACTER_SET_A;
+#endif
 			break;
 		}
-		
+
 		// *** PLAYER AND WEAPON MAINTENANCE *******************************    
 		BUFFER_LOCATION_TO_DRAW(global_destiny_status.location_x, global_destiny_status.location_y, global_destiny_status.symbol
 #ifdef TARGET_C64
           , C64_COLOR_BROWN
 #endif																	
-		);
+		);		
+
 		if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_BOW))
 		{			
 		  ORIENT_AND_QUEUE_DRAW_WEAPON();  //(global_destiny_status);
@@ -3345,7 +3615,11 @@ move_due_to_loiter:
 		}
 		// ***********************************************************************		    
 		
+#if defined(TARGET_A2)
+    // No equivalent
+#else
 		AUDIO_TURN_OFF;
+#endif
 	}
 	
 	// v This is very important, to clear out the challenges before the next stage.
@@ -3404,7 +3678,7 @@ void animate_stage7(Challenge* ptr_challenge)
 {
 	g_i = ptr_challenge->animation_count % 2;
 	
-	if (ptr_challenge->icon[CD_LEFT][0][0] == SYMBOL_CLOVER)
+	if (ptr_challenge->icon[CD_LEFT][0][0] == SYMBOL_CLOVER-128)
 	{
 		// animate scorpion, one side
 		ptr_challenge->icon[CD_LEFT][0][3] = scorpR_symbolsTOP[g_i];
@@ -3492,10 +3766,14 @@ void main(void)
 {	
 	//Time_counter started_timer;
 	unsigned char temp_hp;
+	
+#if defined(TARGET_A2)
+	init_audio();
+#endif
 		
 start_over:
 
-#ifndef TARGET_A2
+#ifndef TARGET_A2  // Ensure tape buffer content used for gamepads is initialized to 00
   POKE(GPAD_RESULT_A, 0x00);
   POKE(GPAD_RESULT_B, 0x00);
 #endif
@@ -3512,7 +3790,7 @@ start_over:
 	check_for_flipskill_learned = TRUE;
 	
 #ifdef TARGET_A2  
-	//POKE(49233U,0);
+	// No equivalent setup necessary.
 	
 #elif TARGET_C64
 	ENABLE_CHARACTER_SET_A;	
@@ -3587,7 +3865,7 @@ quick_game:
 	initialize_stage1_challenges();						
 	decode_stage_to_map(rle_stage1_values, sizeof(rle_stage1_values));
 	run_stage(1, 0);  
-  if (stage_event_state	== STAGE_DEATH) goto start_over;
+  if (stage_event_state	== STAGE_DEATH) goto start_over;	
 	
 	ptr_blockers = blockers_stage2_values;		
 	initialize_stage2_challenges();				
@@ -3600,7 +3878,7 @@ quick_game:
 	decode_stage_to_map(rle_stage3_values, sizeof(rle_stage3_values));	
 	run_stage(3, &animate_stage3); 
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
-	
+
 	if (IS_MASK_ON(global_destiny_status.inventory, INVENTORY_BOOK))
 	{
 		//g_pvec_map[0][0] = global_destiny_status.hp_current;
@@ -3628,7 +3906,7 @@ quick_game:
 	decode_stage_to_map(rle_stage6_values, sizeof(rle_stage6_values));	
 	run_stage(6, 0);  
 	if (stage_event_state	== STAGE_DEATH) goto start_over;
-	
+
 	ptr_blockers = blockers_stage7_values;
 	initialize_stage7_challenges();
 	decode_stage_to_map(rle_stage7_values, sizeof(rle_stage7_values));	
@@ -3668,10 +3946,14 @@ quick_game:
 	WRITE_PU_DIGIT(20, 4, global_destiny_status.arrows_fired, 4); 
 
   WRITE_STRING(10, 5, str_time, STR_TIME_LEN);	
+#if defined(TARGET_A2)
+  WRITE_PU_DIGIT(19, 5, delta_time, 5);
+#else
 	WRITE_PU_DIGIT(19, 5, delta_time_sec, 5);
 	WRITE_CHAR(24, 5, 46);  // '.' decimal
 	g_pad_char = '\0';  //< Required to ensure milliseconds is NOT padded
 	WRITE_PU_DIGIT(25, 5, delta_time_ms, 3);
+#endif
 	// *******************************************************************
 	
 	WRITE_STRING(0, 7, str_thank_you, STR_THANK_YOU_LEN);
