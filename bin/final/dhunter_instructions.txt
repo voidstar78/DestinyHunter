@@ -36,6 +36,19 @@ loaded from disk), thus limited to 32K.
   to the PET version except for the
   addition of COLOR!
 
+- DHUNTERA2 is the Apple ][ build,
+  which is nearly equivalent but some
+  adjustments were necessary due to
+  only having 24 rows instead of 25
+  (and that the Apple ][ has no 
+  native built-in real time clock).
+
+- DHUNTERA2.DSK is an Apple ][
+  pre-built Disk Image, which may
+  be easier to load for some
+  emulators (prepared using 
+  AppleCommander).
+
 
 When you start the game...
 

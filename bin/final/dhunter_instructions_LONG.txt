@@ -65,9 +65,12 @@ important, it is worth repeating:
 your character UP, LEFT, RIGHT, DOWN respectively.
 
 Once you have your hunting weapon:
-- 4 rotates your weapon LEFT    (J on C64)
-- 6 rotates your weapon RIGHT   (L on C64)
+
+- 4 rotates your weapon LEFT              (J on C64 and Apple2)
+- 6 rotates your weapon RIGHT             (L on C64 and Apple2)
+
 - 8 is a FLIP skill that you learn later  (I on C64)
+    (learned after ~200 steps)
 
 Once you have arrows for your hunting weapon:
 
@@ -78,7 +81,7 @@ Then there are two special abilities:
 - B for Blessings!  (if you have any)
      These slow down the CHALLENGES in the STAGE
 
-- P for Persistency  (again, if you have any)
+- 0 for Persistency  (again, if you have any)   (K on C64 and Apple2)
      These HEAL your HEALTH.
 
 - F to FINISH a stage and go to the next one
@@ -89,8 +92,8 @@ In addition, the introduction orients
 you with the variety of terrain you
 are likely to find along your way.
 
-- WATER - observe keenly, it sparkles
-as you walk within it!
+- WATER - walking in water takes more energy and is
+thus slower.
 
 - BEACH - it's very bright
 
@@ -103,6 +106,41 @@ as you walk within it!
 - ROCKS  in general, you can't move through 
          rocks. But there could be exceptions!
          (just not in this DEMO!)
+
+
+SNES GAMEPAD (NOT the same as C64 or Apple joysticks)
+============
+  D-PAD = movement like W/A/S/D
+  A = FIRE ARROW
+  B = PERSISTENCY
+  Y = ORB (if acquired)
+  X = FLIP SKILL (when activated)
+  TOP LEFT/RIGHt = aim arrow left/right
+  START = FINISH (when stage is completed)
+  SELECT = PAUSE 
+
+
+APPLE PADDLE/JOYSTICK
+=====================
+When no buttons are pressed, you are in 
+  MOVEMENT MODE, and the D-PAD will move like W/A/S/D.
+
+When Button-1 is pressed, you are in AIM MODE.  In this
+  mode D-PAD has a different effect:
+  D-PAD LEFT/RIGHT will rotate the arrow,
+  D-PAD UP will FLIP
+  D-PAD DOWN uses a PERSISTENCY.
+
+Button-2 FIRES an arrow.
+
+When BOTH buttons are pressed:
+  D-PAD UP    = FINISH MAP (can proceed without touching keyboard!)
+  D-PAD DOWN  = PAUSE      (must press any key to resume)
+  D-PAD-RIGHT = USE ORB
+
+
+
+
 
 
 STAMINA
