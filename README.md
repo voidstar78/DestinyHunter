@@ -89,7 +89,7 @@ F       = FINISH MAP
 P       = PAUSE (press RETURN to resume)
 
 				
-C64 CONTROLS
+C64 CONTROLS (and Apple ][)
 ============
 Since the C64 has no NUMPAD, the only difference in the controls
 for the C64 is:
@@ -141,6 +141,23 @@ Y-BUTTON            = ACTIVATE ORB (if equipped)
 
 START/SELECT        = FINISH MAP (once all CHALLENGES defeated)
 
+
+APPLE ][ JOYSTICK/PADDLE CONTROLS
+=================================
+With no buttons pressed, joystick does normal W/A/S/D movement.
+
+Button 2 FIRES arrows.
+
+When Button 1 is pressed, the joystick is now in AIM-MODE.  When in AIM-MODE, the D-PAD behavior changes as follows:
+  D-PAD UP = FLIP  (I-key)
+  D-PAD DOWN = PERSISTENCY  (K-key)
+  D-PAD LEFT/RIGHT = AIM bow left/right  (J/L keys)
+  
+If BOTH buttons are pressed at the same time, you are in UTILITY-MODE, the D-PAD behavior changes as follows:
+  D-PAD UP = FINISH MAP (F-key)
+  D-PAD DOWN = PAUSE (press any key on keyboard to resume)
+  D-PAD RIGHT = USE ORB (if in possession)
+  
 
 
 
