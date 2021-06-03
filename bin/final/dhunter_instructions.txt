@@ -49,6 +49,13 @@ loaded from disk), thus limited to 32K.
   emulators (prepared using 
   AppleCommander).
 
+- DHUNTER8032.PRG is an 8032
+  compatible build (80-column wide
+  and new numeric keypad codes).
+
+- DHUNTER.M3 is the TRS-80
+  Model 3 binary build.
+
 
 When you start the game...
 
