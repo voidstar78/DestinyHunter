@@ -220,6 +220,9 @@ ZEROPAGE $FA - $FE = also free space
 The assembly code from below is taken from ....
 https://gist.github.com/thelbane/9291cc81ed0d8e0266c8	
   This code below uses $FA zeropage to store a copy of the Frequency (used as a counter)
+	
+Inspired by: Captain Goodnight 1985 Broderbund
+https://www.youtube.com/watch?v=hapg2Y1KplU	
 */
 
 void init_audio()
@@ -284,13 +287,17 @@ void hit_flash()
 
 	for (i = 0; i < HIT_FLASH_AMOUNT; ++i)
 	{		
-		x = rand_mod(38);
-		y = rand_mod(23);
+    while (TRUE)
+		{
+		  x = rand_mod(38);
+		  y = rand_mod(23);
+			if (PEEK(screen_row_offset[y] + x) != 43) break;
+		}
 		
 		n[i].offset = screen_row_offset[y] + x;
     n[i].symbol = PEEK(n[i].offset);
 		
-		POKE(n[i].offset, 32+rand_mod(2));		
+		POKE(n[i].offset, 43);		  // +
 	}
 	
 	for (i = 0; i < HIT_FLASH_AMOUNT; ++i)
@@ -597,6 +604,10 @@ void draw_stage_map()
   unsigned char screen_x = 0;
 	unsigned char screen_y = 2;
 	unsigned int screen_y_addr = screen_row_offset[screen_y];
+#else 
+  #if defined(PET80MODE)
+	  unsigned char skip40 = 40;
+	#endif
 #endif
 
 #ifdef TARGET_C64
@@ -623,6 +634,15 @@ void draw_stage_map()
 				screen_y_addr = screen_row_offset[screen_y];
 			}
 #else
+	
+  #if defined(PET80MODE)
+      --skip40;
+			if (skip40 == 0)
+			{
+				x += 40;
+				skip40 = 40;
+			}
+  #endif
 	
   #ifdef TARGET_C64
       POKE(y, *ptr_color);
@@ -880,7 +900,7 @@ void audio_end_game()
 		AUDIO_SET_FREQUENCY(118U);      // C  3
 		jiffy_delay(JIFFIES_EIGTH_SECOND);
 
-		AUDIO_SET_FREQUENCY(93U);       // A  4
+		AUDIO_SET_FREQUENCY(93U);       // E  4
 		jiffy_delay(JIFFIES_EIGTH_SECOND);
 		
 		if (GET_PKEY_VIEW == PKEY_RETURN) break;
@@ -1220,7 +1240,7 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,       32,         32,  58, ICON_EMPTY,  ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 3,    ICON_EMPTY,   254, 220, 155,         ICON_EMPTY );
 #else
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER-128,   73,  85, 105,        ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   SYMBOL_CLOVER+128,   73,  85, 105,        ICON_EMPTY );
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 3,   74,             160, 189, ICON_EMPTY, ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,   ICON_EMPTY,      75,  74, 223,        ICON_EMPTY );
 #endif
@@ -1238,7 +1258,7 @@ void initialize_stage5_challenges(unsigned char index, signed char initial_x, si
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,   58,  32,  32,            ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  157,         239, 252,  ICON_EMPTY,    ICON_EMPTY );
 #else		
-	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,          73,  85,  SYMBOL_CLOVER-128, ICON_EMPTY );
+	  set_icon_char(&challenges[index], 0, CD_LEFT, 4,   95,          73,  85,  SYMBOL_CLOVER+128, ICON_EMPTY );
 	  set_icon_char(&challenges[index], 1, CD_LEFT, 4,  ICON_EMPTY,  189, 160,  75,            ICON_EMPTY );
   	set_icon_char(&challenges[index], 2, CD_LEFT, 4,  233,          75,  74,  ICON_EMPTY,    ICON_EMPTY );
 #endif
@@ -1709,6 +1729,10 @@ void run_stage(
 	unsigned char* ptr_cell;	
 	unsigned int x_addr;
 	
+#if defined(PET80MODE)	
+	unsigned char skip40;
+#endif
+	
 #ifdef TARGET_A2	
   // No color for Apple2 text-mode
 #elif TARGET_C64
@@ -1717,10 +1741,6 @@ void run_stage(
 #endif
 	
 	// ---------------------------------------------		
-		
-#ifdef USE_TEST_MEM	
-	size_t mem_test;
-#endif	
 
 	char* ptr_value;
 	
@@ -2017,6 +2037,10 @@ void run_stage(
 			x_addr = screen_row_offset[temp_y];
 #else
 	    x_addr = BASE_SCREEN_ADDRESS+(2*WIDTH_OF_SCREEN);		
+		
+	#if defined(PET80MODE)
+		  skip40 = 40;  // PET80MODE
+	#endif
 #endif
 					
 #ifdef TARGET_A2
@@ -2035,7 +2059,7 @@ void run_stage(
 						if (temp_y == 23) break;						
 						x_addr = screen_row_offset[temp_y];
 						temp_x = 0;
-					}
+					}					
 #endif						
 					
 					// 0x11 (3) was drawn this last animation frame (already on the screen)
@@ -2060,7 +2084,7 @@ void run_stage(
 
 #ifdef TARGET_A2
 						temp_x += 4;
-#endif
+#endif             
 					}
 					else
 					{					
@@ -2164,7 +2188,17 @@ void run_stage(
 						(*ptr_cell) = i;
 					}
 					
+#if defined(PET80MODE)					
+					skip40 -= 4;
+					if (skip40 == 0)
+					{
+						x_addr += 40;
+						skip40 = 40;
+					}
+#endif
+					
 					++ptr_cell;
+					
 				}
 				
 			}
@@ -2325,7 +2359,6 @@ void run_stage(
 
                     // Play audio for defeating a CHALLENGE										
 #ifdef TARGET_A2
-                    // ABC TBD
 										PLAY_FULL(40, 155);  // D
 										PLAY_CURR(    130);  // F
 #else
@@ -3678,7 +3711,11 @@ void animate_stage7(Challenge* ptr_challenge)
 {
 	g_i = ptr_challenge->animation_count % 2;
 	
+#if defined(TARGET_A2)
 	if (ptr_challenge->icon[CD_LEFT][0][0] == SYMBOL_CLOVER-128)
+#else
+	if (ptr_challenge->icon[CD_LEFT][0][0] == SYMBOL_CLOVER+128)	
+#endif
 	{
 		// animate scorpion, one side
 		ptr_challenge->icon[CD_LEFT][0][3] = scorpR_symbolsTOP[g_i];

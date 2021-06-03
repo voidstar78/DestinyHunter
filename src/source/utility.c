@@ -241,7 +241,7 @@ void text_banner_len(unsigned char x, unsigned char y, const char* text_to_say, 
 void text_banner_center(unsigned char y, const char* text_to_say, unsigned char style)
 {
 	text_banner_len(
-	  ((WIDTH_OF_SCREEN - strlen(text_to_say)) / 2), y, 
+	  ((BANNER_MAX_WIDTH - strlen(text_to_say)) / 2), y, 
 		text_to_say, 
 		strlen(text_to_say), 
     style

@@ -182,9 +182,21 @@
 	// T 54
 	//unsigned char PKEY_U           = 0x55;
 	// V 56
-	unsigned char PKEY_W           = 0x57;   // 'W'
-	unsigned char PKEY_X           = 0x58;   // 'X'                 3000: 0x18
+	unsigned char PKEY_W           = 0x57;   // 'W'      
+	unsigned char PKEY_X           = 0x58;   // 'X'      
 	//unsigned char PKEY_Z           = 0x5A;   // 'Z'
+	
+#if defined(PET80MODE)	
+	unsigned char PKEY_0           = 0xB0;
+  unsigned char PKEY_1           = 0xB1;
+	unsigned char PKEY_2           = 0xB2;
+	unsigned char PKEY_3           = 0xB3;
+	unsigned char PKEY_4           = 0xB4;
+	unsigned char PKEY_5           = 0xB5;
+	unsigned char PKEY_6           = 0xB6;
+	unsigned char PKEY_7           = 0xB7;
+	unsigned char PKEY_8           = 0xB8;
+#else
 	unsigned char PKEY_0           = 0x30;
   unsigned char PKEY_1           = 0x31;
 	unsigned char PKEY_2           = 0x32;
@@ -194,7 +206,7 @@
 	unsigned char PKEY_6           = 0x36;
 	unsigned char PKEY_7           = 0x37;
 	unsigned char PKEY_8           = 0x38;
-	
+#endif
 	unsigned char PKEY_NO_KEY      = 0xFF;   // Placeholder to indicate that NO key has been pressed
 	
 #endif
