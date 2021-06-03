@@ -69,6 +69,7 @@ void INVERT_BANNER_STYLE(unsigned char x);
 // NOTE this function uses printf in case the banner characters are REVERSE mode.
 void text_banner_len(unsigned char x, unsigned char y, const char* text_to_say, unsigned char str_len, unsigned char style);
 
+#define BANNER_MAX_WIDTH 40
 // Draws a banner such that the text_to_say is center on the given row y,
 // likewise using the given style-tyle.
 void text_banner_center(unsigned char y, const char* text_to_say, unsigned char style);

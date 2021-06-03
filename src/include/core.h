@@ -40,8 +40,9 @@ DECIMAL  DESCRIPTION
 
 // Should only choose ONE of the following at a time...
 //#define TARGET_C64   // Commodore 64
-//#define TARGET_PET   // Commodore PET 20XX/30XX/40XX
-#define TARGET_A2    // Apple ][
+#define TARGET_PET   // Commodore PET 20XX/30XX/40XX
+#define PET80MODE
+//#define TARGET_A2    // Apple ][
 
 // The following are optimizations intended for the cc65 compiler environment
 //#pragma inline-stdfuncs (on)
@@ -212,8 +213,8 @@ extern unsigned char PKEY_NO_KEY;   // Placeholder to indicate that NO key has b
   #define GET_PKEY_VIEW PEEK(203)  
   //#define GET_PKEY_VIEW PEEK(197)  
 #else
-  //#define GET_PKEY_VIEW PEEK(166)  // works 4016, seems to be identical to 151
-  #define GET_PKEY_VIEW PEEK(151)  // seems to be identical to 166; maybe there is some slight speed/buffer difference?
+  #define GET_PKEY_VIEW PEEK(166)  // works 4016, seems to be identical to 151
+  //#define GET_PKEY_VIEW PEEK(151)  // seems to be identical to 166; maybe there is some slight speed/buffer difference?
 #endif
 // ================================================================= END ===
 
@@ -436,7 +437,11 @@ Alternative time update (using individual b, c, d unsigned char, not the "unsign
 // This may need to become a variable in the future, to help dynamically adjust
 // on the fly to 40 vs 80 column machines.  But for the moment, it is a build-specific
 // macro definition.
-#define WIDTH_OF_SCREEN 40
+#if defined(PET80MODE)
+  #define WIDTH_OF_SCREEN 80
+#else
+	#define WIDTH_OF_SCREEN 40
+#endif
 #define HEIGHT_OF_SCREEN 25  // APPLE ][ we will adjust in other ways...
 
 #ifdef TARGET_A2
