@@ -56,6 +56,15 @@ loaded from disk), thus limited to 32K.
 - DHUNTER.M3 is the TRS-80
   Model 3 binary build.
 
+- DHUNTER.COM is the IBM PC 5150
+  binary build (can work with 
+  PC-DOS 1.0 to MS-DOS 7).
+
+- DHUNTER180.img is a PC-DOS 180K
+  disk image, that may be easier to 
+  use by some emulators. Should be 
+  PC-DOS 2.10 compatible.
+
 
 When you start the game...
 
