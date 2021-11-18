@@ -187,6 +187,6 @@ main.c is the main "game engine" that draws the encoded maps, moves the challeng
 
 
 Compilers Used:
-- cc65-snapshot-win32     (6502 PET/C64/Apple version)
+- cc65-snapshot-win32     (6502 PET/C64/Apple version) (note: modify cfg\pet.cfg to have "    __STACKSIZE__: type = weak, value = $0032;" to reduce stack size to 100 bytes)
 - open-watcom-v2-master   (IBM PC version)
 - z88dk-win32-2.1         (Z80 TRS-80 version)
