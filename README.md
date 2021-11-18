@@ -185,3 +185,8 @@ EDITOR.C is the STAGE editor code.  DH itself does not depend on any external fi
 
 main.c is the main "game engine" that draws the encoded maps, moves the challenges along their target paths, monitors input controls, and animates or updates the game "icons."
 
+
+Compilers Used:
+- cc65-snapshot-win32     (6502 PET/C64/Apple version)
+- open-watcom-v2-master   (IBM PC version)
+- z88dk-win32-2.1         (Z80 TRS-80 version)
